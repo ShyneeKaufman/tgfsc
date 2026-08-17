@@ -1,18 +1,12 @@
 // Vercel Serverless Function: Telegram Webhook Handler
-// Zero dependencies, ultra-fast cold start
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(200).json({ status: 'ok', message: 'TG-Fisch Bot Webhook is running' });
+    return res.status(200).json({ status: 'ok', message: 'TG-Fisch Bot is active' });
   }
 
-  const token = process.env.BOT_TOKEN;
-  const webAppUrl = process.env.WEBAPP_URL || 'https://tgfsc-2jbnlx5he-shyneekaufmans-projects.vercel.app';
-
-  if (!token) {
-    console.error('BOT_TOKEN is not configured in environment variables');
-    return res.status(500).json({ error: 'BOT_TOKEN missing' });
-  }
+  const token = process.env.BOT_TOKEN || '8974555890:AAHM4U1BctSOwQAbbB_DALOHmdcLWQVHU1M';
+  const webAppUrl = process.env.WEBAPP_URL || 'https://tgfsc.vercel.app';
 
   try {
     const update = req.body;
@@ -22,33 +16,26 @@ export default async function handler(req, res) {
 
     const { message } = update;
     const chatId = message.chat.id;
-    const text = message.text || '';
+    const text = (message.text || '').trim();
     const user = message.from || {};
 
     const telegramApi = `https://api.telegram.org/bot${token}`;
 
     if (text.startsWith('/start') || text.startsWith('/play')) {
-      const welcomeText = `🌊 **Добро пожаловать в TG-Fisch, ${user.first_name || 'Рыбак'}!**\n\n` +
-        `🎣 Тебя ждет настоящая океанская рыбалка со скилл-бейзд вываживанием, мутациями и редчайшими видами рыб!\n\n` +
-        `🏆 **Твои возможности:**\n` +
-        `• 35+ уникальных рыб от карася до Кракена\n` +
-        `• 8 мутаций (Золотые, Абиссальные, Космические)\n` +
-        `• Прокачка снастей и путешествия по 4 биомам\n` +
-        `• Тактильная отдача и звуки прямо в Telegram\n\n` +
-        `Нажимай кнопку ниже и забрасывай удочку! 👇`;
+      const welcomeText = `Забрасывай удочку, следи за поплавком и удерживай бегунок на рыбе, пока шкала вываживания не заполнится.\n\n` +
+        `Что тут есть:\n` +
+        `• 35+ видов рыб и 8 мутаций (от золотых до космических)\n` +
+        `• 4 биома: от прибрежной бухты до лавового кратера\n` +
+        `• Удочки со статами натяжения, наживки и расширение садка\n` +
+        `• Тактильная отдача на поклевках и рывках\n\n` +
+        `Жми кнопку ниже, чтобы начать:`;
 
       const keyboard = {
         inline_keyboard: [
           [
             {
-              text: '🎣 Играть в TG-Fisch',
+              text: '🎣 Запустить рыбалку',
               web_app: { url: webAppUrl }
-            }
-          ],
-          [
-            {
-              text: '📖 Официальный канал',
-              url: 'https://t.me/telegram'
             }
           ]
         ]
@@ -60,25 +47,22 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           chat_id: chatId,
           text: welcomeText,
-          parse_mode: 'Markdown',
           reply_markup: keyboard
         })
       });
     } else if (text.startsWith('/help')) {
-      const helpText = `❓ **Как играть в TG-Fisch:**\n\n` +
-        `1. Нажми кнопку **"Играть"** для открытия Mini App.\n` +
-        `2. Нажимай **"Забросить"** и жди поклевки.\n` +
-        `3. При сигнале **"ПОДСЕКАЙ!"** удерживай ползунок на рыбе.\n` +
-        `4. Продавай улов в садке и покупай мощные удочки в магазине!\n\n` +
-        `Удачной рыбалки! 🐟`;
+      const helpText = `Как тут всё устроено:\n\n` +
+        `1. Нажимаешь «Запустить рыбалку».\n` +
+        `2. Жмешь «Забросить» и ждешь сигнала поклевки.\n` +
+        `3. При сигнале «ПОДСЕКАЙ» жмешь кнопку и удерживаешь бегунок на рыбе.\n` +
+        `4. Продаешь рыбу в садке и берешь более прочные удочки в магазине.`;
 
       await fetch(`${telegramApi}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: chatId,
-          text: helpText,
-          parse_mode: 'Markdown'
+          text: helpText
         })
       });
     }
