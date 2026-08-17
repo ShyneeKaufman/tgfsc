@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>TG-Fisch: Рыбалка в Telegram</title>
+    
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- 2D Canvas Water & Physics Viewport -->
+      <div class="game-viewport">
+        <canvas id="waterCanvas"></canvas>
+      </div>
+
+      <!-- Reeling Minigame Container -->
+      <div class="minigame-container hidden" id="minigameContainer"></div>
+
+      <!-- Catch Modal Container -->
+      <div id="catchModalContainer"></div>
+
+      <!-- HUD Layer -->
+      <div id="hudContainer"></div>
+
+      <!-- Views Layer (Backpack, Shop, FishDex, Map) -->
+      <div class="view-panel-container hidden" id="viewPanelContainer"></div>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
