@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   }
 
   const token = process.env.BOT_TOKEN || '8974555890:AAHM4U1BctSOwQAbbB_DALOHmdcLWQVHU1M';
-  const webAppUrl = process.env.WEBAPP_URL || 'https://tgfsc.vercel.app';
+  const webAppUrl = process.env.WEBAPP_URL || 'https://tgfsc.vercel.app/?v=3.0';
 
   try {
     const update = req.body;
