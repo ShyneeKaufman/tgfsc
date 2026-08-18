@@ -89,6 +89,8 @@ body {
   top: var(--safe-top);
   left: 12px;
   right: 12px;
+  max-width: 600px;
+  margin: 0 auto;
   z-index: 25;
   background: rgba(6, 11, 20, 0.92);
   backdrop-filter: blur(16px);
@@ -156,6 +158,8 @@ body {
   top: calc(var(--safe-top) + 32px);
   left: 12px;
   right: 12px;
+  max-width: 600px;
+  margin: 0 auto;
   z-index: 20;
   display: flex;
   justify-content: space-between;
@@ -308,17 +312,27 @@ body {
   top: calc(var(--safe-top) + 82px);
   left: 12px;
   right: 12px;
+  max-width: 600px;
+  margin: 0 auto;
   z-index: 20;
   display: flex;
   justify-content: space-between;
   align-items: center;
   pointer-events: none;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.sub-header-ribbon::-webkit-scrollbar {
+  display: none;
 }
 
 .ribbon-left {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
+  flex-shrink: 0;
 }
 
 .biome-pill {
@@ -843,6 +857,8 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
+  max-width: 600px;
+  margin: 0 auto;
   height: calc(var(--safe-bottom) + 58px);
   padding-bottom: var(--safe-bottom);
   background: rgba(8, 15, 26, 0.88);
@@ -853,6 +869,17 @@ body {
   justify-content: space-around;
   align-items: center;
   z-index: 40;
+}
+
+@media (min-width: 640px) {
+  .bottom-dock {
+    bottom: 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-glass);
+    height: 64px;
+    padding-bottom: 0;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+  }
 }
 
 .dock-tab {
