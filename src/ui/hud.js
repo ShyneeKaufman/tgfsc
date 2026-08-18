@@ -387,26 +387,58 @@ export class HUD {
   }
 
   // --- External UI State Handlers ---
+  setCastState(castState, customText) {
+    if (!this.castBtn || !this.castBtnText) return;
+
+    if (castState === 'waiting') {
+      this.castBtn.classList.remove('disabled', 'holding', 'bite');
+      this.castBtn.classList.add('waiting');
+      this.castBtnText.textContent = customText || 'WAITING FOR BITE...';
+      this.biteBanner?.classList.add('hidden');
+      this.shakeLayer?.classList.remove('hidden');
+      this.positionShakeButton();
+    } else if (castState === 'bite') {
+      this.castBtn.classList.remove('waiting', 'holding', 'disabled');
+      this.castBtn.classList.add('bite');
+      this.castBtnText.textContent = customText || 'BITE! HOOK NOW!';
+      this.biteBanner?.classList.remove('hidden');
+      this.shakeLayer?.classList.add('hidden');
+    } else if (castState === 'reeling') {
+      this.castBtn.classList.remove('waiting', 'holding', 'bite');
+      this.castBtn.classList.add('disabled');
+      this.castBtnText.textContent = customText || 'REELING FISH...';
+      this.biteBanner?.classList.add('hidden');
+      this.shakeLayer?.classList.add('hidden');
+    } else { // 'idle'
+      this.castBtn.classList.remove('waiting', 'holding', 'bite', 'disabled');
+      this.castBtnText.textContent = customText || 'HOLD TO CAST';
+      this.biteBanner?.classList.add('hidden');
+      this.shakeLayer?.classList.add('hidden');
+    }
+  }
+
   setWaitingState(durationSecs) {
-    this.castBtn.classList.add('waiting');
-    this.castBtnText.textContent = 'WAITING FOR BITE...';
-    this.biteBanner.classList.add('hidden');
-    this.shakeLayer.classList.add('hidden');
+    this.setCastState('waiting');
   }
 
   setBiteState() {
-    this.castBtn.classList.remove('waiting');
-    this.castBtnText.textContent = 'HOOK NOW!';
-    this.biteBanner.classList.remove('hidden');
-    this.shakeLayer.classList.remove('hidden');
-    this.positionShakeButton();
+    this.setCastState('bite');
+  }
+
+  setReelingState() {
+    this.setCastState('reeling');
+  }
+
+  setIdleState() {
+    this.setCastState('idle');
   }
 
   positionShakeButton() {
-    const minX = 25;
-    const maxX = 75;
-    const minY = 35;
-    const maxY = 65;
+    if (!this.shakeBtn) return;
+    const minX = 35;
+    const maxX = 65;
+    const minY = 42;
+    const maxY = 62;
 
     const randX = minX + Math.random() * (maxX - minX);
     const randY = minY + Math.random() * (maxY - minY);
@@ -414,21 +446,20 @@ export class HUD {
     this.shakeBtn.style.left = `${randX}%`;
     this.shakeBtn.style.top = `${randY}%`;
     this.shakeBtn.classList.add('pop');
-    setTimeout(() => this.shakeBtn.classList.remove('pop'), 200);
+    setTimeout(() => this.shakeBtn?.classList.remove('pop'), 200);
   }
 
-  setReelingState() {
-    this.biteBanner.classList.add('hidden');
-    this.shakeLayer.classList.add('hidden');
-    this.castBtn.classList.add('disabled');
-    this.castBtnText.textContent = 'REELING FISH...';
-  }
-
-  setIdleState() {
-    this.castBtn.classList.remove('waiting', 'disabled', 'holding');
-    this.castBtnText.textContent = 'HOLD TO CAST';
-    this.biteBanner.classList.add('hidden');
-    this.shakeLayer.classList.add('hidden');
+  setActiveTab(tabKey) {
+    const dockTabs = this.container.querySelectorAll('.dock-tab');
+    dockTabs.forEach(tab => {
+      if (tab.dataset.tab === tabKey) {
+        tab.classList.add('active');
+      } else {
+        tab.classList.remove('active');
+      }
+    });
+    this.activeTab = tabKey;
+    this.onTabChange(tabKey);
   }
 
   updateState() {
