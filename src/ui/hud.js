@@ -26,8 +26,8 @@ export class HUD {
     this.bindEvents();
     state.subscribe(() => this.updateState());
 
-    // Subscribe to live feed ticker
-    liveFeed.subscribe((event) => this.displayLiveCatch(event));
+    // Subscribe to catch events
+    liveFeed.subscribe((event) => this.displayCatchEvent(event));
 
     // Subscribe to global event cycles
     events.subscribe((currentEvent, remainingTime) => this.updateGlobalEvent(currentEvent, remainingTime));
@@ -39,14 +39,13 @@ export class HUD {
     const bait = state.getEquippedBait();
     const biome = state.getCurrentBiome();
     const expPct = Math.round((state.exp / state.getMaxExp()) * 100);
-    const anglers = liveFeed.getAnglersForCurrentBiome();
 
     this.container.innerHTML = `
-      <!-- Live Global Catch Ticker -->
+      <!-- Top Catch / Status Ticker -->
       <div class="live-catch-ticker" id="liveCatchTicker">
         <div class="ticker-content" id="tickerContent">
-          <span class="ticker-pulse">LIVE</span>
-          <span class="ticker-text" id="tickerText">Океан спокоен. Забрасывайте снасти.</span>
+          <span class="ticker-pulse">ЖУРНАЛ</span>
+          <span class="ticker-text" id="tickerText">Готов к забросу снастей в ${biome.name}</span>
         </div>
       </div>
 
@@ -97,18 +96,12 @@ export class HUD {
         </div>
       </header>
 
-      <!-- Active Location, Online Anglers & Gear Ribbon -->
+      <!-- Active Location & Gear Ribbon -->
       <div class="sub-header-ribbon">
         <div class="ribbon-left">
           <div class="biome-pill" id="hudBiome">
             <span class="biome-icon">${getIconSvg(biome.iconKey || 'palmtree', 13)}</span>
             <span class="biome-name">${biome.name}</span>
-          </div>
-          
-          <div class="anglers-pill" id="hudAnglersPill" title="Рыбаки на этой локации">
-            <span class="anglers-dot"></span>
-            ${getIconSvg('users', 12)}
-            <span class="anglers-count" id="hudAnglersCount">${anglers.length + 1} онлайн</span>
           </div>
 
           <div class="streak-pill ${state.streak > 0 ? '' : 'hidden'}" id="hudStreakPill">
@@ -225,17 +218,13 @@ export class HUD {
     this.eventTimer = this.container.querySelector('#eventTimer');
   }
 
-  displayLiveCatch(event) {
+  displayCatchEvent(event) {
     if (!this.tickerText) return;
 
     const mutBadge = event.mutationId !== 'normal' ? `[${event.mutation}] ` : '';
     const locTag = `<span class="ticker-loc">${event.biomeName}</span>`;
 
-    if (event.isLocal) {
-      this.tickerText.innerHTML = `<strong>Вы</strong> выловили <strong>${mutBadge}${event.fishName}</strong> (${event.weight} кг) в ${locTag} (+${event.price} монет)`;
-    } else {
-      this.tickerText.innerHTML = `<strong>${event.playerName}</strong> поймал <strong>${mutBadge}${event.fishName}</strong> (${event.weight} кг) в ${locTag}`;
-    }
+    this.tickerText.innerHTML = `Выловлен <strong>${mutBadge}${event.fishName}</strong> (${event.weight} кг) в ${locTag} (+${event.price} монет)`;
 
     this.tickerContainer.classList.add('flash');
     setTimeout(() => {
@@ -254,7 +243,10 @@ export class HUD {
       this.eventDesc.textContent = currentEvent.desc;
       this.eventTimer.textContent = `${mins}:${secs}`;
       this.eventBanner.style.borderColor = currentEvent.color;
-      this.eventBanner.classList.remove('hidden');
+      
+      if (this.activeTab === 'fishing') {
+        this.eventBanner.classList.remove('hidden');
+      }
     } else {
       this.eventBanner.classList.add('hidden');
     }
@@ -466,7 +458,6 @@ export class HUD {
     const bait = state.getEquippedBait();
     const biome = state.getCurrentBiome();
     const expPct = Math.round((state.exp / state.getMaxExp()) * 100);
-    const anglers = liveFeed.getAnglersForCurrentBiome();
 
     const levelEl = this.container.querySelector('#hudLevel');
     if (levelEl) levelEl.textContent = state.level;
@@ -497,11 +488,6 @@ export class HUD {
     const biomeEl = this.container.querySelector('#hudBiome');
     if (biomeEl) {
       biomeEl.innerHTML = `<span class="biome-icon">${getIconSvg(biome.iconKey || 'palmtree', 13)}</span><span class="biome-name">${biome.name}</span>`;
-    }
-
-    const anglersCountEl = this.container.querySelector('#hudAnglersCount');
-    if (anglersCountEl) {
-      anglersCountEl.textContent = `${anglers.length + 1} онлайн`;
     }
 
     const streakPill = this.container.querySelector('#hudStreakPill');
