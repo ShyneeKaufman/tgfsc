@@ -19,6 +19,8 @@ class GameApp {
     this.gameState = 'idle'; // 'idle' | 'waiting' | 'bite' | 'reeling'
     this.biteTimeout = null;
     this.missTimeout = null;
+    this.remainingLureTime = 0;
+    this.lureIntervalId = null;
     this.pendingCatch = null;
 
     this.init();
@@ -45,11 +47,14 @@ class GameApp {
       (catchItem) => this.handleSellFish(catchItem)
     );
 
-    // 4. Setup HUD
+    // 4. Setup HUD with Fisch interactions
     const hudContainer = document.getElementById('hudContainer');
     this.hud = new HUD(
       hudContainer,
-      () => this.handleCastAction(),
+      () => this.handleCastStart(),
+      (accuracy, isCancelled) => this.handleCastRelease(accuracy, isCancelled),
+      () => this.handleShakeClick(),
+      () => this.handleHookClick(),
       (tab) => this.handleTabChange(tab)
     );
 
@@ -78,42 +83,74 @@ class GameApp {
     window.addEventListener('touchstart', initAudioOnInteraction);
   }
 
-  handleCastAction() {
+  handleCastStart() {
     sound.ensureContext();
-
-    if (this.gameState === 'idle') {
-      this.startCasting();
-    } else if (this.gameState === 'waiting') {
-      // Cancel cast
-      this.cancelCasting();
-    } else if (this.gameState === 'bite') {
-      // Hook the fish!
-      this.hookFish();
-    }
+    sound.playCast();
+    tg.impactLight();
   }
 
-  startCasting() {
+  handleCastRelease(accuracy, isCancelled) {
+    if (isCancelled) {
+      this.cancelCasting();
+      return;
+    }
+
     this.gameState = 'waiting';
     this.hud.setCastState('waiting');
 
-    sound.playCast();
+    // Luck bonus according to Fisch accuracy tier
+    if (accuracy >= 95) {
+      state.castLuckBonus = 15; // PERFECT!!
+      this.canvas.createSplash(this.canvas.width * 0.5, this.canvas.height * 0.6, 25);
+    } else if (accuracy >= 85) {
+      state.castLuckBonus = 8; // Amazing!
+    } else if (accuracy >= 70) {
+      state.castLuckBonus = 4; // Great!
+    } else {
+      state.castLuckBonus = 0;
+    }
+
     tg.impactMedium();
     this.canvas.castBobber();
 
     const rod = state.getEquippedRod();
     const bait = state.getEquippedBait();
 
-    // Calculate dynamic bite time (1.8s to 4.5s modulated by gear speed)
-    const baseWait = 1.8 + Math.random() * 2.7;
-    const effectiveWait = Math.max(1.0, baseWait * rod.lureSpeed * bait.speedMultiplier) * 1000;
+    // Fisch formula: T = Tbase * (1 - (LureSpeed/100))
+    const baseWait = 2.2 + Math.random() * 2.8;
+    const effectiveWait = Math.max(1.0, baseWait * rod.lureSpeed * bait.speedMultiplier);
 
-    this.biteTimeout = setTimeout(() => {
+    this.remainingLureTime = effectiveWait;
+
+    if (this.lureIntervalId) clearInterval(this.lureIntervalId);
+    this.lureIntervalId = setInterval(() => {
+      if (this.gameState !== 'waiting') {
+        clearInterval(this.lureIntervalId);
+        return;
+      }
+      this.remainingLureTime -= 0.2;
+      if (this.remainingLureTime <= 0) {
+        clearInterval(this.lureIntervalId);
+        this.triggerBite();
+      }
+    }, 200);
+  }
+
+  handleShakeClick() {
+    if (this.gameState !== 'waiting') return;
+
+    // Fisch Shake mechanic: each tap subtracts 0.9s from the lure wait time!
+    this.remainingLureTime = Math.max(0, this.remainingLureTime - 0.9);
+    this.canvas.createSplash(this.canvas.bobber.x, this.canvas.bobber.targetY, 8);
+
+    if (this.remainingLureTime <= 0) {
+      if (this.lureIntervalId) clearInterval(this.lureIntervalId);
       this.triggerBite();
-    }, effectiveWait);
+    }
   }
 
   cancelCasting() {
-    if (this.biteTimeout) clearTimeout(this.biteTimeout);
+    if (this.lureIntervalId) clearInterval(this.lureIntervalId);
     if (this.missTimeout) clearTimeout(this.missTimeout);
 
     this.gameState = 'idle';
@@ -132,10 +169,10 @@ class GameApp {
     sound.playBite();
     tg.notificationWarning();
 
-    // Player has 2.4 seconds to react and hook
+    // Player has 2.2 seconds to react and hook
     this.missTimeout = setTimeout(() => {
       this.handleMissedBite();
-    }, 2400);
+    }, 2200);
   }
 
   handleMissedBite() {
@@ -146,19 +183,25 @@ class GameApp {
     this.canvas.retrieveBobber();
     sound.playSplash();
     tg.notificationError();
+
+    // Reset Fisch streak on miss
+    state.resetStreak();
   }
 
-  hookFish() {
+  handleHookClick() {
     if (this.missTimeout) clearTimeout(this.missTimeout);
 
     const rod = state.getEquippedRod();
     const bait = state.getEquippedBait();
 
+    // Total Luck = Rod Luck + Bait Luck + Streak Bonus + Cast Accuracy Bonus
+    const totalLuck = rod.luck + bait.luckBonus + state.getStreakLuckBonus() + (state.castLuckBonus || 0);
+
     // Roll fish, mutation, weight, price
-    const fish = RNG.rollFish(state.currentBiome, rod.luck, bait.luckBonus);
+    const fish = RNG.rollFish(state.currentBiome, totalLuck, bait.luckBonus);
     const mutation = RNG.rollMutation(bait.mutationBonus);
     const weight = RNG.rollWeight(fish, mutation);
-    const price = RNG.calculatePrice(fish, weight, mutation, rod.luck);
+    const price = RNG.calculatePrice(fish, weight, mutation, totalLuck);
     const exp = (RARITIES[fish.rarity] || RARITIES.common).catchExp;
 
     const previousRecord = state.fishdex[fish.id]?.maxWeight || 0;
@@ -189,10 +232,13 @@ class GameApp {
     this.hud.setCastState('idle');
     this.canvas.retrieveBobber();
 
+    // Increment Catch Streak in Fisch!
+    state.incrementStreak();
+
     if (this.pendingCatch) {
       // Award EXP immediately
       state.addExp(this.pendingCatch.exp);
-      // Show spectacular modal
+      // Show catch reveal modal
       this.catchModal.show(this.pendingCatch);
     }
   }
@@ -203,6 +249,9 @@ class GameApp {
     this.canvas.retrieveBobber();
     sound.playSplash();
     tg.notificationError();
+
+    // Reset Catch Streak on snap
+    state.resetStreak();
     this.pendingCatch = null;
   }
 

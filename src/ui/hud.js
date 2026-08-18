@@ -3,14 +3,19 @@ import { sound } from '../core/sound.js';
 import { tg } from '../core/telegram.js';
 
 export class HUD {
-  constructor(container, onCastClick, onTabChange) {
+  constructor(container, onCastStart, onCastRelease, onShakeClick, onHookClick, onTabChange) {
     this.container = container;
-    this.onCastClick = onCastClick;
+    this.onCastStart = onCastStart;
+    this.onCastRelease = onCastRelease;
+    this.onShakeClick = onShakeClick;
+    this.onHookClick = onHookClick;
     this.onTabChange = onTabChange;
+
     this.activeTab = 'fishing';
     this.castPower = 0;
-    this.powerDirection = 1;
     this.powerActive = false;
+    this.powerDirection = 1;
+    this.powerAnimId = null;
 
     this.render();
     this.bindEvents();
@@ -56,11 +61,17 @@ export class HUD {
         </div>
       </header>
 
-      <!-- Active Location & Gear Ribbon -->
+      <!-- Active Location, Gear & Streak Ribbon -->
       <div class="sub-header-ribbon">
-        <div class="biome-pill" id="hudBiome">
-          <span class="biome-icon">${biome.icon}</span>
-          <span class="biome-name">${biome.name}</span>
+        <div class="ribbon-left">
+          <div class="biome-pill" id="hudBiome">
+            <span class="biome-icon">${biome.icon}</span>
+            <span class="biome-name">${biome.name}</span>
+          </div>
+          <div class="streak-pill ${state.streak > 0 ? '' : 'hidden'}" id="hudStreakPill">
+            <span>🔥</span>
+            <span id="hudStreakText">Стрик x${state.streak}</span>
+          </div>
         </div>
 
         <div class="gear-status">
@@ -75,15 +86,36 @@ export class HUD {
         </div>
       </div>
 
+      <!-- Floating Fisch Shake Button Area -->
+      <div class="fisch-shake-layer hidden" id="shakeLayer">
+        <button class="btn-fisch-shake" id="shakeBtn">
+          <span class="shake-inner">SHAKE! 💥</span>
+          <div class="shake-ripple-ring"></div>
+        </button>
+      </div>
+
       <!-- Central Floating Cast / Action Area -->
       <div class="fishing-action-zone" id="fishingActionZone">
-        <!-- Power Bar Meter (Active during casting hold) -->
-        <div class="power-meter-container hidden" id="powerMeter">
-          <div class="power-track">
-            <div class="power-sweetspot"></div>
-            <div class="power-cursor" id="powerCursor"></div>
+        <!-- Fisch Cast Accuracy Meter -->
+        <div class="cast-meter-container hidden" id="castMeter">
+          <div class="cast-meter-track">
+            <div class="cast-meter-zones">
+              <div class="zone-meh"></div>
+              <div class="zone-good"></div>
+              <div class="zone-perfect"></div>
+            </div>
+            <div class="cast-meter-cursor" id="castCursor"></div>
           </div>
-          <div class="power-label">СИЛА ЗАБРОСА</div>
+          <div class="cast-meter-labels">
+            <span>0%</span>
+            <span class="perfect-label">PERFECT</span>
+            <span>100%</span>
+          </div>
+        </div>
+
+        <!-- Cast Accuracy Grade Toast -->
+        <div class="cast-grade-popup hidden" id="castGradePopup">
+          <span class="grade-text" id="gradeText">PERFECT!!</span>
         </div>
 
         <!-- Big Cast Button -->
@@ -97,7 +129,6 @@ export class HUD {
 
         <!-- Bite Notification Overlay -->
         <div class="bite-alert-banner hidden" id="biteAlertBanner">
-          <div class="bite-pulse"></div>
           <div class="bite-content">
             <span class="bite-emoji">⚡</span>
             <span class="bite-title">КЛЮЁТ! ПОДСЕКАЙ!</span>
@@ -133,10 +164,14 @@ export class HUD {
 
     this.castBtn = this.container.querySelector('#castBtn');
     this.castBtnText = this.container.querySelector('#castBtnText');
-    this.powerMeter = this.container.querySelector('#powerMeter');
-    this.powerCursor = this.container.querySelector('#powerCursor');
+    this.castMeter = this.container.querySelector('#castMeter');
+    this.castCursor = this.container.querySelector('#castCursor');
+    this.castGradePopup = this.container.querySelector('#castGradePopup');
+    this.gradeText = this.container.querySelector('#gradeText');
     this.biteBanner = this.container.querySelector('#biteAlertBanner');
     this.soundToggleBtn = this.container.querySelector('#soundToggleBtn');
+    this.shakeLayer = this.container.querySelector('#shakeLayer');
+    this.shakeBtn = this.container.querySelector('#shakeBtn');
   }
 
   bindEvents() {
@@ -147,9 +182,41 @@ export class HUD {
       tg.selectionChanged();
     });
 
-    // Cast button click
-    this.castBtn.addEventListener('click', () => {
-      this.onCastClick();
+    // Hold-to-Cast Mechanics
+    const startCastHold = (e) => {
+      e.preventDefault();
+      if (this.castBtn.classList.contains('waiting')) {
+        // Cancel cast
+        this.onCastRelease(0, true);
+        return;
+      }
+      if (this.castBtn.classList.contains('bite')) {
+        // Hook
+        this.onHookClick();
+        return;
+      }
+
+      this.startPowerMeter();
+      this.onCastStart();
+    };
+
+    const endCastHold = (e) => {
+      if (!this.powerActive) return;
+      e.preventDefault();
+      const finalPower = this.stopPowerMeter();
+      this.onCastRelease(finalPower, false);
+    };
+
+    this.castBtn.addEventListener('mousedown', startCastHold);
+    this.castBtn.addEventListener('mouseup', endCastHold);
+    this.castBtn.addEventListener('touchstart', startCastHold, { passive: false });
+    this.castBtn.addEventListener('touchend', endCastHold, { passive: false });
+
+    // Shake button click
+    this.shakeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.relocateShakeButton();
+      this.onShakeClick();
     });
 
     // Dock tabs
@@ -160,6 +227,93 @@ export class HUD {
         this.setActiveTab(target);
       });
     });
+  }
+
+  startPowerMeter() {
+    this.powerActive = true;
+    this.castPower = 0;
+    this.powerDirection = 1;
+    this.castMeter.classList.remove('hidden');
+
+    const animatePower = () => {
+      if (!this.powerActive) return;
+
+      this.castPower += this.powerDirection * 2.8;
+      if (this.castPower >= 100) {
+        this.castPower = 100;
+        this.powerDirection = -1;
+      } else if (this.castPower <= 0) {
+        this.castPower = 0;
+        this.powerDirection = 1;
+      }
+
+      this.castCursor.style.left = `${this.castPower}%`;
+      this.powerAnimId = requestAnimationFrame(animatePower);
+    };
+
+    this.powerAnimId = requestAnimationFrame(animatePower);
+  }
+
+  stopPowerMeter() {
+    this.powerActive = false;
+    if (this.powerAnimId) cancelAnimationFrame(this.powerAnimId);
+    this.castMeter.classList.add('hidden');
+
+    const accuracy = Math.round(this.castPower);
+    this.showAccuracyGrade(accuracy);
+    return accuracy;
+  }
+
+  showAccuracyGrade(accuracy) {
+    let grade = 'Meh..';
+    let color = '#94a3b8';
+
+    if (accuracy >= 95) {
+      grade = 'PERFECT!!';
+      color = '#f59e0b';
+      state.stats.perfectCasts += 1;
+    } else if (accuracy >= 85) {
+      grade = 'Amazing!';
+      color = '#22d3ee';
+    } else if (accuracy >= 70) {
+      grade = 'Great!';
+      color = '#10b981';
+    } else if (accuracy >= 50) {
+      grade = 'Good!';
+      color = '#38bdf8';
+    } else if (accuracy >= 30) {
+      grade = 'Fine.';
+      color = '#e2e8f0';
+    }
+
+    this.gradeText.textContent = grade;
+    this.gradeText.style.color = color;
+    this.castGradePopup.classList.remove('hidden');
+
+    setTimeout(() => {
+      this.castGradePopup.classList.add('hidden');
+    }, 1400);
+  }
+
+  showShakeButton() {
+    this.shakeLayer.classList.remove('hidden');
+    this.relocateShakeButton();
+  }
+
+  hideShakeButton() {
+    this.shakeLayer.classList.add('hidden');
+  }
+
+  relocateShakeButton() {
+    // Random position within safe middle area (20% to 75% width, 25% to 65% height)
+    const randomX = 15 + Math.random() * 65;
+    const randomY = 25 + Math.random() * 40;
+
+    this.shakeBtn.style.left = `${randomX}%`;
+    this.shakeBtn.style.top = `${randomY}%`;
+
+    sound.playClick();
+    tg.impactLight();
   }
 
   setActiveTab(tabName) {
@@ -192,19 +346,23 @@ export class HUD {
       this.castBtn.classList.remove('waiting', 'bite', 'hidden');
       this.castBtnText.textContent = customText || 'ЗАБРОСИТЬ';
       this.biteBanner.classList.add('hidden');
+      this.hideShakeButton();
     } else if (status === 'waiting') {
       this.castBtn.classList.add('waiting');
       this.castBtn.classList.remove('bite', 'hidden');
       this.castBtnText.textContent = 'ОЖИДАНИЕ...';
       this.biteBanner.classList.add('hidden');
+      this.showShakeButton();
     } else if (status === 'bite') {
       this.castBtn.classList.remove('waiting', 'hidden');
       this.castBtn.classList.add('bite');
       this.castBtnText.textContent = 'ПОДСЕЧЬ!';
       this.biteBanner.classList.remove('hidden');
+      this.hideShakeButton();
     } else if (status === 'reeling') {
       this.castBtn.classList.add('hidden');
       this.biteBanner.classList.add('hidden');
+      this.hideShakeButton();
     }
   }
 
@@ -243,6 +401,17 @@ export class HUD {
     const biomeEl = this.container.querySelector('#hudBiome');
     if (biomeEl) {
       biomeEl.innerHTML = `<span class="biome-icon">${biome.icon}</span><span class="biome-name">${biome.name}</span>`;
+    }
+
+    const streakPill = this.container.querySelector('#hudStreakPill');
+    const streakText = this.container.querySelector('#hudStreakText');
+    if (streakPill && streakText) {
+      if (state.streak > 0) {
+        streakPill.classList.remove('hidden');
+        streakText.textContent = `Стрик x${state.streak} (+${state.getStreakLuckBonus()}%)`;
+      } else {
+        streakPill.classList.add('hidden');
+      }
     }
 
     const rodPill = this.container.querySelector('#hudRodPill');

@@ -253,6 +253,12 @@ body {
   pointer-events: none;
 }
 
+.ribbon-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .biome-pill {
   pointer-events: auto;
   display: flex;
@@ -268,6 +274,28 @@ body {
   font-weight: 700;
   letter-spacing: 0.3px;
   color: var(--sonar-cyan);
+}
+
+.streak-pill {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid var(--brass-gold);
+  padding: 4px 9px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--brass-gold);
+  box-shadow: 0 0 12px var(--brass-glow);
+  animation: streakGlow 1.5s infinite alternate;
+}
+
+@keyframes streakGlow {
+  0% { transform: scale(0.98); }
+  100% { transform: scale(1.04); }
 }
 
 .gear-status {
@@ -299,7 +327,50 @@ body {
   color: var(--ocean-foam);
 }
 
-/* ================= FISHING ACTION ZONE ================= */
+/* ================= FLOATING FISCH SHAKE LAYER ================= */
+.fisch-shake-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 22;
+  pointer-events: none;
+}
+
+.btn-fisch-shake {
+  pointer-events: auto;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border: 2px solid #fef08a;
+  border-radius: var(--radius-full);
+  padding: 12px 22px;
+  color: #040810;
+  cursor: pointer;
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.8), 0 8px 20px rgba(0, 0, 0, 0.6);
+  animation: popPulse 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-fisch-shake:active {
+  transform: translate(-50%, -50%) scale(0.9);
+}
+
+.shake-inner {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+@keyframes popPulse {
+  0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0; }
+  80% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ================= FISHING ACTION ZONE & CAST METER ================= */
 .fishing-action-zone {
   position: absolute;
   bottom: calc(var(--safe-bottom) + 84px);
@@ -312,6 +383,97 @@ body {
   z-index: 25;
   pointer-events: none;
   gap: 12px;
+}
+
+.cast-meter-container {
+  width: 220px;
+  background: rgba(8, 15, 26, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid var(--sonar-cyan);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 20px var(--sonar-glow);
+}
+
+.cast-meter-track {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  background: #040810;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+
+.cast-meter-zones {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.zone-meh {
+  width: 60%;
+  background: #334155;
+}
+
+.zone-good {
+  width: 30%;
+  background: #0284c7;
+}
+
+.zone-perfect {
+  width: 10%;
+  background: linear-gradient(90deg, #10b981, #f59e0b);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
+}
+
+.cast-meter-cursor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  margin-left: -2.5px;
+  background: #ffffff;
+  box-shadow: 0 0 8px #ffffff;
+  border-radius: var(--radius-full);
+  transition: left 0.016s linear;
+}
+
+.cast-meter-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  color: var(--ocean-mist);
+}
+
+.perfect-label {
+  color: var(--brass-gold);
+  font-weight: 800;
+}
+
+.cast-grade-popup {
+  position: absolute;
+  top: -45px;
+  background: rgba(6, 11, 20, 0.95);
+  border: 1px solid var(--border-glass);
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+  animation: gradeFloat 1.2s ease-out forwards;
+}
+
+@keyframes gradeFloat {
+  0% { transform: translateY(0) scale(0.8); opacity: 0; }
+  25% { transform: translateY(-8px) scale(1.15); opacity: 1; }
+  100% { transform: translateY(-24px) scale(1); opacity: 0; }
 }
 
 .btn-cast {

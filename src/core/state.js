@@ -7,26 +7,49 @@ import { tg } from './telegram.js';
 class GameState {
   constructor() {
     this.listeners = new Set();
+    this.streak = 0;
+    this.castLuckBonus = 0; // Granted by Perfect Cast
     this.loadInitialState();
+    this.syncCloud();
   }
 
   loadInitialState() {
     const saved = StorageManager.load();
-    if (saved) {
-      this.coins = saved.coins ?? 50;
-      this.pearls = saved.pearls ?? 0;
-      this.level = saved.level ?? 1;
-      this.exp = saved.exp ?? 0;
-      this.equippedRodId = saved.equippedRodId ?? 'starter_rod';
-      this.equippedBaitId = saved.equippedBaitId ?? 'none';
-      this.ownedRods = saved.ownedRods ?? ['starter_rod'];
-      this.baits = saved.baits ?? { none: 999999, worm: 5 };
-      this.inventory = saved.inventory ?? [];
-      this.backpackCapacity = saved.backpackCapacity ?? 15;
-      this.currentBiome = saved.currentBiome ?? 'coast';
-      this.unlockedBiomes = saved.unlockedBiomes ?? ['coast'];
-      this.fishdex = saved.fishdex ?? {};
-      this.stats = saved.stats ?? {
+    this.applyData(saved);
+  }
+
+  async syncCloud() {
+    try {
+      const cloudData = await StorageManager.loadFromCloud();
+      if (cloudData) {
+        // If cloud data is richer or more advanced, apply it
+        if ((cloudData.coins || 0) >= this.coins && (cloudData.level || 1) >= this.level) {
+          this.applyData(cloudData);
+          this.notify();
+        }
+      }
+    } catch (e) {
+      console.warn('Cloud sync failed:', e);
+    }
+  }
+
+  applyData(data) {
+    if (data) {
+      this.coins = data.coins ?? 50;
+      this.pearls = data.pearls ?? 0;
+      this.level = data.level ?? 1;
+      this.exp = data.exp ?? 0;
+      this.equippedRodId = data.equippedRodId ?? 'starter_rod';
+      this.equippedBaitId = data.equippedBaitId ?? 'none';
+      this.ownedRods = data.ownedRods ?? ['starter_rod'];
+      this.baits = data.baits ?? { none: 999999, worm: 5 };
+      this.inventory = data.inventory ?? [];
+      this.backpackCapacity = data.backpackCapacity ?? 15;
+      this.currentBiome = data.currentBiome ?? 'coast';
+      this.unlockedBiomes = data.unlockedBiomes ?? ['coast'];
+      this.fishdex = data.fishdex ?? {};
+      this.streak = data.streak ?? 0;
+      this.stats = data.stats ?? {
         totalCaught: 0,
         totalCoinsEarned: 0,
         heaviestFish: 0,
@@ -46,6 +69,7 @@ class GameState {
       this.currentBiome = 'coast';
       this.unlockedBiomes = ['coast'];
       this.fishdex = {};
+      this.streak = 0;
       this.stats = {
         totalCaught: 0,
         totalCoinsEarned: 0,
@@ -70,6 +94,7 @@ class GameState {
       currentBiome: this.currentBiome,
       unlockedBiomes: this.unlockedBiomes,
       fishdex: this.fishdex,
+      streak: this.streak,
       stats: this.stats
     });
     this.notify();
@@ -107,6 +132,23 @@ class GameState {
     return BIOMES.find(b => b.id === this.currentBiome) || BIOMES[0];
   }
 
+  getStreakLuckBonus() {
+    // 2% luck bonus per streak, capped at +30%
+    return Math.min(30, this.streak * 2);
+  }
+
+  incrementStreak() {
+    this.streak += 1;
+    this.save();
+  }
+
+  resetStreak() {
+    if (this.streak > 0) {
+      this.streak = 0;
+      this.save();
+    }
+  }
+
   // --- Progress Actions ---
   addExp(amount) {
     this.exp += amount;
@@ -115,7 +157,7 @@ class GameState {
     while (this.exp >= this.getMaxExp()) {
       this.exp -= this.getMaxExp();
       this.level += 1;
-      this.pearls += 3; // Bonus pearls on level up!
+      this.pearls += 3;
       leveledUp = true;
     }
 
@@ -158,7 +200,7 @@ class GameState {
   // --- Inventory & Fish Caught ---
   addFish(fishItem) {
     if (this.inventory.length >= this.backpackCapacity) {
-      return false; // Backpack full
+      return false;
     }
 
     this.inventory.unshift(fishItem);

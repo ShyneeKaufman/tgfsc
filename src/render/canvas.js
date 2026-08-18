@@ -279,6 +279,22 @@ export class WaterCanvas {
       ctx.beginPath();
       ctx.arc(bx, by - 16, 3, 0, Math.PI * 2);
       ctx.fill();
+
+      // Fisch Red Exclamation Mark on Bite
+      if (this.bobber.submerged) {
+        ctx.save();
+        ctx.fillStyle = '#f43f5e';
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.font = 'bold 30px Syne, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = 'rgba(244, 63, 94, 0.9)';
+        ctx.shadowBlur = 15;
+        const exY = by - 32 + Math.sin(this.time * 12) * 4;
+        ctx.strokeText('❗', bx, exY);
+        ctx.fillText('❗', bx, exY);
+        ctx.restore();
+      }
     }
 
     // 6. Splash particles
