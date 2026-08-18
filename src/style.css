@@ -1666,10 +1666,96 @@ body {
   width: 100%;
 }
 
-/* FishDex & Map */
+/* Shop Cards & Headers */
+.shop-item-header-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.rod-english-sub {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--ocean-mist);
+  font-weight: 500;
+}
+
+.item-count-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--sonar-cyan);
+  background: rgba(34, 211, 238, 0.1);
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  margin-left: auto;
+}
+
+/* Infinite Backpack Summary Info */
+.bag-summary-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--ocean-foam);
+  margin-bottom: 4px;
+}
+
+.summary-label {
+  color: var(--ocean-mist);
+}
+
+.summary-value {
+  color: var(--brass-gold);
+  font-weight: 800;
+  font-family: var(--font-mono);
+}
+
+/* ================= BESTIARY (БЕСТИАРИЙ) ================= */
+.bestiary-progress-card {
+  background: var(--abyss-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bestiary-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ocean-foam);
+}
+
+.progress-pct {
+  color: var(--sonar-cyan);
+  font-family: var(--font-mono);
+  font-weight: 800;
+}
+
+.bestiary-progress-track {
+  width: 100%;
+  height: 6px;
+  background: var(--abyss-2);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.bestiary-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0284c7, #22d3ee);
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.8);
+  transition: width 0.3s ease;
+}
+
 .dex-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 
@@ -1677,81 +1763,126 @@ body {
   background: var(--surface-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 12px;
+  padding: 14px;
+  display: flex;
+  gap: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.dex-card.locked {
+  opacity: 0.55;
+  background: rgba(10, 18, 30, 0.5);
+}
+
+.dex-sprite-stage {
+  width: 58px;
+  height: 58px;
+  background: var(--abyss-1);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--border-subtle);
+}
+
+.dex-sprite-stage.locked {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.locked-icon {
+  color: var(--ocean-depth);
+}
+
+.dex-info {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
 }
 
-.dex-card.undiscovered {
-  opacity: 0.45;
-  text-align: center;
-  align-items: center;
-  padding: 24px 10px;
-}
-
-.dex-silhouette {
-  font-size: 32px;
-}
-
-.dex-card-top {
+.dex-header-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-}
-
-.dex-icon {
-  font-size: 26px;
-}
-
-.dex-badge-rarity {
-  font-family: var(--font-mono);
-  font-size: 8.5px;
-  font-weight: 700;
-  color: #040810;
-  padding: 2px 6px;
-  border-radius: var(--radius-xs);
+  align-items: baseline;
+  gap: 8px;
 }
 
 .dex-name {
   font-family: var(--font-display);
-  font-size: 12.5px;
+  font-size: 14px;
   font-weight: 800;
   color: var(--ocean-foam);
 }
 
-.dex-desc {
-  font-size: 10px;
+.dex-name.locked {
   color: var(--ocean-mist);
-  line-height: 1.35;
 }
 
-.dex-records-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 9px;
-  color: var(--ocean-depth);
+.dex-english-name {
+  font-size: 10.5px;
+  color: var(--ocean-mist);
   font-family: var(--font-mono);
-  border-top: 1px solid var(--border-subtle);
-  padding-top: 5px;
+}
+
+.dex-rarity-pill {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 800;
+  color: #040810;
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+  letter-spacing: 0.5px;
+}
+
+.dex-rarity-pill.locked {
+  background: var(--abyss-2);
+  color: var(--ocean-depth);
+}
+
+.dex-desc {
+  font-size: 11px;
+  color: var(--ocean-mist);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+.dex-stats-row {
+  display: flex;
+  gap: 16px;
+  font-size: 10px;
+  color: var(--ocean-foam);
+  font-family: var(--font-mono);
   margin-top: 4px;
 }
 
-.dex-mutations-tag-row {
+.dex-stats-row strong {
+  color: var(--sonar-cyan);
+}
+
+.dex-mutations-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 3px;
+  align-items: center;
+  gap: 4px;
   margin-top: 4px;
+}
+
+.dex-mut-label {
+  font-size: 9px;
+  color: var(--ocean-mist);
+  font-family: var(--font-mono);
 }
 
 .dex-mut-pill {
-  font-size: 8px;
+  font-size: 8.5px;
   font-family: var(--font-mono);
   font-weight: 700;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 1px 4px;
+  padding: 1px 6px;
   border-radius: 3px;
+  border: 1px solid;
 }
 
 .biomes-grid {

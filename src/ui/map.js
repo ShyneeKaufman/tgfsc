@@ -14,6 +14,8 @@ export class MapView {
   }
 
   render() {
+    const currentBiome = state.getCurrentBiome();
+
     this.container.innerHTML = `
       <div class="view-panel map-panel">
         <div class="panel-header">
@@ -22,7 +24,7 @@ export class MapView {
             <h2>КАРТА ЭКСПЕДИЦИЙ</h2>
           </div>
           <div class="active-location-pill">
-            Сейчас: ${state.getCurrentBiome().name}
+            Сейчас: ${currentBiome.name}
           </div>
         </div>
 
@@ -39,26 +41,19 @@ export class MapView {
     return BIOMES.map(biome => {
       const isCurrent = state.currentBiome === biome.id;
       const isUnlocked = state.unlockedBiomes.includes(biome.id);
-      const isLevelLocked = state.level < biome.requiredLevel;
+      const isLevelLocked = state.level < biome.levelReq;
 
       let actionHTML = '';
       if (isCurrent) {
         actionHTML = `<button class="btn-biome-action current" disabled>${getIconSvg('anchor', 14)} Текущая локация</button>`;
-      } else if (isUnlocked) {
-        actionHTML = `<button class="btn-biome-action travel-btn" data-action="travel" data-id="${biome.id}">Отплыть</button>`;
       } else if (isLevelLocked) {
-        actionHTML = `<button class="btn-biome-action locked" disabled>${getIconSvg('lock', 13)} Требуется ${biome.requiredLevel} уровень</button>`;
+        actionHTML = `<button class="btn-biome-action locked" disabled>${getIconSvg('lock', 13)} Требуется ${biome.levelReq} уровень</button>`;
       } else {
-        const canAfford = state.coins >= biome.travelCost;
-        actionHTML = `
-          <button class="btn-biome-action unlock-btn ${canAfford ? '' : 'cant-afford'}" data-action="unlock" data-id="${biome.id}" ${canAfford ? '' : 'disabled'}>
-            Открыть: ${biome.travelCost.toLocaleString('ru-RU')} монет
-          </button>
-        `;
+        actionHTML = `<button class="btn-biome-action travel-btn" data-action="travel" data-id="${biome.id}">Отплыть</button>`;
       }
 
       return `
-        <div class="biome-card ${isCurrent ? 'current-biome' : ''}" style="background: linear-gradient(145deg, ${biome.skyGradient[0]}, ${biome.skyGradient[1]})">
+        <div class="biome-card ${isCurrent ? 'current-biome' : ''}" style="border-color: ${isCurrent ? '#22d3ee' : 'rgba(255, 255, 255, 0.12)'}; background: linear-gradient(145deg, ${biome.skyColor || '#071526'}, ${biome.ambientColor || '#0c4a6e'})">
           <div class="biome-water-preview" style="background: ${biome.waterColor}"></div>
           
           <div class="biome-card-content">
@@ -66,7 +61,7 @@ export class MapView {
               <span class="biome-big-icon">${getIconSvg(biome.iconKey || 'palmtree', 26)}</span>
               <div class="biome-title-group">
                 <h3 class="biome-title">${biome.name}</h3>
-                <span class="biome-req-level">Уровень: ${biome.requiredLevel}</span>
+                <span class="biome-req-level">${biome.englishName} • Ур. ${biome.levelReq}</span>
               </div>
             </div>
 
@@ -96,21 +91,21 @@ export class MapView {
           sound.playSplash();
           tg.impactMedium();
           this.onTravelSuccess(id);
-        }
-      } else if (action === 'unlock') {
-        if (state.unlockBiome(id)) {
-          sound.playCoin();
-          tg.notificationSuccess();
-          this.onTravelSuccess(id);
-        } else {
-          tg.notificationError();
+          this.update();
         }
       }
     });
   }
 
   update() {
+    const activePill = this.container.querySelector('.active-location-pill');
+    if (activePill) {
+      activePill.textContent = `Сейчас: ${state.getCurrentBiome().name}`;
+    }
+
     const grid = this.container.querySelector('#biomesGrid');
-    if (grid) grid.innerHTML = this.renderBiomes();
+    if (grid) {
+      grid.innerHTML = this.renderBiomes();
+    }
   }
 }

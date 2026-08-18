@@ -188,7 +188,7 @@ export class HUD {
         </button>
         <button class="dock-tab" data-tab="fishdex" id="tabFishdex">
           <span class="tab-icon">${getIconSvg('book', 20)}</span>
-          <span class="tab-label">FishDex</span>
+          <span class="tab-label">Бестиарий</span>
         </button>
         <button class="dock-tab" data-tab="map" id="tabMap">
           <span class="tab-icon">${getIconSvg('map', 20)}</span>
@@ -482,11 +482,6 @@ export class HUD {
     if (bagBadge) {
       bagBadge.textContent = state.inventory.length;
       bagBadge.style.display = state.inventory.length > 0 ? 'flex' : 'none';
-      if (state.inventory.length >= state.backpackCapacity) {
-        bagBadge.classList.add('full');
-      } else {
-        bagBadge.classList.remove('full');
-      }
     }
 
     const biomeEl = this.container.querySelector('#hudBiome');

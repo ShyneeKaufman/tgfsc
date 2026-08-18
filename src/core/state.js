@@ -1,28 +1,26 @@
-import { StorageManager } from './storage.js';
 import { RODS } from '../data/rods.js';
 import { BAITS } from '../data/baits.js';
 import { BIOMES } from '../data/biomes.js';
+import { StorageManager } from './storage.js';
 import { tg } from './telegram.js';
 
 class GameState {
   constructor() {
     this.listeners = new Set();
-    this.streak = 0;
-    this.castLuckBonus = 0; // Granted by Perfect Cast
-    this.loadInitialState();
-    this.syncCloud();
-  }
+    this.castLuckBonus = 0;
 
-  loadInitialState() {
+    // Load from LocalStorage / Cookies
     const saved = StorageManager.load();
     this.applyData(saved);
+
+    // Async sync with Telegram CloudStorage
+    this.syncCloud();
   }
 
   async syncCloud() {
     try {
       const cloudData = await StorageManager.loadFromCloud();
       if (cloudData) {
-        // If cloud data is richer or more advanced, apply it
         if ((cloudData.coins || 0) >= this.coins && (cloudData.level || 1) >= this.level) {
           this.applyData(cloudData);
           this.notify();
@@ -33,20 +31,58 @@ class GameState {
     }
   }
 
+  migrateRod(id) {
+    const map = {
+      starter_rod: 'flimsy_rod',
+      iron_rod: 'carbon_rod',
+      neon_rod: 'fast_rod',
+      golden_rod: 'lucky_rod',
+      abyssal_rod: 'destiny_rod'
+    };
+    return map[id] || id;
+  }
+
+  migrateBiome(id) {
+    const map = {
+      coast: 'moosewood',
+      reef: 'roslit',
+      abyss: 'depths',
+      caldera: 'sunstone'
+    };
+    return map[id] || id;
+  }
+
   applyData(data) {
     if (data) {
       this.coins = data.coins ?? 50;
       this.pearls = data.pearls ?? 0;
       this.level = data.level ?? 1;
       this.exp = data.exp ?? 0;
-      this.equippedRodId = data.equippedRodId ?? 'starter_rod';
+      
+      const rawRod = data.equippedRodId ?? 'flimsy_rod';
+      this.equippedRodId = this.migrateRod(rawRod);
+
       this.equippedBaitId = data.equippedBaitId ?? 'none';
-      this.ownedRods = data.ownedRods ?? ['starter_rod'];
+      
+      const rawOwnedRods = data.ownedRods ?? ['flimsy_rod'];
+      this.ownedRods = Array.isArray(rawOwnedRods) 
+        ? rawOwnedRods.map(r => this.migrateRod(r)) 
+        : ['flimsy_rod'];
+      if (!this.ownedRods.includes('flimsy_rod')) this.ownedRods.unshift('flimsy_rod');
+
       this.baits = data.baits ?? { none: 999999, worm: 5 };
-      this.inventory = data.inventory ?? [];
-      this.backpackCapacity = data.backpackCapacity ?? 15;
-      this.currentBiome = data.currentBiome ?? 'coast';
-      this.unlockedBiomes = data.unlockedBiomes ?? ['coast'];
+      this.inventory = Array.isArray(data.inventory) ? data.inventory : [];
+      this.backpackCapacity = Infinity; // Infinite backpack!
+
+      const rawBiome = data.currentBiome ?? 'moosewood';
+      this.currentBiome = this.migrateBiome(rawBiome);
+
+      const rawUnlocked = data.unlockedBiomes ?? ['moosewood'];
+      this.unlockedBiomes = Array.isArray(rawUnlocked) 
+        ? rawUnlocked.map(b => this.migrateBiome(b)) 
+        : ['moosewood'];
+      if (!this.unlockedBiomes.includes('moosewood')) this.unlockedBiomes.unshift('moosewood');
+
       this.fishdex = data.fishdex ?? {};
       this.streak = data.streak ?? 0;
       this.dailyStreak = data.dailyStreak ?? 0;
@@ -62,14 +98,14 @@ class GameState {
       this.pearls = 0;
       this.level = 1;
       this.exp = 0;
-      this.equippedRodId = 'starter_rod';
+      this.equippedRodId = 'flimsy_rod';
       this.equippedBaitId = 'none';
-      this.ownedRods = ['starter_rod'];
+      this.ownedRods = ['flimsy_rod'];
       this.baits = { none: 999999, worm: 5 };
       this.inventory = [];
-      this.backpackCapacity = 15;
-      this.currentBiome = 'coast';
-      this.unlockedBiomes = ['coast'];
+      this.backpackCapacity = Infinity; // Infinite backpack!
+      this.currentBiome = 'moosewood';
+      this.unlockedBiomes = ['moosewood'];
       this.fishdex = {};
       this.streak = 0;
       this.dailyStreak = 0;
@@ -94,7 +130,7 @@ class GameState {
       ownedRods: this.ownedRods,
       baits: this.baits,
       inventory: this.inventory,
-      backpackCapacity: this.backpackCapacity,
+      backpackCapacity: Infinity,
       currentBiome: this.currentBiome,
       unlockedBiomes: this.unlockedBiomes,
       fishdex: this.fishdex,
@@ -139,7 +175,6 @@ class GameState {
   }
 
   getStreakLuckBonus() {
-    // 2% luck bonus per streak, capped at +30%
     return Math.min(30, this.streak * 2);
   }
 
@@ -205,10 +240,7 @@ class GameState {
 
   // --- Inventory & Fish Caught ---
   addFish(fishItem) {
-    if (this.inventory.length >= this.backpackCapacity) {
-      return false;
-    }
-
+    // Infinite backpack: always allow adding!
     this.inventory.unshift(fishItem);
     this.stats.totalCaught += 1;
     if (fishItem.weight > this.stats.heaviestFish) {
@@ -216,7 +248,7 @@ class GameState {
     }
 
     const fishId = fishItem.fish?.id || fishItem.fishId || 'unknown';
-    // Update FishDex
+    // Update Bestiary
     const dex = this.fishdex[fishId] || {
       discovered: true,
       count: 0,
@@ -259,52 +291,56 @@ class GameState {
     const total = this.inventory.reduce((sum, f) => sum + f.price, 0);
     this.inventory = [];
     this.addCoins(total);
-    tg.notificationSuccess();
-    this.save();
     return total;
   }
 
-  upgradeBackpack() {
-    const cost = Math.round(150 * Math.pow(1.6, (this.backpackCapacity - 15) / 5));
-    if (this.spendCoins(cost)) {
-      this.backpackCapacity += 5;
-      tg.notificationSuccess();
-      this.save();
-      return true;
-    }
-    return false;
-  }
-
-  getBackpackUpgradeCost() {
-    return Math.round(150 * Math.pow(1.6, (this.backpackCapacity - 15) / 5));
-  }
-
-  // --- Gear Actions ---
-  equipRod(rodId) {
-    if (this.ownedRods.includes(rodId)) {
-      this.equippedRodId = rodId;
-      tg.selectionChanged();
-      this.save();
-      return true;
-    }
-    return false;
-  }
-
+  // --- Equipment & Shop ---
   buyRod(rodId) {
     const rod = RODS.find(r => r.id === rodId);
     if (!rod || this.ownedRods.includes(rodId)) return false;
+    if (this.level < rod.levelReq) return false;
 
-    if (this.level < rod.requiredLevel) return false;
-
-    if (rod.pearlPrice > 0 && this.pearls < rod.pearlPrice) return false;
-    if (rod.price > 0 && this.coins < rod.price) return false;
-
-    if (rod.price > 0) this.coins -= rod.price;
-    if (rod.pearlPrice > 0) this.pearls -= rod.pearlPrice;
+    if (rod.pearlPrice > 0) {
+      if (!this.spendPearls(rod.pearlPrice)) return false;
+    }
+    if (rod.price > 0) {
+      if (!this.spendCoins(rod.price)) return false;
+    }
 
     this.ownedRods.push(rodId);
     this.equippedRodId = rodId;
-    tg.notificationSuccess();
+    this.save();
+    return true;
+  }
+
+  equipRod(rodId) {
+    if (this.ownedRods.includes(rodId)) {
+      this.equippedRodId = rodId;
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
+  buyBait(baitId, quantity = 1) {
+    const bait = BAITS.find(b => b.id === baitId);
+    if (!bait) return false;
+
+    const totalCost = bait.price * quantity;
+    const totalPearlCost = bait.pearlPrice * quantity;
+
+    if (totalPearlCost > 0) {
+      if (!this.spendPearls(totalPearlCost)) return false;
+    }
+    if (totalCost > 0) {
+      if (!this.spendCoins(totalCost)) return false;
+    }
+
+    const addedAmount = bait.amount * quantity;
+    this.baits[baitId] = (this.baits[baitId] || 0) + addedAmount;
+    if (this.equippedBaitId === 'none') {
+      this.equippedBaitId = baitId;
+    }
     this.save();
     return true;
   }
@@ -312,21 +348,6 @@ class GameState {
   equipBait(baitId) {
     if (baitId === 'none' || (this.baits[baitId] && this.baits[baitId] > 0)) {
       this.equippedBaitId = baitId;
-      tg.selectionChanged();
-      this.save();
-      return true;
-    }
-    return false;
-  }
-
-  buyBait(baitId) {
-    const bait = BAITS.find(b => b.id === baitId);
-    if (!bait || bait.id === 'none') return false;
-
-    if (this.spendCoins(bait.price)) {
-      this.baits[baitId] = (this.baits[baitId] || 0) + bait.amount;
-      this.equippedBaitId = baitId;
-      tg.notificationSuccess();
       this.save();
       return true;
     }
@@ -334,41 +355,29 @@ class GameState {
   }
 
   consumeBait() {
-    if (this.equippedBaitId === 'none') return;
-    if (this.baits[this.equippedBaitId] > 0) {
-      this.baits[this.equippedBaitId] -= 1;
-      if (this.baits[this.equippedBaitId] <= 0) {
-        this.equippedBaitId = 'none';
+    if (this.equippedBaitId !== 'none') {
+      if (this.baits[this.equippedBaitId] > 0) {
+        this.baits[this.equippedBaitId] -= 1;
+        if (this.baits[this.equippedBaitId] <= 0) {
+          this.equippedBaitId = 'none';
+        }
+        this.save();
       }
-      this.save();
     }
   }
 
-  // --- Travel Actions ---
-  unlockBiome(biomeId) {
-    const biome = BIOMES.find(b => b.id === biomeId);
-    if (!biome || this.unlockedBiomes.includes(biomeId)) return false;
-
-    if (this.level < biome.requiredLevel) return false;
-
-    if (this.spendCoins(biome.travelCost)) {
-      this.unlockedBiomes.push(biomeId);
-      this.currentBiome = biomeId;
-      tg.notificationSuccess();
-      this.save();
-      return true;
-    }
-    return false;
-  }
-
+  // --- Travel ---
   travelTo(biomeId) {
-    if (this.unlockedBiomes.includes(biomeId)) {
-      this.currentBiome = biomeId;
-      tg.selectionChanged();
-      this.save();
-      return true;
+    const biome = BIOMES.find(b => b.id === biomeId);
+    if (!biome) return false;
+    if (this.level < biome.levelReq) return false;
+
+    if (!this.unlockedBiomes.includes(biomeId)) {
+      this.unlockedBiomes.push(biomeId);
     }
-    return false;
+    this.currentBiome = biomeId;
+    this.save();
+    return true;
   }
 }
 

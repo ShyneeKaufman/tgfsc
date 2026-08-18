@@ -1,60 +1,61 @@
-import { state } from '../core/state.js';
 import { FISH_DATABASE } from '../data/fish.js';
 import { BIOMES } from '../data/biomes.js';
 import { RARITIES, MUTATIONS } from '../data/mutations.js';
+import { state } from '../core/state.js';
 import { sound } from '../core/sound.js';
+import { tg } from '../core/telegram.js';
 import { getIconSvg } from './icons.js';
 
 export class FishDexView {
   constructor(container) {
     this.container = container;
-    this.selectedBiome = 'all';
+    this.activeBiomeFilter = 'all';
 
     this.render();
     state.subscribe(() => this.update());
   }
 
   render() {
-    const totalSpecies = FISH_DATABASE.length;
-    const discoveredCount = Object.keys(state.fishdex).length;
-    const totalProgressPct = Math.round((discoveredCount / totalSpecies) * 100);
+    const totalFish = FISH_DATABASE.length;
+    const discoveredCount = Object.keys(state.fishdex).filter(id => state.fishdex[id]?.discovered).length;
+    const completionPct = Math.round((discoveredCount / totalFish) * 100);
 
     this.container.innerHTML = `
       <div class="view-panel fishdex-panel">
         <div class="panel-header">
           <div class="panel-title-group">
             <span class="panel-icon">${getIconSvg('book', 20)}</span>
-            <h2>FISHDEX</h2>
+            <h2>БЕСТИАРИЙ</h2>
           </div>
-          <div class="progress-pill">
-            ${discoveredCount} / ${totalSpecies} (${totalProgressPct}%)
-          </div>
-        </div>
-
-        <!-- Overall Progress Header Card -->
-        <div class="fishdex-progress-card">
-          <div class="fishdex-bar-wrap">
-            <div class="fishdex-bar-fill" style="width: ${totalProgressPct}%"></div>
-          </div>
-          <div class="fishdex-stats-summary">
-            <span>Выловлено рыб: <strong>${state.stats.totalCaught} шт.</strong></span>
-            <span>Рекордный вес: <strong>${state.stats.heaviestFish.toFixed(2)} кг</strong></span>
+          <div class="completion-pill" id="dexCompletionPill">
+            ${discoveredCount} / ${totalFish} (${completionPct}%)
           </div>
         </div>
 
-        <!-- Biome Filter Tabs -->
-        <div class="biome-filters-row">
-          <button class="biome-filter-btn active" data-biome="all">Все водоемы</button>
+        <!-- Bestiary Progress Bar -->
+        <div class="bestiary-progress-card">
+          <div class="bestiary-progress-header">
+            <span class="progress-title">Исследование фауны архипелага</span>
+            <span class="progress-pct" id="dexPctText">${completionPct}%</span>
+          </div>
+          <div class="bestiary-progress-track">
+            <div class="bestiary-progress-fill" id="dexProgressFill" style="width: ${completionPct}%"></div>
+          </div>
+        </div>
+
+        <!-- Location Filter Chips -->
+        <div class="filter-chips-row horizontal-scroll">
+          <button class="chip ${this.activeBiomeFilter === 'all' ? 'active' : ''}" data-biome="all">Все регионы</button>
           ${BIOMES.map(b => `
-            <button class="biome-filter-btn" data-biome="${b.id}">
-              ${getIconSvg(b.iconKey || 'palmtree', 13)} ${b.name}
+            <button class="chip ${this.activeBiomeFilter === b.id ? 'active' : ''}" data-biome="${b.id}">
+              ${b.name}
             </button>
           `).join('')}
         </div>
 
-        <!-- Dex Grid -->
+        <!-- Bestiary Grid -->
         <div class="dex-grid" id="dexGrid">
-          ${this.renderDexGrid()}
+          ${this.renderBestiaryGrid()}
         </div>
       </div>
     `;
@@ -62,62 +63,69 @@ export class FishDexView {
     this.bindEvents();
   }
 
-  renderDexGrid() {
-    let speciesList = [...FISH_DATABASE];
-    if (this.selectedBiome !== 'all') {
-      speciesList = speciesList.filter(f => f.biome === this.selectedBiome);
+  renderBestiaryGrid() {
+    let list = FISH_DATABASE;
+    if (this.activeBiomeFilter !== 'all') {
+      list = list.filter(f => f.biome === this.activeBiomeFilter);
     }
 
-    return speciesList.map(fish => {
-      const record = state.fishdex[fish.id];
-      const isDiscovered = !!record;
+    return list.map(fish => {
+      const entry = state.fishdex[fish.id];
+      const isDiscovered = Boolean(entry && entry.discovered);
       const rarityDef = RARITIES[fish.rarity] || RARITIES.common;
+      const biomeObj = BIOMES.find(b => b.id === fish.biome) || BIOMES[0];
 
       if (!isDiscovered) {
         return `
-          <div class="dex-card undiscovered">
-            <div class="dex-icon-box">
-              <span class="dex-silhouette">${getIconSvg('info', 20)}</span>
+          <div class="dex-card locked">
+            <div class="dex-sprite-stage locked">
+              <span class="locked-icon">${getIconSvg('lock', 24)}</span>
             </div>
             <div class="dex-info">
-              <div class="dex-name">Неизвестно</div>
-              <div class="dex-rarity" style="color: ${rarityDef.color}">${rarityDef.name.toUpperCase()}</div>
-              <div class="dex-hint">Еще не поймана в экспедициях</div>
+              <div class="dex-name locked">???</div>
+              <div class="dex-sub-tag">${biomeObj.name}</div>
+              <div class="dex-rarity-pill locked">${rarityDef.name.toUpperCase()}</div>
             </div>
           </div>
         `;
       }
 
+      const count = entry.count || 1;
+      const maxWeight = (entry.maxWeight || 0).toFixed(2);
+      const discoveredMutations = entry.mutations || [];
+
       return `
-        <div class="dex-card discovered" style="border-color: ${rarityDef.borderColor}">
-          <div class="dex-card-top">
-            <div class="dex-icon-box" style="background: radial-gradient(circle, ${rarityDef.color}33 0%, transparent 70%)">
-              <span class="dex-icon">${getIconSvg('fish', 24)}</span>
-            </div>
-            <div class="dex-badge-rarity" style="background: ${rarityDef.color}">${rarityDef.name}</div>
+        <div class="dex-card unlocked" style="border-color: ${rarityDef.borderColor}">
+          <div class="dex-sprite-stage">
+            <span class="dex-fish-icon" style="color: ${rarityDef.color}">
+              ${getIconSvg('fish', 36)}
+            </span>
           </div>
-          
+
           <div class="dex-info">
-            <h4 class="dex-name">${fish.name}</h4>
+            <div class="dex-header-row">
+              <h3 class="dex-name">${fish.name}</h3>
+              <span class="dex-rarity-pill" style="background: ${rarityDef.color}">${rarityDef.name.toUpperCase()}</span>
+            </div>
+
+            <div class="dex-english-name">${fish.englishName || ''} • ${biomeObj.name}</div>
             <p class="dex-desc">${fish.description}</p>
 
-            <div class="dex-records-row">
-              <div class="record-item">
-                <span>Поймано:</span>
-                <strong>${record.count} раз</strong>
+            <div class="dex-stats-row">
+              <div class="dex-stat">
+                <span>Выловлено:</span> <strong>${count} шт.</strong>
               </div>
-              <div class="record-item">
-                <span>Макс. вес:</span>
-                <strong>${record.maxWeight.toFixed(2)} кг</strong>
+              <div class="dex-stat">
+                <span>Рекорд веса:</span> <strong>${maxWeight} кг</strong>
               </div>
             </div>
 
-            <!-- Discovered Mutations Badges -->
-            ${record.mutations && record.mutations.length > 0 ? `
-              <div class="dex-mutations-tag-row">
-                ${record.mutations.map(mId => {
-                  const m = MUTATIONS[mId];
-                  return m ? `<span class="dex-mut-pill" style="color: ${m.color}">${m.prefix || m.name}</span>` : '';
+            ${discoveredMutations.length > 0 ? `
+              <div class="dex-mutations-row">
+                <span class="dex-mut-label">Мутации:</span>
+                ${discoveredMutations.map(mId => {
+                  const mut = MUTATIONS[mId] || { name: mId, color: '#38bdf8' };
+                  return `<span class="dex-mut-pill" style="background: ${mut.color}22; border-color: ${mut.color}; color: ${mut.color}">${mut.name}</span>`;
                 }).join('')}
               </div>
             ` : ''}
@@ -128,20 +136,34 @@ export class FishDexView {
   }
 
   bindEvents() {
-    const filters = this.container.querySelectorAll('.biome-filter-btn');
-    filters.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filters.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        this.selectedBiome = btn.dataset.biome;
-        sound.playClick();
+    const chips = this.container.querySelectorAll('.chip');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        this.activeBiomeFilter = chip.dataset.biome;
         this.update();
+        sound.playClick();
+        tg.selectionChanged();
       });
     });
   }
 
   update() {
+    const totalFish = FISH_DATABASE.length;
+    const discoveredCount = Object.keys(state.fishdex).filter(id => state.fishdex[id]?.discovered).length;
+    const completionPct = Math.round((discoveredCount / totalFish) * 100);
+
+    const pill = this.container.querySelector('#dexCompletionPill');
+    if (pill) pill.textContent = `${discoveredCount} / ${totalFish} (${completionPct}%)`;
+
+    const pctText = this.container.querySelector('#dexPctText');
+    if (pctText) pctText.textContent = `${completionPct}%`;
+
+    const fill = this.container.querySelector('#dexProgressFill');
+    if (fill) fill.style.width = `${completionPct}%`;
+
     const grid = this.container.querySelector('#dexGrid');
-    if (grid) grid.innerHTML = this.renderDexGrid();
+    if (grid) grid.innerHTML = this.renderBestiaryGrid();
   }
 }
