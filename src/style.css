@@ -95,7 +95,7 @@ body {
 /* ================= LIVE GLOBAL CATCH TICKER ================= */
 .live-catch-ticker {
   position: absolute;
-  top: var(--safe-top);
+  top: calc(var(--safe-top) + 6px);
   left: 12px;
   right: 12px;
   max-width: 600px;
@@ -164,7 +164,7 @@ body {
 /* ================= TOP TELEMETRY HUD ================= */
 .game-header {
   position: absolute;
-  top: calc(var(--safe-top) + 32px);
+  top: calc(var(--safe-top) + 38px);
   left: 12px;
   right: 12px;
   max-width: 600px;
@@ -605,7 +605,7 @@ body {
 /* ================= SUB-HEADER EXPEDITION RIBBON ================= */
 .sub-header-ribbon {
   position: absolute;
-  top: calc(var(--safe-top) + 82px);
+  top: calc(var(--safe-top) + 90px);
   left: 12px;
   right: 12px;
   max-width: 600px;
@@ -615,7 +615,7 @@ body {
   justify-content: space-between;
   align-items: center;
   pointer-events: none;
-  gap: 6px;
+  gap: 8px;
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -624,68 +624,52 @@ body {
   display: none;
 }
 
-.ribbon-left {
+.gear-pills-left {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
-.biome-pill {
+.gear-pills-left::-webkit-scrollbar {
+  display: none;
+}
+
+.hud-pill {
   pointer-events: auto;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(8, 15, 26, 0.75);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-glass);
-  padding: 3px 9px;
-  border-radius: var(--radius-full);
-  font-family: var(--font-display);
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  color: var(--sonar-cyan);
-}
-
-.anglers-pill {
-  pointer-events: auto;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: rgba(8, 15, 26, 0.75);
-  backdrop-filter: blur(12px);
+  background: rgba(8, 15, 26, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--border-subtle);
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: var(--radius-full);
   font-family: var(--font-body);
-  font-size: 9.5px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--ocean-foam);
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
 }
 
-.anglers-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--bio-green);
-  border-radius: var(--radius-full);
-  box-shadow: 0 0 6px var(--bio-green);
+.hud-pill.location-pill {
+  border-color: rgba(34, 211, 238, 0.4);
+  color: var(--sonar-cyan);
+  font-family: var(--font-display);
+  font-weight: 700;
 }
 
-.streak-pill {
-  pointer-events: auto;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+.hud-pill.streak-pill {
   background: rgba(245, 158, 11, 0.18);
-  border: 1px solid var(--brass-gold);
-  padding: 3px 8px;
-  border-radius: var(--radius-full);
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  font-weight: 800;
+  border-color: var(--brass-gold);
   color: var(--brass-gold);
-  box-shadow: 0 0 10px var(--brass-glow);
+  font-family: var(--font-mono);
+  font-weight: 800;
+  box-shadow: 0 0 12px var(--brass-glow);
   animation: streakGlow 1.5s infinite alternate;
 }
 
@@ -694,28 +678,8 @@ body {
   100% { transform: scale(1.04); }
 }
 
-.gear-status {
-  pointer-events: auto;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.gear-item {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  background: rgba(8, 15, 26, 0.75);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border-subtle);
-  padding: 3px 7px;
-  border-radius: var(--radius-xs);
-  font-size: 10px;
-  color: var(--ocean-mist);
-}
-
 .gear-name {
-  max-width: 75px;
+  max-width: 90px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -724,13 +688,12 @@ body {
 }
 
 /* ================= FLOATING FISCH SHAKE LAYER ================= */
-.fisch-shake-layer {
+.shake-layer {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 22;
+  z-index: 30;
   pointer-events: none;
 }
 
@@ -759,7 +722,7 @@ body {
   box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
 }
 
-.shake-inner {
+.shake-text {
   font-family: var(--font-mono);
   font-size: 11.5px;
   font-weight: 800;
@@ -774,8 +737,8 @@ body {
   100% { transform: translate(-50%, -50%) scale(1); }
 }
 
-/* ================= FISHING ACTION ZONE & CAST METER ================= */
-.fishing-action-zone {
+/* ================= ACTION CONTROLS & CAST METER ================= */
+.action-controls-layer {
   position: absolute;
   bottom: calc(var(--safe-bottom) + 84px);
   left: 0;
@@ -800,6 +763,7 @@ body {
   flex-direction: column;
   gap: 4px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 20px var(--sonar-glow);
+  pointer-events: auto;
 }
 
 .cast-meter-track {
@@ -812,29 +776,27 @@ body {
   border: 1px solid var(--border-subtle);
 }
 
-.cast-meter-zones {
-  display: flex;
-  width: 100%;
-  height: 100%;
+.cast-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
 }
 
-.zone-meh {
-  width: 60%;
-  background: #334155;
-}
-
-.zone-good {
+.great-zone {
+  left: 70%;
   width: 30%;
   background: #0284c7;
 }
 
-.zone-perfect {
+.perfect-zone {
+  left: 85%;
   width: 10%;
   background: linear-gradient(90deg, #10b981, #f59e0b);
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
+  z-index: 2;
 }
 
-.cast-meter-cursor {
+.cast-cursor {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -843,7 +805,7 @@ body {
   background: #ffffff;
   box-shadow: 0 0 8px #ffffff;
   border-radius: var(--radius-full);
-  transition: left 0.016s linear;
+  z-index: 3;
 }
 
 .cast-meter-labels {
@@ -880,10 +842,15 @@ body {
   100% { transform: translateY(-24px) scale(1); opacity: 0; }
 }
 
-.btn-cast {
+.cast-btn-wrapper {
   pointer-events: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-primary-cast {
   position: relative;
-  width: 190px;
+  width: 220px;
   height: 56px;
   background: linear-gradient(145deg, #0284c7, #083344);
   border: 1.5px solid var(--sonar-cyan);
@@ -892,82 +859,89 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   box-shadow: 0 8px 28px rgba(2, 132, 199, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.3);
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.2s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.btn-cast:active {
+.btn-primary-cast:active, .btn-primary-cast.holding {
   transform: scale(0.95);
+  background: linear-gradient(145deg, #0369a1, #0c4a6e);
+  box-shadow: 0 0 20px var(--sonar-glow);
 }
 
-.btn-cast-inner {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  z-index: 2;
+.btn-primary-cast.waiting {
+  background: linear-gradient(145deg, #334155, #1e293b);
+  border-color: #64748b;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
 
-.cast-icon {
-  font-size: 20px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+.btn-primary-cast.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.cast-text {
+.cast-label {
   font-family: var(--font-display);
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 800;
   letter-spacing: 0.8px;
   color: #ffffff;
   text-transform: uppercase;
 }
 
-.btn-cast.waiting {
-  background: linear-gradient(145deg, #1e293b, #0f172a);
-  border-color: var(--ocean-depth);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+.cast-icon {
+  display: flex;
+  align-items: center;
+  color: var(--sonar-cyan);
 }
 
-.btn-cast.bite {
-  background: linear-gradient(145deg, #f43f5e, #be123c);
-  border-color: #fecdd3;
-  box-shadow: 0 0 35px rgba(244, 63, 94, 0.85);
+.bite-alert-banner {
+  pointer-events: auto;
+  cursor: pointer;
+  position: absolute;
+  top: -75px;
+  background: rgba(190, 18, 60, 0.96);
+  border: 1.5px solid #fecdd3;
+  color: #ffffff;
+  padding: 8px 22px;
+  border-radius: var(--radius-full);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 0 35px rgba(244, 63, 94, 0.9);
   animation: radarBite 0.35s infinite alternate;
 }
 
 @keyframes radarBite {
   0% { transform: scale(1); box-shadow: 0 0 20px rgba(244, 63, 94, 0.6); }
-  100% { transform: scale(1.07); box-shadow: 0 0 45px rgba(244, 63, 94, 0.95); }
+  100% { transform: scale(1.06); box-shadow: 0 0 45px rgba(244, 63, 94, 0.95); }
 }
 
-.bite-alert-banner {
-  pointer-events: none;
-  position: absolute;
-  top: -65px;
-  background: rgba(190, 18, 60, 0.96);
-  border: 1px solid #fecdd3;
-  color: #ffffff;
-  padding: 8px 20px;
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  box-shadow: 0 8px 30px rgba(244, 63, 94, 0.7);
-  animation: sonarPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.bite-icon {
+  font-size: 22px;
+  animation: pulseBiteIcon 0.25s infinite alternate;
 }
 
-.bite-content {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.bite-title {
   font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 13px;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 1px;
 }
 
-@keyframes sonarPop {
-  0% { opacity: 0; transform: translateY(12px) scale(0.85); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+.bite-subtitle {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #fecdd3;
+}
+
+@keyframes pulseBiteIcon {
+  0% { transform: scale(0.9); }
+  100% { transform: scale(1.2); }
 }
 
 /* ================= FISCH AUTHENTIC REELING BAR (MATCHING SCREENSHOT) ================= */
