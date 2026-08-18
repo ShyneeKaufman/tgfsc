@@ -22,6 +22,9 @@ export default async function handler(req, res) {
     const telegramApi = `https://api.telegram.org/bot${token}`;
 
     if (text.startsWith('/start') || text.startsWith('/play')) {
+      const baseUrl = process.env.WEBAPP_URL || 'https://tgfsc.vercel.app';
+      const dynamicUrl = `${baseUrl.split('?')[0]}?v=5.0&t=${Date.now()}`;
+
       const welcomeText = `🎣 Welcome to TG-Fisch!\n\n` +
         `Cast your rod, watch the bobber, and keep your control bar centered on the fish until it's reeled in.\n\n` +
         `Features:\n` +
@@ -36,7 +39,7 @@ export default async function handler(req, res) {
           [
             {
               text: '🎣 Play TG-Fisch',
-              web_app: { url: webAppUrl }
+              web_app: { url: dynamicUrl }
             }
           ]
         ]
