@@ -224,7 +224,11 @@ export class HUD {
     const mutBadge = event.mutationId !== 'normal' ? `[${event.mutation}] ` : '';
     const locTag = `<span class="ticker-loc">${event.biomeName}</span>`;
 
-    this.tickerText.innerHTML = `Выловлен <strong>${mutBadge}${event.fishName}</strong> (${event.weight} кг) в ${locTag} (+${event.price} монет)`;
+    if (event.isLocal) {
+      this.tickerText.innerHTML = `Вы выловили <strong>${mutBadge}${event.fishName}</strong> (${event.weight} кг) в ${locTag} (+${event.price} монет)`;
+    } else {
+      this.tickerText.innerHTML = `<strong>${event.playerName}</strong> выловил <strong>${mutBadge}${event.fishName}</strong> (${event.weight} кг) в ${locTag}`;
+    }
 
     this.tickerContainer.classList.add('flash');
     setTimeout(() => {
