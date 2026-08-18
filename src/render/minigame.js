@@ -28,7 +28,7 @@ export class ReelingMinigame {
     // Progress
     this.progress = 20;      // 0 to 100 %
     this.isInside = false;
-    this.perfectCatch = true; // Lost progress flag
+    this.perfectCatch = true;
 
     this.currentFish = null;
     this.currentRod = null;
@@ -51,22 +51,22 @@ export class ReelingMinigame {
             <div class="reeling-progress-num" id="reelingProgressNum">20%</div>
           </div>
 
-          <!-- Exact Fisch Minigame Track from Photo -->
+          <!-- Exact Fisch Minigame Track from User Photo -->
           <div class="fisch-track-container">
             <span class="track-arrow left">▶</span>
 
             <div class="fisch-main-track" id="mainTrack">
               <!-- White Slider Bar with motion arrow -->
               <div class="fisch-white-bar" id="whiteBar">
-                <div class="fisch-slider-arrow" id="sliderArrow">➔</div>
+                <div class="fisch-slider-arrow" id="sliderArrow">→</div>
               </div>
 
-              <!-- Needle / Fish Indicator -->
+              <!-- Vertical Stick / Needle with tilted fish on top (точно как на фото) -->
               <div class="fisch-needle" id="fishNeedle">
                 <div class="needle-fish-icon" id="needleFishIcon">
                   ${getIconSvg('fish', 16)}
                 </div>
-                <div class="needle-line"></div>
+                <div class="needle-stick"></div>
               </div>
             </div>
 
@@ -79,7 +79,7 @@ export class ReelingMinigame {
           </div>
 
           <div class="reeling-hint-text">
-            Удерживайте экран для движения вправо. Отпустите для движения влево.
+            Удерживайте для движения вправо. Отпустите для движения влево.
           </div>
         </div>
       </div>
@@ -111,7 +111,7 @@ export class ReelingMinigame {
       this.isHolding = false;
     };
 
-    // Global document touch / mouse for reeling
+    // Touch and mouse listeners
     document.addEventListener('mousedown', (e) => {
       if (this.active) handleInputStart(e);
     });
@@ -156,11 +156,11 @@ export class ReelingMinigame {
     this.progress = 20; // Starts at 20%
     this.perfectCatch = true;
     this.isLocked = true;
-    this.lockTimer = 1.0; // 1.0s intro lock
+    this.lockTimer = 0.8; // Brief 0.8s intro lock
 
     // Calculate bar width based on rod control/resilience (30% base + rod bonus)
     const controlBonus = (rod.barSize - 0.22) * 100;
-    this.barWidth = Math.max(24, Math.min(48, 30 + controlBonus));
+    this.barWidth = Math.max(22, Math.min(46, 28 + controlBonus));
     this.whiteBar.style.width = `${this.barWidth}%`;
 
     this.fishBehavior = fish.behavior || 'calm';
@@ -194,21 +194,19 @@ export class ReelingMinigame {
       }
     }
 
-    // 2. Bar Motion Physics
-    // Holding = right acceleration, Not holding = left acceleration (recoil)
-    const accelRight = 380; // % / s^2
-    const accelLeft = -320; // % / s^2
-    const maxSpeed = 160;   // % / s
-    const friction = 0.94;
+    // 2. Bar Motion Physics (Faster, Snappier & Highly Responsive)
+    // Holding = fast right acceleration; Released = fast left recoil
+    const accelRight = 680; // % / s^2 (Much faster!)
+    const accelLeft = -580; // % / s^2 (Fast recoil!)
+    const maxSpeed = 260;   // % / s (Snappy high top speed!)
+    const friction = 0.92;
 
     if (this.isHolding) {
       this.barVel += accelRight * dt;
-      this.sliderArrow.textContent = '➔';
-      this.sliderArrow.style.transform = 'scale(1.1)';
+      this.sliderArrow.textContent = '→';
     } else {
       this.barVel += accelLeft * dt;
-      this.sliderArrow.textContent = '⬅';
-      this.sliderArrow.style.transform = 'scale(0.9)';
+      this.sliderArrow.textContent = '←';
     }
 
     this.barVel *= Math.pow(friction, dt * 60);
@@ -235,8 +233,8 @@ export class ReelingMinigame {
     this.isInside = (this.fishPos >= barLeft && this.fishPos <= barRight);
 
     // 5. Progress Calculation
-    const progressGainRate = 14.5; // % per sec
-    const progressDrainRate = 11.5; // % per sec
+    const progressGainRate = 16.0; // % per sec
+    const progressDrainRate = 12.0; // % per sec
 
     if (this.isInside) {
       this.progress += progressGainRate * dt;
@@ -270,29 +268,29 @@ export class ReelingMinigame {
     const resilienceDampener = Math.max(0.4, 1.0 - (rodResilience - 1.0) * 0.4);
 
     if (this.fishTimer <= 0) {
-      let switchInterval = 1.4;
-      let moveSpeed = 35;
+      let switchInterval = 1.2;
+      let moveSpeed = 40;
 
       switch (this.fishBehavior) {
         case 'calm':
-          switchInterval = 1.6 + Math.random() * 1.2;
+          switchInterval = 1.4 + Math.random() * 1.0;
           this.fishTargetPos = 20 + Math.random() * 60;
-          moveSpeed = (25 + Math.random() * 20) * resilienceDampener;
+          moveSpeed = (30 + Math.random() * 20) * resilienceDampener;
           break;
         case 'erratic':
-          switchInterval = 0.6 + Math.random() * 0.7;
+          switchInterval = 0.5 + Math.random() * 0.6;
           this.fishTargetPos = 10 + Math.random() * 80;
-          moveSpeed = (45 + Math.random() * 35) * resilienceDampener;
+          moveSpeed = (55 + Math.random() * 35) * resilienceDampener;
           break;
         case 'thrashing':
-          switchInterval = 0.35 + Math.random() * 0.5;
-          this.fishTargetPos = Math.random() > 0.5 ? 85 : 15;
-          moveSpeed = (65 + Math.random() * 45) * resilienceDampener;
+          switchInterval = 0.3 + Math.random() * 0.4;
+          this.fishTargetPos = Math.random() > 0.5 ? 88 : 12;
+          moveSpeed = (75 + Math.random() * 45) * resilienceDampener;
           break;
         default:
-          switchInterval = 1.2;
+          switchInterval = 1.0;
           this.fishTargetPos = 15 + Math.random() * 70;
-          moveSpeed = 35 * resilienceDampener;
+          moveSpeed = 40 * resilienceDampener;
       }
 
       this.fishTimer = switchInterval;
@@ -301,7 +299,7 @@ export class ReelingMinigame {
 
     // Smooth movement towards target position
     const diff = this.fishTargetPos - this.fishPos;
-    const step = (diff > 0 ? 1 : -1) * (this.fishSpeed || 35) * dt;
+    const step = (diff > 0 ? 1 : -1) * (this.fishSpeed || 40) * dt;
 
     if (Math.abs(diff) < Math.abs(step)) {
       this.fishPos = this.fishTargetPos;
@@ -322,10 +320,10 @@ export class ReelingMinigame {
 
     if (this.isInside) {
       this.whiteBar.classList.add('active-hit');
-      this.needleFishIcon.style.color = '#22d3ee';
+      this.needleFishIcon.style.color = '#38bdf8';
     } else {
       this.whiteBar.classList.remove('active-hit');
-      this.needleFishIcon.style.color = '#ef4444';
+      this.needleFishIcon.style.color = '#94a3b8';
     }
   }
 }
