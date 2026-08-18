@@ -2,15 +2,18 @@ import { state } from '../core/state.js';
 import { sound } from '../core/sound.js';
 import { tg } from '../core/telegram.js';
 import { liveFeed } from '../core/liveFeed.js';
+import { events } from '../core/events.js';
 
 export class HUD {
-  constructor(container, onCastStart, onCastRelease, onShakeClick, onHookClick, onTabChange) {
+  constructor(container, onCastStart, onCastRelease, onShakeClick, onHookClick, onTabChange, onOpenDaily, onOpenRef) {
     this.container = container;
     this.onCastStart = onCastStart;
     this.onCastRelease = onCastRelease;
     this.onShakeClick = onShakeClick;
     this.onHookClick = onHookClick;
     this.onTabChange = onTabChange;
+    this.onOpenDaily = onOpenDaily;
+    this.onOpenRef = onOpenRef;
 
     this.activeTab = 'fishing';
     this.castPower = 0;
@@ -24,6 +27,9 @@ export class HUD {
 
     // Subscribe to live feed ticker
     liveFeed.subscribe((event) => this.displayLiveCatch(event));
+
+    // Subscribe to global event cycles
+    events.subscribe((currentEvent, remainingTime) => this.updateGlobalEvent(currentEvent, remainingTime));
   }
 
   render() {
@@ -41,6 +47,16 @@ export class HUD {
           <span class="ticker-pulse">🔴 LIVE</span>
           <span class="ticker-text" id="tickerText">Океан спокоен... Забрасывайте удочки!</span>
         </div>
+      </div>
+
+      <!-- Active Global Event / Weather Banner -->
+      <div class="global-event-banner hidden" id="globalEventBanner">
+        <span class="event-icon" id="eventIcon">⚡</span>
+        <div class="event-info">
+          <div class="event-title" id="eventTitle">ШТОРМ БЕЗДНЫ</div>
+          <div class="event-desc" id="eventDesc">+25 к Удаче и шанс мутаций x2.5!</div>
+        </div>
+        <div class="event-timer-badge" id="eventTimer">02:30</div>
       </div>
 
       <!-- Top Status Header -->
@@ -68,6 +84,8 @@ export class HUD {
             <span class="pearl-icon">💎</span>
             <span class="pearl-value" id="hudPearls">${state.pearls}</span>
           </div>
+          <button class="header-action-btn" id="dailyBtn" title="Ежедневный бонус">🎁</button>
+          <button class="header-action-btn" id="refBtn" title="Пригласить друзей">🤝</button>
           <button class="sound-toggle" id="soundToggleBtn" aria-label="Звук">
             ${sound.muted ? '🔇' : '🔊'}
           </button>
@@ -82,7 +100,6 @@ export class HUD {
             <span class="biome-name">${biome.name}</span>
           </div>
           
-          <!-- Live Anglers at this location -->
           <div class="anglers-pill" id="hudAnglersPill" title="Рыбаки на этой локации">
             <span class="anglers-dot"></span>
             <span class="anglers-count" id="hudAnglersCount">👥 ${anglers.length + 1} онлайн</span>
@@ -189,10 +206,17 @@ export class HUD {
     this.gradeText = this.container.querySelector('#gradeText');
     this.biteBanner = this.container.querySelector('#biteAlertBanner');
     this.soundToggleBtn = this.container.querySelector('#soundToggleBtn');
+    this.dailyBtn = this.container.querySelector('#dailyBtn');
+    this.refBtn = this.container.querySelector('#refBtn');
     this.shakeLayer = this.container.querySelector('#shakeLayer');
     this.shakeBtn = this.container.querySelector('#shakeBtn');
     this.tickerText = this.container.querySelector('#tickerText');
     this.tickerContainer = this.container.querySelector('#liveCatchTicker');
+    this.eventBanner = this.container.querySelector('#globalEventBanner');
+    this.eventIcon = this.container.querySelector('#eventIcon');
+    this.eventTitle = this.container.querySelector('#eventTitle');
+    this.eventDesc = this.container.querySelector('#eventDesc');
+    this.eventTimer = this.container.querySelector('#eventTimer');
   }
 
   displayLiveCatch(event) {
@@ -213,7 +237,28 @@ export class HUD {
     }, 1200);
   }
 
+  updateGlobalEvent(currentEvent, remainingSecs) {
+    if (!this.eventBanner) return;
+
+    if (currentEvent) {
+      const mins = Math.floor(remainingSecs / 60).toString().padStart(2, '0');
+      const secs = (remainingSecs % 60).toString().padStart(2, '0');
+
+      this.eventIcon.textContent = currentEvent.title.split(' ')[0];
+      this.eventTitle.textContent = currentEvent.title;
+      this.eventDesc.textContent = currentEvent.desc;
+      this.eventTimer.textContent = `${mins}:${secs}`;
+      this.eventBanner.style.borderColor = currentEvent.color;
+      this.eventBanner.classList.remove('hidden');
+    } else {
+      this.eventBanner.classList.add('hidden');
+    }
+  }
+
   bindEvents() {
+    this.dailyBtn.addEventListener('click', () => this.onOpenDaily());
+    this.refBtn.addEventListener('click', () => this.onOpenRef());
+
     // Sound toggle
     this.soundToggleBtn.addEventListener('click', () => {
       const isMuted = sound.toggleMute();
@@ -225,12 +270,10 @@ export class HUD {
     const startCastHold = (e) => {
       e.preventDefault();
       if (this.castBtn.classList.contains('waiting')) {
-        // Cancel cast
         this.onCastRelease(0, true);
         return;
       }
       if (this.castBtn.classList.contains('bite')) {
-        // Hook
         this.onHookClick();
         return;
       }

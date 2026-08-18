@@ -291,7 +291,7 @@ body {
   color: var(--abyss-violet);
 }
 
-.sound-toggle {
+.header-action-btn {
   background: var(--abyss-1);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
@@ -300,10 +300,297 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
   color: var(--ocean-foam);
-  transition: background 0.15s ease;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+
+.header-action-btn:active {
+  transform: scale(0.92);
+  border-color: var(--sonar-cyan);
+}
+
+/* ================= GLOBAL EVENT / WEATHER BANNER ================= */
+.global-event-banner {
+  position: absolute;
+  top: calc(var(--safe-top) + 26px);
+  left: 12px;
+  right: 12px;
+  max-width: 600px;
+  margin: 0 auto;
+  z-index: 24;
+  background: rgba(12, 21, 36, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid var(--brass-gold);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  animation: pulseGlow 2s infinite alternate;
+}
+
+.event-icon {
+  font-size: 18px;
+}
+
+.event-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.event-title {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--ocean-foam);
+  letter-spacing: 0.5px;
+}
+
+.event-desc {
+  font-size: 9.5px;
+  color: var(--ocean-mist);
+}
+
+.event-timer-badge {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--sonar-cyan);
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+}
+
+/* ================= DAILY BONUS & REFERRAL MODALS ================= */
+.daily-modal-backdrop, .ref-modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(4, 8, 16, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.2s ease;
+}
+
+.daily-card, .ref-card {
+  width: 100%;
+  max-width: 400px;
+  background: linear-gradient(160deg, #0c1524, #060b14);
+  border: 1.5px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+  animation: popScale 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.daily-header, .ref-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.daily-title-group, .ref-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.daily-big-icon, .ref-big-icon {
+  font-size: 30px;
+}
+
+.daily-title-group h3, .ref-title-group h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ocean-foam);
+}
+
+.daily-title-group p, .ref-title-group p {
+  font-size: 11px;
+  color: var(--ocean-mist);
+}
+
+.btn-close-daily, .btn-close-ref {
+  background: none;
+  border: none;
+  color: var(--ocean-mist);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.daily-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.daily-box {
+  background: var(--abyss-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.daily-box.grand-box {
+  grid-column: span 2;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(12, 21, 36, 0.95));
+  border-color: var(--brass-gold);
+}
+
+.daily-box.available {
+  border-color: var(--sonar-cyan);
+  box-shadow: 0 0 14px var(--sonar-glow);
+  animation: pulseDot 1s infinite alternate;
+}
+
+.daily-box.claimed {
+  opacity: 0.55;
+  border-color: var(--bio-green);
+}
+
+.daily-day-label {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  color: var(--ocean-mist);
+}
+
+.daily-box-icon {
+  font-size: 20px;
+}
+
+.daily-box-reward {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--ocean-foam);
+}
+
+.daily-box-status {
+  font-size: 8px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--sonar-cyan);
+}
+
+.btn-claim-daily {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, #0284c7, #083344);
+  border: 1px solid var(--sonar-cyan);
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-claim-daily.disabled {
+  background: var(--abyss-2);
+  border-color: transparent;
+  color: var(--ocean-depth);
+  cursor: not-allowed;
+}
+
+/* Referral Card Styles */
+.ref-perks-card {
+  background: var(--abyss-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.perk-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.perk-row span {
+  font-size: 22px;
+}
+
+.perk-row strong {
+  display: block;
+  font-size: 12px;
+  color: var(--ocean-foam);
+}
+
+.perk-row small {
+  font-size: 10px;
+  color: var(--ocean-mist);
+}
+
+.ref-link-box {
+  display: flex;
+  gap: 6px;
+}
+
+.ref-link-input {
+  flex: 1;
+  background: #040810;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  color: var(--ocean-foam);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.btn-copy-ref {
+  background: var(--abyss-1);
+  border: 1px solid var(--border-subtle);
+  color: var(--ocean-foam);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 11px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.btn-share-tg {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, #0284c7, #0284c7);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 18px rgba(2, 132, 199, 0.4);
 }
 
 /* ================= SUB-HEADER EXPEDITION RIBBON ================= */

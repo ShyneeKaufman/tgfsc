@@ -4,12 +4,15 @@ import { sound } from './core/sound.js';
 import { RNG } from './core/rng.js';
 import { RARITIES } from './data/mutations.js';
 import { liveFeed } from './core/liveFeed.js';
+import { events } from './core/events.js';
 
 import { WaterCanvas } from './render/canvas.js';
 import { ReelingMinigame } from './render/minigame.js';
 
 import { HUD } from './ui/hud.js';
 import { CatchModal } from './ui/catchModal.js';
+import { DailyModal } from './ui/dailyModal.js';
+import { ReferralModal } from './ui/referralModal.js';
 import { BackpackView } from './ui/backpack.js';
 import { ShopView } from './ui/shop.js';
 import { FishDexView } from './ui/fishdex.js';
@@ -48,7 +51,17 @@ class GameApp {
       (catchItem) => this.handleSellFish(catchItem)
     );
 
-    // 4. Setup HUD with Fisch interactions
+    // 4. Setup Daily & Referral Modals
+    const modalsContainer = document.getElementById('modalsContainer') || document.body;
+    const dailyDiv = document.createElement('div');
+    const refDiv = document.createElement('div');
+    modalsContainer.appendChild(dailyDiv);
+    modalsContainer.appendChild(refDiv);
+
+    this.dailyModal = new DailyModal(dailyDiv);
+    this.referralModal = new ReferralModal(refDiv);
+
+    // 5. Setup HUD with Fisch interactions
     const hudContainer = document.getElementById('hudContainer');
     this.hud = new HUD(
       hudContainer,
@@ -56,10 +69,12 @@ class GameApp {
       (accuracy, isCancelled) => this.handleCastRelease(accuracy, isCancelled),
       () => this.handleShakeClick(),
       () => this.handleHookClick(),
-      (tab) => this.handleTabChange(tab)
+      (tab) => this.handleTabChange(tab),
+      () => this.dailyModal.show(),
+      () => this.referralModal.show()
     );
 
-    // 5. Setup Views Container
+    // 6. Setup Views Container
     this.viewPanelContainer = document.getElementById('viewPanelContainer');
     this.backpackView = new BackpackView(document.createElement('div'));
     this.shopView = new ShopView(document.createElement('div'));
@@ -194,16 +209,29 @@ class GameApp {
 
     const rod = state.getEquippedRod();
     const bait = state.getEquippedBait();
+    const activeEvent = events.getCurrentEvent();
 
-    // Total Luck = Rod Luck + Bait Luck + Streak Bonus + Cast Accuracy Bonus
-    const totalLuck = rod.luck + bait.luckBonus + state.getStreakLuckBonus() + (state.castLuckBonus || 0);
+    // Event Bonuses
+    const eventLuck = activeEvent ? activeEvent.luckBonus : 0;
+    const eventMutationBonus = activeEvent ? activeEvent.mutationBonus : 0;
+
+    // Total Luck = Rod Luck + Bait Luck + Streak Bonus + Cast Accuracy Bonus + Event Luck
+    const totalLuck = rod.luck + bait.luckBonus + state.getStreakLuckBonus() + (state.castLuckBonus || 0) + eventLuck;
 
     // Roll fish, mutation, weight, price
     const fish = RNG.rollFish(state.currentBiome, totalLuck, bait.luckBonus);
-    const mutation = RNG.rollMutation(bait.mutationBonus);
+    const mutation = RNG.rollMutation(bait.mutationBonus + eventMutationBonus);
     const weight = RNG.rollWeight(fish, mutation);
-    const price = RNG.calculatePrice(fish, weight, mutation, totalLuck);
-    const exp = (RARITIES[fish.rarity] || RARITIES.common).catchExp;
+    
+    let price = RNG.calculatePrice(fish, weight, mutation, totalLuck);
+    if (activeEvent && activeEvent.priceMultiplier) {
+      price = Math.round(price * activeEvent.priceMultiplier);
+    }
+
+    let exp = (RARITIES[fish.rarity] || RARITIES.common).catchExp;
+    if (activeEvent && activeEvent.expMultiplier) {
+      exp = Math.round(exp * activeEvent.expMultiplier);
+    }
 
     const previousRecord = state.fishdex[fish.id]?.maxWeight || 0;
     const isNewRecord = weight > previousRecord;
