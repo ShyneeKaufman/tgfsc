@@ -49,6 +49,8 @@ class GameState {
       this.unlockedBiomes = data.unlockedBiomes ?? ['coast'];
       this.fishdex = data.fishdex ?? {};
       this.streak = data.streak ?? 0;
+      this.dailyStreak = data.dailyStreak ?? 0;
+      this.lastDailyClaim = data.lastDailyClaim ?? 0;
       this.stats = data.stats ?? {
         totalCaught: 0,
         totalCoinsEarned: 0,
@@ -70,6 +72,8 @@ class GameState {
       this.unlockedBiomes = ['coast'];
       this.fishdex = {};
       this.streak = 0;
+      this.dailyStreak = 0;
+      this.lastDailyClaim = 0;
       this.stats = {
         totalCaught: 0,
         totalCoinsEarned: 0,
@@ -95,6 +99,8 @@ class GameState {
       unlockedBiomes: this.unlockedBiomes,
       fishdex: this.fishdex,
       streak: this.streak,
+      dailyStreak: this.dailyStreak,
+      lastDailyClaim: this.lastDailyClaim,
       stats: this.stats
     });
     this.notify();
