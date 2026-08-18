@@ -22,26 +22,26 @@ export class ReferralModal {
             <div class="ref-title-group">
               <span class="ref-big-icon">${getIconSvg('userPlus', 24)}</span>
               <div>
-                <h3>Приглашение друзей</h3>
-                <p>Получайте +5 жемчужин за каждого приглашенного рыбака.</p>
+                <h3>Invite Friends</h3>
+                <p>Earn +5 Abyssal Pearls for every friend who joins your fleet.</p>
               </div>
             </div>
-            <button class="btn-close-ref" id="closeRefBtn">${getIconSvg('close', 18)}</button>
+            <button class="btn-close-ref" id="closeRefBtn">${getIconSvg('x', 18)}</button>
           </div>
 
           <div class="ref-perks-card">
             <div class="perk-row">
               <span class="perk-icon-wrap">${getIconSvg('gem', 20)}</span>
               <div>
-                <strong>+5 Жемчуга Бездны</strong>
-                <small>Зачисляется на ваш баланс при старте друга</small>
+                <strong>+5 Abyssal Pearls</strong>
+                <small>Credited directly when your friend starts fishing</small>
               </div>
             </div>
             <div class="perk-row">
               <span class="perk-icon-wrap">${getIconSvg('coins', 20)}</span>
               <div>
-                <strong>+500 Монет другу</strong>
-                <small>Стартовый капитал на первые снасти и наживку</small>
+                <strong>+500 C$ Starter Bonus</strong>
+                <small>Starter funds for your friend's first rods and baits</small>
               </div>
             </div>
           </div>
@@ -49,13 +49,13 @@ export class ReferralModal {
           <div class="ref-link-box">
             <input type="text" readonly value="${inviteUrl}" id="refLinkInput" class="ref-link-input"/>
             <button class="btn-copy-ref" id="copyRefBtn">
-              ${getIconSvg('copy', 14)} Копировать
+              ${getIconSvg('copy', 14)} Copy
             </button>
           </div>
 
           <div class="ref-footer">
             <button class="btn-share-tg" id="shareTgBtn">
-              ${getIconSvg('send', 15)} Поделиться в Telegram
+              ${getIconSvg('send', 15)} Share in Telegram
             </button>
           </div>
         </div>
@@ -79,16 +79,16 @@ export class ReferralModal {
 
     this.copyBtn.addEventListener('click', () => {
       navigator.clipboard.writeText(inviteUrl);
-      this.copyBtn.innerHTML = `${getIconSvg('check', 14)} Скопировано`;
+      this.copyBtn.innerHTML = `${getIconSvg('check', 14)} Copied!`;
       sound.playClick();
       tg.notificationSuccess();
       setTimeout(() => {
-        this.copyBtn.innerHTML = `${getIconSvg('copy', 14)} Копировать`;
+        this.copyBtn.innerHTML = `${getIconSvg('copy', 14)} Copy`;
       }, 2000);
     });
 
     this.shareBtn.addEventListener('click', () => {
-      const shareText = encodeURIComponent('Рыбалка в Telegram: вываживание рыбы, редкие мутации и снасти.');
+      const shareText = encodeURIComponent('Play TG-Fisch on Telegram! Catch legendary sea monsters, explore islands, and discover rare mutations!');
       const shareLink = `https://t.me/share/url?url=${encodeURIComponent(inviteUrl)}&text=${shareText}`;
       
       if (window.Telegram?.WebApp?.openTelegramLink) {

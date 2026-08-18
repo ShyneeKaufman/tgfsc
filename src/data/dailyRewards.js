@@ -1,8 +1,8 @@
 export const DAILY_REWARDS = [
   {
     day: 1,
-    title: 'День 1',
-    rewardText: '+150 Монет',
+    title: 'Day 1',
+    rewardText: '+150 C$ & 5 Worms',
     iconKey: 'coins',
     coins: 150,
     pearls: 0,
@@ -11,62 +11,62 @@ export const DAILY_REWARDS = [
   },
   {
     day: 2,
-    title: 'День 2',
-    rewardText: '+300 Монет & 3 💎',
+    title: 'Day 2',
+    rewardText: '+300 C$ & 3 Pearls',
     iconKey: 'gem',
     coins: 300,
     pearls: 3,
-    baitId: 'glow_shrimp',
+    baitId: 'shrimp',
     baitCount: 5
   },
   {
     day: 3,
-    title: 'День 3',
-    rewardText: '+500 Монет & 5 💎',
+    title: 'Day 3',
+    rewardText: '+500 C$ & 5 Pearls',
     iconKey: 'gift',
     coins: 500,
     pearls: 5,
-    baitId: 'bioluminescent_squid',
+    baitId: 'squid',
     baitCount: 5
   },
   {
     day: 4,
-    title: 'День 4',
-    rewardText: '+800 Монет & 8 💎',
+    title: 'Day 4',
+    rewardText: '+800 C$ & 8 Pearls',
     iconKey: 'sparkles',
     coins: 800,
     pearls: 8,
-    baitId: 'bioluminescent_squid',
+    baitId: 'fish_head',
     baitCount: 5
   },
   {
     day: 5,
-    title: 'День 5',
-    rewardText: '+1,200 Монет & 12 💎',
+    title: 'Day 5',
+    rewardText: '+1,200 C$ & 12 Pearls',
     iconKey: 'flame',
     coins: 1200,
     pearls: 12,
-    baitId: 'magma_crab',
+    baitId: 'fish_head',
     baitCount: 5
   },
   {
     day: 6,
-    title: 'День 6',
-    rewardText: '+2,000 Монет & 20 💎',
+    title: 'Day 6',
+    rewardText: '+2,000 C$ & 20 Pearls',
     iconKey: 'trophy',
     coins: 2000,
     pearls: 20,
-    baitId: 'golden_fly',
+    baitId: 'super_flakes',
     baitCount: 5
   },
   {
     day: 7,
-    title: 'День 7 (ГРАНД)',
-    rewardText: '+5,000 Монет, 50 💎 & Золотой Набор',
+    title: 'Day 7 (GRAND)',
+    rewardText: '+5,000 C$, 50 Pearls & Truffle Worms',
     iconKey: 'trophy',
     coins: 5000,
     pearls: 50,
-    baitId: 'golden_fly',
-    baitCount: 15
+    baitId: 'truffle_worm',
+    baitCount: 10
   }
 ];

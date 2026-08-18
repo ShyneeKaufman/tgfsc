@@ -30,7 +30,7 @@ class LiveFeedManager {
     const user = tg.getUser();
     const biome = state.getCurrentBiome();
     const playerId = user.id ? `tg_${user.id}` : `local_${state.stats.totalCaught}`;
-    const playerName = user.firstName || user.username || 'Вы';
+    const playerName = user.firstName || user.username || 'You';
 
     const event = {
       id: `local_${Date.now()}`,

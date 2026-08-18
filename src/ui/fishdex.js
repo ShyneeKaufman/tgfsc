@@ -25,7 +25,7 @@ export class FishDexView {
         <div class="panel-header">
           <div class="panel-title-group">
             <span class="panel-icon">${getIconSvg('book', 20)}</span>
-            <h2>БЕСТИАРИЙ</h2>
+            <h2>BESTIARY</h2>
           </div>
           <div class="completion-pill" id="dexCompletionPill">
             ${discoveredCount} / ${totalFish} (${completionPct}%)
@@ -35,7 +35,7 @@ export class FishDexView {
         <!-- Bestiary Progress Bar -->
         <div class="bestiary-progress-card">
           <div class="bestiary-progress-header">
-            <span class="progress-title">Исследование фауны архипелага</span>
+            <span class="progress-title">Archipelago Fauna Research</span>
             <span class="progress-pct" id="dexPctText">${completionPct}%</span>
           </div>
           <div class="bestiary-progress-track">
@@ -45,7 +45,7 @@ export class FishDexView {
 
         <!-- Location Filter Chips -->
         <div class="filter-chips-row horizontal-scroll">
-          <button class="chip ${this.activeBiomeFilter === 'all' ? 'active' : ''}" data-biome="all">Все регионы</button>
+          <button class="chip ${this.activeBiomeFilter === 'all' ? 'active' : ''}" data-biome="all">All Regions</button>
           ${BIOMES.map(b => `
             <button class="chip ${this.activeBiomeFilter === b.id ? 'active' : ''}" data-biome="${b.id}">
               ${b.name}
@@ -108,21 +108,21 @@ export class FishDexView {
               <span class="dex-rarity-pill" style="background: ${rarityDef.color}">${rarityDef.name.toUpperCase()}</span>
             </div>
 
-            <div class="dex-english-name">${fish.englishName || ''} • ${biomeObj.name}</div>
+            <div class="dex-english-name">${biomeObj.name}</div>
             <p class="dex-desc">${fish.description}</p>
 
             <div class="dex-stats-row">
               <div class="dex-stat">
-                <span>Выловлено:</span> <strong>${count} шт.</strong>
+                <span>Caught:</span> <strong>${count} pcs</strong>
               </div>
               <div class="dex-stat">
-                <span>Рекорд веса:</span> <strong>${maxWeight} кг</strong>
+                <span>Record:</span> <strong>${maxWeight} kg</strong>
               </div>
             </div>
 
             ${discoveredMutations.length > 0 ? `
               <div class="dex-mutations-row">
-                <span class="dex-mut-label">Мутации:</span>
+                <span class="dex-mut-label">Mutations:</span>
                 ${discoveredMutations.map(mId => {
                   const mut = MUTATIONS[mId] || { name: mId, color: '#38bdf8' };
                   return `<span class="dex-mut-pill" style="background: ${mut.color}22; border-color: ${mut.color}; color: ${mut.color}">${mut.name}</span>`;

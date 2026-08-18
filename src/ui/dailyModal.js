@@ -18,17 +18,17 @@ export class DailyModal {
             <div class="daily-title-group">
               <span class="daily-big-icon">${getIconSvg('gift', 24)}</span>
               <div>
-                <h3>Ежедневный бонус</h3>
-                <p>Заходите каждый день, чтобы развивать снаряжение быстрее.</p>
+                <h3>Daily Rewards</h3>
+                <p>Log in every day to claim exclusive currency and premium baits.</p>
               </div>
             </div>
-            <button class="btn-close-daily" id="closeDailyBtn">${getIconSvg('close', 18)}</button>
+            <button class="btn-close-daily" id="closeDailyBtn">${getIconSvg('x', 18)}</button>
           </div>
 
           <div class="daily-grid" id="dailyGrid"></div>
 
           <div class="daily-footer">
-            <button class="btn-claim-daily" id="claimDailyBtn">Забрать награду</button>
+            <button class="btn-claim-daily" id="claimDailyBtn">Claim Reward</button>
           </div>
         </div>
       </div>
@@ -80,14 +80,14 @@ export class DailyModal {
       const isCurrent = index === currentStreak;
 
       let statusClass = 'locked';
-      let statusText = 'Закрыто';
+      let statusText = 'Locked';
 
       if (isClaimed) {
         statusClass = 'claimed';
-        statusText = 'Получено';
+        statusText = 'Claimed';
       } else if (isCurrent) {
         statusClass = canClaim ? 'available' : 'waiting';
-        statusText = canClaim ? 'Доступно' : 'Завтра';
+        statusText = canClaim ? 'Ready' : 'Tomorrow';
       }
 
       return `
@@ -102,11 +102,11 @@ export class DailyModal {
 
     if (canClaim) {
       this.claimBtn.disabled = false;
-      this.claimBtn.textContent = `Забрать награду (День ${currentStreak + 1})`;
+      this.claimBtn.textContent = `Claim Day ${currentStreak + 1} Reward`;
       this.claimBtn.classList.remove('disabled');
     } else {
       this.claimBtn.disabled = true;
-      this.claimBtn.textContent = 'Награда уже получена сегодня';
+      this.claimBtn.textContent = 'Reward Already Claimed Today';
       this.claimBtn.classList.add('disabled');
     }
   }

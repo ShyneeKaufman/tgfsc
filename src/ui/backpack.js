@@ -20,33 +20,33 @@ export class BackpackView {
         <div class="panel-header">
           <div class="panel-title-group">
             <span class="panel-icon">${getIconSvg('bag', 20)}</span>
-            <h2>РЫБНЫЙ САДОК</h2>
+            <h2>BACKPACK</h2>
           </div>
           <div class="capacity-pill" id="bagCapacityText">
-            ${state.inventory.length} шт. (Бесконечный)
+            ${state.inventory.length} items (Infinite)
           </div>
         </div>
 
         <!-- Bulk Sell & Value Summary -->
         <div class="backpack-stats-card">
           <div class="bag-summary-info">
-            <span class="summary-label">Общая стоимость улова:</span>
-            <span class="summary-value" id="totalBagVal">${this.calcTotalValue()} монет</span>
+            <span class="summary-label">Total Catch Value:</span>
+            <span class="summary-value" id="totalBagVal">${this.calcTotalValue()} C$</span>
           </div>
 
           <div class="backpack-actions-row">
             <button class="btn-sell-all" id="btnSellAll" ${state.inventory.length === 0 ? 'disabled' : ''}>
               <span class="sell-all-icon">${getIconSvg('coins', 16)}</span>
-              <span class="sell-all-text">Продать весь улов</span>
+              <span class="sell-all-text">Sell All Catch</span>
             </button>
           </div>
         </div>
 
         <!-- Filter Chips -->
         <div class="filter-chips-row">
-          <button class="chip active" data-filter="all">Все (${state.inventory.length})</button>
-          <button class="chip" data-filter="rare">Редкие+</button>
-          <button class="chip" data-filter="mutations">Мутации</button>
+          <button class="chip active" data-filter="all">All (${state.inventory.length})</button>
+          <button class="chip" data-filter="rare">Rare+</button>
+          <button class="chip" data-filter="mutations">Mutations</button>
         </div>
 
         <!-- Fish Grid -->
@@ -67,7 +67,7 @@ export class BackpackView {
   }
 
   calcTotalValue() {
-    return state.inventory.reduce((sum, f) => sum + f.price, 0).toLocaleString('ru-RU');
+    return state.inventory.reduce((sum, f) => sum + f.price, 0).toLocaleString('en-US');
   }
 
   renderFishGrid() {
@@ -75,8 +75,8 @@ export class BackpackView {
       return `
         <div class="empty-bag-placeholder">
           <span class="empty-icon">${getIconSvg('bag', 32)}</span>
-          <p>Садок пуст</p>
-          <small>Забросьте удочку в воду, чтобы поймать рыбу.</small>
+          <p>Backpack is empty</p>
+          <small>Cast your line into the water to catch fish.</small>
         </div>
       `;
     }
@@ -89,7 +89,7 @@ export class BackpackView {
     }
 
     if (items.length === 0) {
-      return `<div class="empty-bag-placeholder"><p>Нет рыбы по выбранному фильтру</p></div>`;
+      return `<div class="empty-bag-placeholder"><p>No fish matching current filter</p></div>`;
     }
 
     return items.map(item => {
@@ -110,7 +110,7 @@ export class BackpackView {
           <div class="fish-card-meta">
             <div class="fish-card-name">${item.fish.name}</div>
             <div class="fish-card-sub">
-              <span class="card-weight">${item.weight} кг</span>
+              <span class="card-weight">${item.weight} kg</span>
               <span class="card-price">${getIconSvg('coins', 11)} ${item.price}</span>
             </div>
           </div>
@@ -138,7 +138,7 @@ export class BackpackView {
     if (btnSellAll) {
       btnSellAll.addEventListener('click', () => {
         if (state.inventory.length === 0) return;
-        const total = state.sellAllFish();
+        state.sellAllFish();
         sound.playCoin();
         tg.notificationSuccess();
         this.update();
@@ -184,7 +184,7 @@ export class BackpackView {
 
       ${isMutated ? `
         <div class="detail-mutation-tag" style="border-color: ${item.mutation.color}; color: ${item.mutation.color}">
-          Мутация: ${item.mutation.name} (${item.mutation.multiplier}x стоимость)
+          Mutation: ${item.mutation.name} (${item.mutation.multiplier}x value)
         </div>
       ` : ''}
 
@@ -193,18 +193,18 @@ export class BackpackView {
 
       <div class="detail-stats-row">
         <div class="detail-stat">
-          <span>Вес</span>
-          <strong>${item.weight} кг</strong>
+          <span>Weight</span>
+          <strong>${item.weight} kg</strong>
         </div>
         <div class="detail-stat">
-          <span>Стоимость</span>
-          <strong>${getIconSvg('coins', 14)} ${item.price.toLocaleString('ru-RU')}</strong>
+          <span>Value</span>
+          <strong>${getIconSvg('coins', 14)} ${item.price.toLocaleString('en-US')} C$</strong>
         </div>
       </div>
 
       <div class="detail-actions">
         <button class="btn-detail-sell" id="btnSingleSell">
-          ${getIconSvg('coins', 16)} Продать за ${item.price.toLocaleString('ru-RU')} монет
+          ${getIconSvg('coins', 16)} Sell for ${item.price.toLocaleString('en-US')} C$
         </button>
       </div>
     `;
@@ -246,12 +246,12 @@ export class BackpackView {
   update() {
     const capEl = this.container.querySelector('#bagCapacityText');
     if (capEl) {
-      capEl.textContent = `${state.inventory.length} шт. (Бесконечный)`;
+      capEl.textContent = `${state.inventory.length} items (Infinite)`;
     }
 
     const valEl = this.container.querySelector('#totalBagVal');
     if (valEl) {
-      valEl.textContent = `${this.calcTotalValue()} монет`;
+      valEl.textContent = `${this.calcTotalValue()} C$`;
     }
 
     const btnSellAll = this.container.querySelector('#btnSellAll');
@@ -261,7 +261,7 @@ export class BackpackView {
 
     const filterChips = this.container.querySelectorAll('.chip');
     if (filterChips.length >= 3) {
-      filterChips[0].textContent = `Все (${state.inventory.length})`;
+      filterChips[0].textContent = `All (${state.inventory.length})`;
     }
 
     this.refreshGrid();

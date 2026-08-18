@@ -20,11 +20,11 @@ export class ShopView {
         <div class="panel-header">
           <div class="panel-title-group">
             <span class="panel-icon">${getIconSvg('store', 20)}</span>
-            <h2>МАГАЗИН СНАСТЕЙ</h2>
+            <h2>TACKLE SHOP</h2>
           </div>
           <div class="shop-subtabs">
-            <button class="subtab-btn ${this.currentSubTab === 'rods' ? 'active' : ''}" data-subtab="rods">Удочки</button>
-            <button class="subtab-btn ${this.currentSubTab === 'baits' ? 'active' : ''}" data-subtab="baits">Наживки</button>
+            <button class="subtab-btn ${this.currentSubTab === 'rods' ? 'active' : ''}" data-subtab="rods">Rods</button>
+            <button class="subtab-btn ${this.currentSubTab === 'baits' ? 'active' : ''}" data-subtab="baits">Baits</button>
           </div>
         </div>
 
@@ -45,23 +45,23 @@ export class ShopView {
 
       let btnHTML = '';
       if (isEquipped) {
-        btnHTML = `<button class="btn-shop-action equipped" disabled>${getIconSvg('check', 14)} Экипировано</button>`;
+        btnHTML = `<button class="btn-shop-action equipped" disabled>${getIconSvg('check', 14)} Equipped</button>`;
       } else if (isOwned) {
-        btnHTML = `<button class="btn-shop-action equip-btn" data-action="equip-rod" data-id="${rod.id}">Экипировать</button>`;
+        btnHTML = `<button class="btn-shop-action equip-btn" data-action="equip-rod" data-id="${rod.id}">Equip</button>`;
       } else if (isLevelLocked) {
-        btnHTML = `<button class="btn-shop-action locked" disabled>${getIconSvg('lock', 13)} Требуется ${rod.levelReq} уровень</button>`;
+        btnHTML = `<button class="btn-shop-action locked" disabled>${getIconSvg('lock', 13)} Requires Level ${rod.levelReq}</button>`;
       } else {
         const canAffordCoins = rod.price === 0 || state.coins >= rod.price;
         const canAffordPearls = rod.pearlPrice === 0 || state.pearls >= rod.pearlPrice;
         const canAfford = canAffordCoins && canAffordPearls;
 
         const priceParts = [];
-        if (rod.price > 0) priceParts.push(`${rod.price.toLocaleString('ru-RU')} монет`);
-        if (rod.pearlPrice > 0) priceParts.push(`${rod.pearlPrice} жемчужин`);
+        if (rod.price > 0) priceParts.push(`${rod.price.toLocaleString('en-US')} C$`);
+        if (rod.pearlPrice > 0) priceParts.push(`${rod.pearlPrice} Pearls`);
 
         btnHTML = `
           <button class="btn-shop-action buy-btn ${canAfford ? '' : 'cant-afford'}" data-action="buy-rod" data-id="${rod.id}" ${canAfford ? '' : 'disabled'}>
-            Купить: ${priceParts.join(' + ')}
+            Buy: ${priceParts.join(' + ')}
           </button>
         `;
       }
@@ -78,16 +78,16 @@ export class ShopView {
             <div class="shop-item-details">
               <div class="shop-item-header-row">
                 <div class="shop-item-name">${rod.name}</div>
-                <span class="rod-english-sub">${rod.englishName}</span>
+                <span class="rod-english-sub">${rod.badge}</span>
               </div>
               <p class="shop-item-desc">${rod.description}</p>
               
               <!-- Stat pills -->
               <div class="stat-pills-row">
-                <div class="stat-pill">Удача: +${rod.luck}</div>
-                <div class="stat-pill">Скорость клёва: ${lureSpeedText}</div>
-                <div class="stat-pill">Контроль: ${Math.round(rod.barSize * 100)}%</div>
-                <div class="stat-pill">Макс. вес: ${rod.maxWeight.toLocaleString('ru-RU')} кг</div>
+                <div class="stat-pill">Luck: +${rod.luck}</div>
+                <div class="stat-pill">Lure Speed: ${lureSpeedText}</div>
+                <div class="stat-pill">Control Bar: ${Math.round(rod.barSize * 100)}%</div>
+                <div class="stat-pill">Max Weight: ${rod.maxWeight.toLocaleString('en-US')} kg</div>
               </div>
             </div>
           </div>
@@ -107,9 +107,9 @@ export class ShopView {
       let actionHTML = '';
       if (bait.id === 'none') {
         if (isEquipped) {
-          actionHTML = `<button class="btn-shop-action equipped" disabled>${getIconSvg('check', 14)} Выбрано</button>`;
+          actionHTML = `<button class="btn-shop-action equipped" disabled>${getIconSvg('check', 14)} Selected</button>`;
         } else {
-          actionHTML = `<button class="btn-shop-action equip-btn" data-action="equip-bait" data-id="${bait.id}">Выбрать</button>`;
+          actionHTML = `<button class="btn-shop-action equip-btn" data-action="equip-bait" data-id="${bait.id}">Select</button>`;
         }
       } else {
         const canAffordCoins = bait.price === 0 || state.coins >= bait.price;
@@ -117,18 +117,18 @@ export class ShopView {
         const canAfford = canAffordCoins && canAffordPearls;
 
         const priceParts = [];
-        if (bait.price > 0) priceParts.push(`${bait.price} монет`);
-        if (bait.pearlPrice > 0) priceParts.push(`${bait.pearlPrice} жемчужин`);
+        if (bait.price > 0) priceParts.push(`${bait.price} C$`);
+        if (bait.pearlPrice > 0) priceParts.push(`${bait.pearlPrice} Pearls`);
 
         actionHTML = `
           <div class="bait-actions-group">
             ${count > 0 ? `
               <button class="btn-shop-action ${isEquipped ? 'equipped' : 'equip-btn'}" data-action="equip-bait" data-id="${bait.id}" ${isEquipped ? 'disabled' : ''}>
-                ${isEquipped ? `${getIconSvg('check', 14)} В руках` : 'Насадить'}
+                ${isEquipped ? `${getIconSvg('check', 14)} In Hand` : 'Equip'}
               </button>
             ` : ''}
             <button class="btn-shop-action buy-btn ${canAfford ? '' : 'cant-afford'}" data-action="buy-bait" data-id="${bait.id}" ${canAfford ? '' : 'disabled'}>
-              +${bait.amount} шт. (${priceParts.join(' + ')})
+              +${bait.amount} pcs (${priceParts.join(' + ')})
             </button>
           </div>
         `;
@@ -143,15 +143,15 @@ export class ShopView {
             <div class="shop-item-details">
               <div class="shop-item-header-row">
                 <div class="shop-item-name">${bait.name}</div>
-                <span class="item-count-badge">${bait.id === 'none' ? '∞' : `${count} шт.`}</span>
+                <span class="item-count-badge">${bait.id === 'none' ? '∞' : `${count} pcs`}</span>
               </div>
               <p class="shop-item-desc">${bait.description}</p>
               
               <!-- Stat pills -->
               <div class="stat-pills-row">
-                ${bait.luckBonus > 0 ? `<div class="stat-pill">Удача: +${bait.luckBonus}</div>` : ''}
-                ${bait.speedMultiplier < 1.0 ? `<div class="stat-pill">Скорость: +${Math.round((1 - bait.speedMultiplier) * 100)}%</div>` : ''}
-                ${bait.mutationBonus > 0 ? `<div class="stat-pill">Мутации: +${bait.mutationBonus}%</div>` : ''}
+                ${bait.luckBonus > 0 ? `<div class="stat-pill">Luck: +${bait.luckBonus}</div>` : ''}
+                ${bait.speedMultiplier < 1.0 ? `<div class="stat-pill">Speed: +${Math.round((1 - bait.speedMultiplier) * 100)}%</div>` : ''}
+                ${bait.mutationBonus > 0 ? `<div class="stat-pill">Mutations: +${bait.mutationBonus}%</div>` : ''}
               </div>
             </div>
           </div>

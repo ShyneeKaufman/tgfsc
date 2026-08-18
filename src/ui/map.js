@@ -21,10 +21,10 @@ export class MapView {
         <div class="panel-header">
           <div class="panel-title-group">
             <span class="panel-icon">${getIconSvg('map', 20)}</span>
-            <h2>КАРТА ЭКСПЕДИЦИЙ</h2>
+            <h2>EXPEDITION MAP</h2>
           </div>
           <div class="active-location-pill">
-            Сейчас: ${currentBiome.name}
+            Current: ${currentBiome.name}
           </div>
         </div>
 
@@ -40,16 +40,15 @@ export class MapView {
   renderBiomes() {
     return BIOMES.map(biome => {
       const isCurrent = state.currentBiome === biome.id;
-      const isUnlocked = state.unlockedBiomes.includes(biome.id);
       const isLevelLocked = state.level < biome.levelReq;
 
       let actionHTML = '';
       if (isCurrent) {
-        actionHTML = `<button class="btn-biome-action current" disabled>${getIconSvg('anchor', 14)} Текущая локация</button>`;
+        actionHTML = `<button class="btn-biome-action current" disabled>${getIconSvg('anchor', 14)} Current Location</button>`;
       } else if (isLevelLocked) {
-        actionHTML = `<button class="btn-biome-action locked" disabled>${getIconSvg('lock', 13)} Требуется ${biome.levelReq} уровень</button>`;
+        actionHTML = `<button class="btn-biome-action locked" disabled>${getIconSvg('lock', 13)} Requires Level ${biome.levelReq}</button>`;
       } else {
-        actionHTML = `<button class="btn-biome-action travel-btn" data-action="travel" data-id="${biome.id}">Отплыть</button>`;
+        actionHTML = `<button class="btn-biome-action travel-btn" data-action="travel" data-id="${biome.id}">Travel</button>`;
       }
 
       return `
@@ -61,7 +60,7 @@ export class MapView {
               <span class="biome-big-icon">${getIconSvg(biome.iconKey || 'palmtree', 26)}</span>
               <div class="biome-title-group">
                 <h3 class="biome-title">${biome.name}</h3>
-                <span class="biome-req-level">${biome.englishName} • Ур. ${biome.levelReq}</span>
+                <span class="biome-req-level">Req. Lvl ${biome.levelReq} • Luck +${biome.luckBonus}</span>
               </div>
             </div>
 
@@ -100,7 +99,7 @@ export class MapView {
   update() {
     const activePill = this.container.querySelector('.active-location-pill');
     if (activePill) {
-      activePill.textContent = `Сейчас: ${state.getCurrentBiome().name}`;
+      activePill.textContent = `Current: ${state.getCurrentBiome().name}`;
     }
 
     const grid = this.container.querySelector('#biomesGrid');

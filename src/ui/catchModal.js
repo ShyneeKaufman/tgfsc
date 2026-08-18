@@ -19,7 +19,7 @@ export class CatchModal {
       <div class="catch-modal-backdrop hidden" id="catchBackdrop">
         <div class="catch-card" id="catchCard">
           <!-- Close button (auto-saves to backpack) -->
-          <button class="modal-close-btn" id="btnCatchClose" title="В садок">
+          <button class="modal-close-btn" id="btnCatchClose" title="Save to Backpack">
             ${getIconSvg('x', 18)}
           </button>
 
@@ -28,7 +28,7 @@ export class CatchModal {
 
           <!-- Rarity Tag Header -->
           <div class="catch-header">
-            <span class="rarity-tag" id="catchRarityTag">РЕДКОСТЬ</span>
+            <span class="rarity-tag" id="catchRarityTag">RARITY</span>
             <div class="exp-reward-tag" id="catchExpTag">+50 XP</div>
           </div>
 
@@ -42,28 +42,28 @@ export class CatchModal {
 
           <!-- Mutation Badge -->
           <div class="mutation-badge hidden" id="catchMutationBadge">
-            <span class="mutation-text" id="catchMutationText">Золотая</span>
+            <span class="mutation-text" id="catchMutationText">Golden</span>
           </div>
 
           <!-- Fish Titles -->
           <div class="catch-info">
-            <h2 class="catch-name" id="catchFishName">Морской Окунь</h2>
-            <div class="catch-lore" id="catchFishLore">Обитатель прибрежных скал.</div>
+            <h2 class="catch-name" id="catchFishName">Bass</h2>
+            <div class="catch-lore" id="catchFishLore">A shoreline saltwater predator.</div>
           </div>
 
           <!-- Caught Stats Grid -->
           <div class="catch-stats-grid">
             <div class="stat-box">
-              <span class="stat-label">ВЕС</span>
+              <span class="stat-label">WEIGHT</span>
               <div class="stat-val-group">
                 <span class="stat-value" id="catchWeight">3.45</span>
-                <span class="stat-unit">кг</span>
+                <span class="stat-unit">kg</span>
               </div>
-              <span class="record-indicator hidden" id="newRecordPill">РЕКОРД</span>
+              <span class="record-indicator hidden" id="newRecordPill">NEW RECORD</span>
             </div>
 
             <div class="stat-box">
-              <span class="stat-label">СТОИМОСТЬ</span>
+              <span class="stat-label">VALUE</span>
               <div class="stat-val-group">
                 <span class="stat-value coin-val" id="catchPrice">120</span>
                 <span class="stat-unit">${getIconSvg('coins', 14)}</span>
@@ -76,11 +76,11 @@ export class CatchModal {
           <div class="catch-actions">
             <button class="btn-action btn-sell" id="btnCatchSell">
               <span class="btn-icon">${getIconSvg('coins', 16)}</span>
-              <span class="btn-text">Продать (+<span id="btnSellVal">120</span>)</span>
+              <span class="btn-text">Sell (+<span id="btnSellVal">120</span> C$)</span>
             </button>
             <button class="btn-action btn-keep" id="btnCatchKeep">
               <span class="btn-icon">${getIconSvg('bag', 16)}</span>
-              <span class="btn-text">В садок</span>
+              <span class="btn-text">Keep in Backpack</span>
             </button>
           </div>
         </div>
@@ -162,19 +162,14 @@ export class CatchModal {
     this.fishIcon.innerHTML = getIconSvg('fish', 56);
     let displayName = fish.name;
     if (mutation.prefix) {
-      const cleanPrefix = mutation.name.replace(/[^а-яёА-ЯЁa-zA-Z]/g, '').trim();
-      if (!displayName.toLowerCase().includes(cleanPrefix.toLowerCase())) {
-        displayName = `${mutation.prefix} ${displayName}`;
-      } else {
-        displayName = `${mutation.prefix.split(' ')[0]} ${displayName}`;
-      }
+      displayName = `${mutation.prefix} ${displayName}`;
     }
     this.fishName.textContent = displayName;
     this.fishLore.textContent = fish.description || mutation.description;
 
     this.weightVal.textContent = weight.toFixed(2);
-    this.priceVal.textContent = price.toLocaleString('ru-RU');
-    this.sellVal.textContent = price.toLocaleString('ru-RU');
+    this.priceVal.textContent = price.toLocaleString('en-US');
+    this.sellVal.textContent = price.toLocaleString('en-US');
     this.multiplierTag.textContent = `${mutation.multiplier}x`;
 
     if (mutation.id !== 'normal') {
@@ -195,16 +190,9 @@ export class CatchModal {
     this.ringGlow.style.background = `radial-gradient(circle, ${rarityDef.color}88 0%, rgba(0,0,0,0) 70%)`;
     this.card.style.borderColor = rarityDef.borderColor;
 
-    // Check if backpack full
-    if (state.inventory.length >= state.backpackCapacity) {
-      this.btnKeep.disabled = true;
-      this.btnKeep.classList.add('disabled');
-      this.btnKeep.querySelector('.btn-text').textContent = 'Садок полон';
-    } else {
-      this.btnKeep.disabled = false;
-      this.btnKeep.classList.remove('disabled');
-      this.btnKeep.querySelector('.btn-text').textContent = 'В садок';
-    }
+    this.btnKeep.disabled = false;
+    this.btnKeep.classList.remove('disabled');
+    this.btnKeep.querySelector('.btn-text').textContent = 'Keep in Backpack';
 
     this.backdrop.classList.remove('hidden');
     sound.playCatchFanfare(fish.rarity);

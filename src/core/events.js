@@ -4,9 +4,9 @@ import { tg } from './telegram.js';
 export const GLOBAL_EVENTS = [
   {
     id: 'golden_hour',
-    title: 'ЗОЛОТОЙ ЧАС',
+    title: 'GOLDEN HOUR',
     iconKey: 'sparkles',
-    desc: '+50% к цене всей рыбы и +15 к Удаче',
+    desc: '+50% fish sell price & +15 Luck',
     luckBonus: 15,
     priceMultiplier: 1.5,
     expMultiplier: 1.0,
@@ -16,9 +16,9 @@ export const GLOBAL_EVENTS = [
   },
   {
     id: 'abyssal_storm',
-    title: 'ШТОРМ БЕЗДНЫ',
+    title: 'ABYSSAL STORM',
     iconKey: 'zap',
-    desc: 'Шанс редких мутаций увеличен в 2.5 раза',
+    desc: 'Mutation rates increased by 2.5x & +25 Luck',
     luckBonus: 25,
     priceMultiplier: 1.2,
     expMultiplier: 1.2,
@@ -28,9 +28,9 @@ export const GLOBAL_EVENTS = [
   },
   {
     id: 'aurora_blessing',
-    title: 'СИЯНИЕ АВРОРЫ',
+    title: 'AURORA BLESSING',
     iconKey: 'sparkle',
-    desc: '+100% к опыту и мгновенная поклевка',
+    desc: '+100% EXP & rapid fish bite attraction',
     luckBonus: 10,
     priceMultiplier: 1.0,
     expMultiplier: 2.0,
@@ -40,9 +40,9 @@ export const GLOBAL_EVENTS = [
   },
   {
     id: 'caldera_surge',
-    title: 'ВУЛКАНИЧЕСКИЙ ВСПЛЕСК',
+    title: 'CALDERA SURGE',
     iconKey: 'flame',
-    desc: 'Легендарные рыбы поднялись из глубин',
+    desc: 'Mythical and apex titans surfaced from the depths',
     luckBonus: 35,
     priceMultiplier: 1.4,
     expMultiplier: 1.5,
@@ -113,7 +113,6 @@ class EventManager {
   }
 
   startCycle() {
-    // Start an event every 2 to 4 minutes
     const triggerRandomEvent = () => {
       const randomEvent = GLOBAL_EVENTS[Math.floor(Math.random() * GLOBAL_EVENTS.length)];
       this.triggerEvent(randomEvent);
@@ -121,12 +120,10 @@ class EventManager {
       sound.playCatchFanfare();
       tg.notificationSuccess();
 
-      // Schedule next event in 45-90 seconds after finish
       const nextDelay = randomEvent.durationMs + 45000 + Math.random() * 45000;
       setTimeout(triggerRandomEvent, nextDelay);
     };
 
-    // First event after 25 seconds of play
     setTimeout(triggerRandomEvent, 25000);
   }
 }

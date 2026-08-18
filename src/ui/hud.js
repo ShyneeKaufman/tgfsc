@@ -1,6 +1,6 @@
 import { state } from '../core/state.js';
-import { sound } from '../core/sound.js';
 import { tg } from '../core/telegram.js';
+import { sound } from '../core/sound.js';
 import { liveFeed } from '../core/liveFeed.js';
 import { events } from '../core/events.js';
 import { getIconSvg } from './icons.js';
@@ -45,8 +45,8 @@ export class HUD {
       <!-- Top Catch / Status Ticker -->
       <div class="live-catch-ticker" id="liveCatchTicker">
         <div class="ticker-content" id="tickerContent">
-          <span class="ticker-pulse">ЖУРНАЛ</span>
-          <span class="ticker-text" id="tickerText">Готов к забросу снастей в ${biome.name}</span>
+          <span class="ticker-pulse">LOG</span>
+          <span class="ticker-text" id="tickerText">Ready to cast line at ${biome.name}</span>
         </div>
       </div>
 
@@ -54,8 +54,8 @@ export class HUD {
       <div class="global-event-banner hidden" id="globalEventBanner">
         <span class="event-icon" id="eventIcon">${getIconSvg('zap', 18)}</span>
         <div class="event-info">
-          <div class="event-title" id="eventTitle">ШТОРМ БЕЗДНЫ</div>
-          <div class="event-desc" id="eventDesc">+25 к Удаче и шанс мутаций x2.5</div>
+          <div class="event-title" id="eventTitle">ABYSSAL STORM</div>
+          <div class="event-desc" id="eventDesc">+25 Luck & 2.5x Mutation Rates</div>
         </div>
         <div class="event-timer-badge" id="eventTimer">02:30</div>
       </div>
@@ -67,7 +67,7 @@ export class HUD {
             <div class="avatar-ring">${user.photoUrl ? `<img src="${user.photoUrl}" class="avatar-img"/>` : getIconSvg('anchor', 16)}</div>
             <div class="user-meta">
               <div class="user-name">${user.firstName || user.username}</div>
-              <div class="level-pill">Ур. <span id="hudLevel">${state.level}</span></div>
+              <div class="level-pill">Lvl <span id="hudLevel">${state.level}</span></div>
             </div>
           </div>
           <div class="exp-bar-container">
@@ -77,26 +77,26 @@ export class HUD {
         </div>
 
         <div class="header-right">
-          <div class="currency-badge coins" title="Монеты">
+          <div class="currency-badge coins" title="Coins (C$)">
             ${getIconSvg('coins', 13)}
-            <span class="coin-value" id="hudCoins">${state.coins.toLocaleString('ru-RU')}</span>
+            <span class="coin-value" id="hudCoins">${state.coins.toLocaleString('en-US')}</span>
           </div>
-          <div class="currency-badge pearls" title="Жемчуг Бездны">
+          <div class="currency-badge pearls" title="Abyssal Pearls">
             ${getIconSvg('gem', 13)}
             <span class="pearl-value" id="hudPearls">${state.pearls}</span>
           </div>
-          <button class="header-action-btn" id="dailyBtn" title="Ежедневный бонус">
+          <button class="header-action-btn" id="dailyBtn" title="Daily Rewards">
             ${getIconSvg('gift', 15)}
           </button>
-          <button class="header-action-btn" id="refBtn" title="Пригласить друзей">
+          <button class="header-action-btn" id="refBtn" title="Invite Friends">
             ${getIconSvg('userPlus', 15)}
           </button>
           ${tg.isAdmin() ? `
-            <button class="header-action-btn admin-btn-glow" id="adminBtn" title="Панель администратора">
+            <button class="header-action-btn admin-btn-glow" id="adminBtn" title="Admin Console">
               ${getIconSvg('shield', 15)}
             </button>
           ` : ''}
-          <button class="sound-toggle" id="soundToggleBtn" aria-label="Звук">
+          <button class="sound-toggle" id="soundToggleBtn" aria-label="Sound">
             ${sound.muted ? getIconSvg('mute', 14) : getIconSvg('volume', 14)}
           </button>
         </div>
@@ -104,48 +104,34 @@ export class HUD {
 
       <!-- Active Location & Gear Ribbon -->
       <div class="sub-header-ribbon">
-        <div class="ribbon-left">
-          <div class="biome-pill" id="hudBiome">
+        <div class="gear-pills-left">
+          <div class="hud-pill location-pill" id="hudBiome">
             <span class="biome-icon">${getIconSvg(biome.iconKey || 'palmtree', 13)}</span>
             <span class="biome-name">${biome.name}</span>
           </div>
-
-          <div class="streak-pill ${state.streak > 0 ? '' : 'hidden'}" id="hudStreakPill">
-            ${getIconSvg('flame', 12)}
-            <span id="hudStreakText">Стрик x${state.streak}</span>
-          </div>
-        </div>
-
-        <div class="gear-status">
-          <div class="gear-item" id="hudRodPill" title="Текущая удочка">
+          <div class="hud-pill rod-pill" id="hudRodPill">
             <span>${getIconSvg(rod.iconKey || 'anchor', 12)}</span>
             <span class="gear-name">${rod.name}</span>
           </div>
-          <div class="gear-item" id="hudBaitPill" title="Текущая наживка">
+          <div class="hud-pill bait-pill" id="hudBaitPill">
             <span>${getIconSvg(bait.iconKey || 'crosshair', 12)}</span>
-            <span class="gear-name">${bait.name} ${state.equippedBaitId !== 'none' ? `(${state.baits[state.equippedBaitId] || 0})` : ''}</span>
+            <span class="gear-name">${bait.name}</span>
           </div>
+        </div>
+        <div class="hud-pill streak-pill ${state.streak > 0 ? '' : 'hidden'}" id="hudStreakPill">
+          <span class="streak-flame">${getIconSvg('flame', 13)}</span>
+          <span class="streak-text" id="hudStreakText">Streak x${state.streak} (+${state.getStreakLuckBonus()}%)</span>
         </div>
       </div>
 
-      <!-- Floating Fisch Shake Button Area -->
-      <div class="fisch-shake-layer hidden" id="shakeLayer">
-        <button class="btn-fisch-shake" id="shakeBtn">
-          <span class="shake-inner">SHAKE</span>
-        </button>
-      </div>
-
-      <!-- Central Floating Cast / Action Area -->
-      <div class="fishing-action-zone" id="fishingActionZone">
-        <!-- Fisch Cast Accuracy Meter -->
+      <!-- Action Controls & Overlays -->
+      <div class="action-controls-layer" id="actionLayer">
+        <!-- Cast Meter Ring -->
         <div class="cast-meter-container hidden" id="castMeter">
           <div class="cast-meter-track">
-            <div class="cast-meter-zones">
-              <div class="zone-meh"></div>
-              <div class="zone-good"></div>
-              <div class="zone-perfect"></div>
-            </div>
-            <div class="cast-meter-cursor" id="castCursor"></div>
+            <div class="cast-zone perfect-zone"></div>
+            <div class="cast-zone great-zone"></div>
+            <div class="cast-cursor" id="castCursor"></div>
           </div>
           <div class="cast-meter-labels">
             <span>0%</span>
@@ -154,26 +140,32 @@ export class HUD {
           </div>
         </div>
 
-        <!-- Cast Accuracy Grade Toast -->
+        <!-- Grade Popup (Perfect / Great / Good) -->
         <div class="cast-grade-popup hidden" id="castGradePopup">
-          <span class="grade-text" id="gradeText">PERFECT</span>
+          <span class="grade-text" id="gradeText">PERFECT!</span>
+          <span class="grade-bonus" id="gradeBonus">+20 Luck</span>
         </div>
 
-        <!-- Big Cast Button -->
-        <button class="btn-cast" id="castBtn">
-          <div class="btn-cast-inner">
-            <span class="cast-icon">${getIconSvg('crosshair', 20)}</span>
-            <span class="cast-text" id="castBtnText">ЗАБРОСИТЬ</span>
-          </div>
-          <div class="cast-glow"></div>
-        </button>
-
-        <!-- Bite Notification Overlay -->
+        <!-- Bite Indicator Banner -->
         <div class="bite-alert-banner hidden" id="biteAlertBanner">
-          <div class="bite-content">
-            <span class="bite-icon">${getIconSvg('zap', 16)}</span>
-            <span class="bite-title">ПОДСЕКАЙ</span>
-          </div>
+          <span class="bite-icon">${getIconSvg('zap', 24)}</span>
+          <span class="bite-title">FISH BITE!</span>
+          <span class="bite-subtitle">TAP TO HOOK!</span>
+        </div>
+
+        <!-- Floating Shake / Interactive Layer -->
+        <div class="shake-layer hidden" id="shakeLayer">
+          <button class="btn-fisch-shake" id="shakeBtn">
+            <span class="shake-text">SHAKE</span>
+          </button>
+        </div>
+
+        <!-- Cast / Reel Primary Button -->
+        <div class="cast-btn-wrapper" id="castBtnWrapper">
+          <button class="btn-primary-cast" id="castBtn">
+            <span class="cast-icon">${getIconSvg('crosshair', 18)}</span>
+            <span class="cast-label" id="castBtnText">HOLD TO CAST</span>
+          </button>
         </div>
       </div>
 
@@ -181,24 +173,24 @@ export class HUD {
       <nav class="bottom-dock">
         <button class="dock-tab active" data-tab="fishing" id="tabFishing">
           <span class="tab-icon">${getIconSvg('waves', 20)}</span>
-          <span class="tab-label">Вода</span>
+          <span class="tab-label">Fish</span>
         </button>
         <button class="dock-tab" data-tab="backpack" id="tabBackpack">
           <span class="tab-icon">${getIconSvg('bag', 20)}</span>
-          <span class="tab-label">Садок</span>
+          <span class="tab-label">Backpack</span>
           <span class="badge" id="hudBagBadge" style="display: ${state.inventory.length > 0 ? 'flex' : 'none'}">${state.inventory.length}</span>
         </button>
         <button class="dock-tab" data-tab="shop" id="tabShop">
           <span class="tab-icon">${getIconSvg('store', 20)}</span>
-          <span class="tab-label">Снасти</span>
+          <span class="tab-label">Shop</span>
         </button>
         <button class="dock-tab" data-tab="fishdex" id="tabFishdex">
           <span class="tab-icon">${getIconSvg('book', 20)}</span>
-          <span class="tab-label">Бестиарий</span>
+          <span class="tab-label">Bestiary</span>
         </button>
         <button class="dock-tab" data-tab="map" id="tabMap">
           <span class="tab-icon">${getIconSvg('map', 20)}</span>
-          <span class="tab-label">Карта</span>
+          <span class="tab-label">Map</span>
         </button>
       </nav>
     `;
@@ -232,9 +224,9 @@ export class HUD {
     const locTag = `<span class="ticker-loc">${event.biomeName}</span>`;
 
     if (event.isLocal) {
-      this.tickerText.innerHTML = `Вы выловили <strong>${mutBadge}${event.fishName}</strong> (${event.weight} кг) в ${locTag} (+${event.price} монет)`;
+      this.tickerText.innerHTML = `You caught <strong>${mutBadge}${event.fishName}</strong> (${event.weight} kg) at ${locTag} (+${event.price} C$)`;
     } else {
-      this.tickerText.innerHTML = `<strong>${event.playerName}</strong> выловил <strong>${mutBadge}${event.fishName}</strong> (${event.weight} кг) в ${locTag}`;
+      this.tickerText.innerHTML = `<strong>${event.playerName}</strong> caught <strong>${mutBadge}${event.fishName}</strong> (${event.weight} kg) at ${locTag}`;
     }
 
     this.tickerContainer.classList.add('flash');
@@ -286,187 +278,157 @@ export class HUD {
         this.onCastRelease(0, true);
         return;
       }
-      if (this.castBtn.classList.contains('bite')) {
-        this.onHookClick();
-        return;
-      }
+      if (this.castBtn.classList.contains('disabled') || this.powerActive) return;
 
-      this.startPowerMeter();
+      this.powerActive = true;
+      this.castPower = 0;
+      this.powerDirection = 1;
+      this.castMeter.classList.remove('hidden');
+      this.castBtnText.textContent = 'RELEASING...';
+      this.castBtn.classList.add('holding');
+
       this.onCastStart();
+
+      const animatePower = () => {
+        if (!this.powerActive) return;
+
+        this.castPower += this.powerDirection * 1.6;
+        if (this.castPower >= 100) {
+          this.castPower = 100;
+          this.powerDirection = -1;
+        } else if (this.castPower <= 0) {
+          this.castPower = 0;
+          this.powerDirection = 1;
+        }
+
+        this.castCursor.style.left = `${this.castPower}%`;
+        this.powerAnimId = requestAnimationFrame(animatePower);
+      };
+
+      this.powerAnimId = requestAnimationFrame(animatePower);
     };
 
     const endCastHold = (e) => {
-      if (!this.powerActive) return;
       e.preventDefault();
-      const finalPower = this.stopPowerMeter();
-      this.onCastRelease(finalPower, false);
+      if (!this.powerActive) return;
+
+      this.powerActive = false;
+      if (this.powerAnimId) cancelAnimationFrame(this.powerAnimId);
+
+      this.castMeter.classList.add('hidden');
+      this.castBtn.classList.remove('holding');
+
+      // Calculate accuracy bonus
+      let grade = 'GOOD';
+      let bonusLuck = 5;
+
+      if (this.castPower >= 85 && this.castPower <= 95) {
+        grade = 'PERFECT!';
+        bonusLuck = 25;
+        state.stats.perfectCasts += 1;
+        sound.playCatchFanfare();
+        tg.notificationSuccess();
+      } else if (this.castPower >= 70 && this.castPower <= 100) {
+        grade = 'GREAT!';
+        bonusLuck = 12;
+        sound.playCoin();
+        tg.impactMedium();
+      } else {
+        sound.playCast();
+        tg.impactLight();
+      }
+
+      this.showGradePopup(grade, bonusLuck);
+      this.onCastRelease(bonusLuck);
     };
 
     this.castBtn.addEventListener('mousedown', startCastHold);
-    this.castBtn.addEventListener('mouseup', endCastHold);
-    this.castBtn.addEventListener('touchstart', startCastHold, { passive: false });
-    this.castBtn.addEventListener('touchend', endCastHold, { passive: false });
+    window.addEventListener('mouseup', endCastHold);
 
-    // Shake button click
+    this.castBtn.addEventListener('touchstart', startCastHold, { passive: false });
+    window.addEventListener('touchend', endCastHold, { passive: false });
+
+    // Shake Button tap
     this.shakeBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      this.relocateShakeButton();
       this.onShakeClick();
     });
 
-    // Dock tabs
-    const tabs = this.container.querySelectorAll('.dock-tab');
-    tabs.forEach(tab => {
+    // Bite Banner tap
+    this.biteBanner.addEventListener('click', () => {
+      this.onHookClick();
+    });
+
+    // Bottom Dock navigation
+    const dockTabs = this.container.querySelectorAll('.dock-tab');
+    dockTabs.forEach(tab => {
       tab.addEventListener('click', () => {
-        const target = tab.dataset.tab;
-        this.setActiveTab(target);
+        const tabKey = tab.dataset.tab;
+        dockTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        this.activeTab = tabKey;
+        this.onTabChange(tabKey);
+        sound.playClick();
+        tg.selectionChanged();
       });
     });
   }
 
-  startPowerMeter() {
-    this.powerActive = true;
-    this.castPower = 0;
-    this.powerDirection = 1;
-    this.castMeter.classList.remove('hidden');
-
-    const animatePower = () => {
-      if (!this.powerActive) return;
-
-      this.castPower += this.powerDirection * 2.8;
-      if (this.castPower >= 100) {
-        this.castPower = 100;
-        this.powerDirection = -1;
-      } else if (this.castPower <= 0) {
-        this.castPower = 0;
-        this.powerDirection = 1;
-      }
-
-      this.castCursor.style.left = `${this.castPower}%`;
-      this.powerAnimId = requestAnimationFrame(animatePower);
-    };
-
-    this.powerAnimId = requestAnimationFrame(animatePower);
-  }
-
-  stopPowerMeter() {
-    this.powerActive = false;
-    if (this.powerAnimId) cancelAnimationFrame(this.powerAnimId);
-    this.castMeter.classList.add('hidden');
-
-    const accuracy = Math.round(this.castPower);
-    this.showAccuracyGrade(accuracy);
-    return accuracy;
-  }
-
-  showAccuracyGrade(accuracy) {
-    let grade = 'Слабо';
-    let color = '#94a3b8';
-
-    if (accuracy >= 95) {
-      grade = 'ИДЕАЛЬНО!';
-      color = '#f59e0b';
-      state.stats.perfectCasts += 1;
-    } else if (accuracy >= 85) {
-      grade = 'Отлично!';
-      color = '#22d3ee';
-    } else if (accuracy >= 70) {
-      grade = 'Хорошо';
-      color = '#10b981';
-    } else if (accuracy >= 50) {
-      grade = 'Нормально';
-      color = '#38bdf8';
-    } else if (accuracy >= 30) {
-      grade = 'Неплохо';
-      color = '#e2e8f0';
-    }
-
+  showGradePopup(grade, bonusLuck) {
     this.gradeText.textContent = grade;
-    this.gradeText.style.color = color;
-    this.castGradePopup.classList.remove('hidden');
+    this.gradeText.className = 'grade-text ' + grade.toLowerCase().replace('!', '');
+    const bonusEl = this.container.querySelector('#gradeBonus');
+    if (bonusEl) bonusEl.textContent = `+${bonusLuck} Luck`;
 
+    this.castGradePopup.classList.remove('hidden');
     setTimeout(() => {
       this.castGradePopup.classList.add('hidden');
-    }, 1400);
+    }, 1100);
   }
 
-  showShakeButton() {
-    this.shakeLayer.classList.remove('hidden');
-    this.relocateShakeButton();
-  }
-
-  hideShakeButton() {
+  // --- External UI State Handlers ---
+  setWaitingState(durationSecs) {
+    this.castBtn.classList.add('waiting');
+    this.castBtnText.textContent = 'WAITING FOR BITE...';
+    this.biteBanner.classList.add('hidden');
     this.shakeLayer.classList.add('hidden');
   }
 
-  relocateShakeButton() {
-    const randomX = 15 + Math.random() * 65;
-    const randomY = 25 + Math.random() * 40;
-
-    this.shakeBtn.style.left = `${randomX}%`;
-    this.shakeBtn.style.top = `${randomY}%`;
-
-    sound.playClick();
-    tg.impactLight();
+  setBiteState() {
+    this.castBtn.classList.remove('waiting');
+    this.castBtnText.textContent = 'HOOK NOW!';
+    this.biteBanner.classList.remove('hidden');
+    this.shakeLayer.classList.remove('hidden');
+    this.positionShakeButton();
   }
 
-  setActiveTab(tabName) {
-    this.activeTab = tabName;
-    const tabs = this.container.querySelectorAll('.dock-tab');
-    tabs.forEach(t => {
-      if (t.dataset.tab === tabName) {
-        t.classList.add('active');
-      } else {
-        t.classList.remove('active');
-      }
-    });
+  positionShakeButton() {
+    const minX = 25;
+    const maxX = 75;
+    const minY = 35;
+    const maxY = 65;
 
-    const actionZone = this.container.querySelector('#fishingActionZone');
-    if (actionZone) {
-      if (tabName === 'fishing') {
-        actionZone.classList.remove('hidden');
-      } else {
-        actionZone.classList.add('hidden');
-      }
-    }
+    const randX = minX + Math.random() * (maxX - minX);
+    const randY = minY + Math.random() * (maxY - minY);
 
-    const eventBanner = this.container.querySelector('#globalEventBanner');
-    if (eventBanner) {
-      if (tabName === 'fishing' && events.getCurrentEvent()) {
-        eventBanner.classList.remove('hidden');
-      } else {
-        eventBanner.classList.add('hidden');
-      }
-    }
-
-    sound.playClick();
-    tg.selectionChanged();
-    this.onTabChange(tabName);
+    this.shakeBtn.style.left = `${randX}%`;
+    this.shakeBtn.style.top = `${randY}%`;
+    this.shakeBtn.classList.add('pop');
+    setTimeout(() => this.shakeBtn.classList.remove('pop'), 200);
   }
 
-  setCastState(status, customText = null) {
-    if (status === 'idle') {
-      this.castBtn.classList.remove('waiting', 'bite', 'hidden');
-      this.castBtnText.textContent = customText || 'ЗАБРОСИТЬ';
-      this.biteBanner.classList.add('hidden');
-      this.hideShakeButton();
-    } else if (status === 'waiting') {
-      this.castBtn.classList.add('waiting');
-      this.castBtn.classList.remove('bite', 'hidden');
-      this.castBtnText.textContent = 'ОЖИДАНИЕ...';
-      this.biteBanner.classList.add('hidden');
-      this.showShakeButton();
-    } else if (status === 'bite') {
-      this.castBtn.classList.remove('waiting', 'hidden');
-      this.castBtn.classList.add('bite');
-      this.castBtnText.textContent = 'ПОДСЕЧЬ!';
-      this.biteBanner.classList.remove('hidden');
-      this.hideShakeButton();
-    } else if (status === 'reeling') {
-      this.castBtn.classList.add('hidden');
-      this.biteBanner.classList.add('hidden');
-      this.hideShakeButton();
-    }
+  setReelingState() {
+    this.biteBanner.classList.add('hidden');
+    this.shakeLayer.classList.add('hidden');
+    this.castBtn.classList.add('disabled');
+    this.castBtnText.textContent = 'REELING FISH...';
+  }
+
+  setIdleState() {
+    this.castBtn.classList.remove('waiting', 'disabled', 'holding');
+    this.castBtnText.textContent = 'HOLD TO CAST';
+    this.biteBanner.classList.add('hidden');
+    this.shakeLayer.classList.add('hidden');
   }
 
   updateState() {
@@ -479,7 +441,7 @@ export class HUD {
     if (levelEl) levelEl.textContent = state.level;
 
     const coinsEl = this.container.querySelector('#hudCoins');
-    if (coinsEl) coinsEl.textContent = state.coins.toLocaleString('ru-RU');
+    if (coinsEl) coinsEl.textContent = state.coins.toLocaleString('en-US');
 
     const pearlsEl = this.container.querySelector('#hudPearls');
     if (pearlsEl) pearlsEl.textContent = state.pearls;
@@ -506,7 +468,7 @@ export class HUD {
     if (streakPill && streakText) {
       if (state.streak > 0) {
         streakPill.classList.remove('hidden');
-        streakText.textContent = `Стрик x${state.streak} (+${state.getStreakLuckBonus()}%)`;
+        streakText.textContent = `Streak x${state.streak} (+${state.getStreakLuckBonus()}%)`;
       } else {
         streakPill.classList.add('hidden');
       }
@@ -519,7 +481,8 @@ export class HUD {
 
     const baitPill = this.container.querySelector('#hudBaitPill');
     if (baitPill) {
-      baitPill.innerHTML = `<span>${getIconSvg(bait.iconKey || 'crosshair', 12)}</span><span class="gear-name">${bait.name} ${state.equippedBaitId !== 'none' ? `(${state.baits[state.equippedBaitId] || 0})` : ''}</span>`;
+      const baitCountStr = bait.id === 'none' ? '' : ` (${state.baits[bait.id] || 0})`;
+      baitPill.innerHTML = `<span>${getIconSvg(bait.iconKey || 'crosshair', 12)}</span><span class="gear-name">${bait.name}${baitCountStr}</span>`;
     }
   }
 }

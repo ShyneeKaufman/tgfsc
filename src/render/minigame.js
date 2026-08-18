@@ -44,7 +44,7 @@ export class ReelingMinigame {
           
           <!-- Top Telemetry Row -->
           <div class="reeling-status-row">
-            <div class="reeling-fish-badge" id="reelingFishName">Рыба на крючке</div>
+            <div class="reeling-fish-badge" id="reelingFishName">FISH ON HOOK</div>
             <div class="reeling-perfect-badge ${this.perfectCatch ? '' : 'hidden'}" id="reelingPerfectBadge">
               <span class="perfect-badge-icon">${getIconSvg('sparkles', 11)}</span> PERFECT CATCH
             </div>
@@ -61,7 +61,7 @@ export class ReelingMinigame {
                 <div class="fisch-slider-arrow" id="sliderArrow">→</div>
               </div>
 
-              <!-- Vertical Stick / Needle with tilted fish on top (точно как на фото) -->
+              <!-- Vertical Stick / Needle with tilted fish on top -->
               <div class="fisch-needle" id="fishNeedle">
                 <div class="needle-fish-icon" id="needleFishIcon">
                   ${getIconSvg('fish', 16)}
@@ -79,7 +79,7 @@ export class ReelingMinigame {
           </div>
 
           <div class="reeling-hint-text">
-            Удерживайте для движения вправо. Отпустите для движения влево.
+            Hold to steer bar right. Release to drift left. Keep bar on fish!
           </div>
         </div>
       </div>

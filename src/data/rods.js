@@ -1,23 +1,23 @@
 export const RODS = [
   {
     id: 'flimsy_rod',
-    name: 'Хлипкая удочка',
+    name: 'Flimsy Rod',
     englishName: 'Flimsy Rod',
     price: 0,
     pearlPrice: 0,
     levelReq: 1,
     luck: 0,
     lureSpeed: 1.0,     // Normal wait
-    resilience: 1.0,    // Normal fish pull
+    resilience: 1.0,    // Normal pull
     barSize: 0.24,      // 24% width
     maxWeight: 100,
     iconKey: 'anchor',
-    badge: 'СТАРТ',
-    description: 'Простая деревянная удочка, с которой начинает каждый рыбак в Мьюсвуде.'
+    badge: 'STARTER',
+    description: 'A basic wooden fishing rod that every beginner receives at Moosewood.'
   },
   {
     id: 'training_rod',
-    name: 'Учебная удочка',
+    name: 'Training Rod',
     englishName: 'Training Rod',
     price: 300,
     pearlPrice: 0,
@@ -28,12 +28,12 @@ export const RODS = [
     barSize: 0.28,      // +20% control for beginners
     maxWeight: 250,
     iconKey: 'shield',
-    badge: 'ОБУЧЕНИЕ',
-    description: 'Оснащена увеличенной контрольной шкалой для легкого освоения вываживания.'
+    badge: 'TRAINING',
+    description: 'Equipped with an enlarged control bar designed for practicing steady reeling.'
   },
   {
     id: 'plastic_rod',
-    name: 'Пластиковая удочка',
+    name: 'Plastic Rod',
     englishName: 'Plastic Rod',
     price: 900,
     pearlPrice: 0,
@@ -44,12 +44,12 @@ export const RODS = [
     barSize: 0.25,
     maxWeight: 750,
     iconKey: 'anchor',
-    badge: 'НАЧАЛЬНАЯ',
-    description: 'Легкое гибкое удилище из прочного полимера для прибрежной ловли.'
+    badge: 'NOVICE',
+    description: 'A lightweight flexible polymer rod suitable for shoreline angling.'
   },
   {
     id: 'carbon_rod',
-    name: 'Карбоновая удочка',
+    name: 'Carbon Rod',
     englishName: 'Carbon Rod',
     price: 2000,
     pearlPrice: 0,
@@ -60,12 +60,12 @@ export const RODS = [
     barSize: 0.26,
     maxWeight: 2000,
     iconKey: 'crosshair',
-    badge: 'КАРБОН',
-    description: 'Углепластиковый бланк с высокой чувствительностью к осторожным поклёвкам.'
+    badge: 'CARBON',
+    description: 'High-modulus carbon fiber blank offering supreme bite sensitivity.'
   },
   {
     id: 'fast_rod',
-    name: 'Скоростная удочка',
+    name: 'Fast Rod',
     englishName: 'Fast Rod',
     price: 4500,
     pearlPrice: 0,
@@ -76,12 +76,12 @@ export const RODS = [
     barSize: 0.22,
     maxWeight: 1500,
     iconKey: 'zap',
-    badge: 'СКОРОСТЬ',
-    description: 'Сверхбыстрая намотка лески и моментальное привлечение рыбы.'
+    badge: 'SPEED',
+    description: 'Ultra-fast line retrieval and rapid fish attraction capabilities.'
   },
   {
     id: 'lucky_rod',
-    name: 'Удочка Удачи',
+    name: 'Lucky Rod',
     englishName: 'Lucky Rod',
     price: 5250,
     pearlPrice: 0,
@@ -92,28 +92,28 @@ export const RODS = [
     barSize: 0.24,
     maxWeight: 3000,
     iconKey: 'sparkles',
-    badge: 'УДАЧА',
-    description: 'Зачарована на повышенный шанс поимки редкой и экзотической рыбы.'
+    badge: 'LUCKY',
+    description: 'Infused with good fortune, significantly increasing rare and exotic fish chances.'
   },
   {
     id: 'steady_rod',
-    name: 'Устойчивая удочка',
+    name: 'Steady Rod',
     englishName: 'Steady Rod',
     price: 7000,
     pearlPrice: 0,
     levelReq: 15,
     luck: 35,
     lureSpeed: 1.05,
-    resilience: 1.6,    // Damps violent fish movements
+    resilience: 1.6,    // Damps violent movements
     barSize: 0.34,      // Massive control bar
     maxWeight: 10000,
     iconKey: 'shield',
-    badge: 'КОНТРОЛЬ',
-    description: 'Тяжелый прочный бланк, гасящий резкие рывки крупных хищников.'
+    badge: 'CONTROL',
+    description: 'Heavy duty blank that dampens violent thrashing from massive saltwater predators.'
   },
   {
     id: 'fortune_rod',
-    name: 'Удочка Фортуны',
+    name: 'Fortune Rod',
     englishName: 'Fortune Rod',
     price: 12750,
     pearlPrice: 0,
@@ -124,12 +124,12 @@ export const RODS = [
     barSize: 0.26,
     maxWeight: 7500,
     iconKey: 'sparkles',
-    badge: 'ФОРТУНА',
-    description: 'Золотая инкрустация многократно увеличивает шанс встретить мутации.'
+    badge: 'FORTUNE',
+    description: 'Gold-inlaid rod granting vastly superior chances of catching valuable mutations.'
   },
   {
     id: 'magma_rod',
-    name: 'Магматическая удочка',
+    name: 'Magma Rod',
     englishName: 'Magma Rod',
     price: 18000,
     pearlPrice: 15,
@@ -140,12 +140,12 @@ export const RODS = [
     barSize: 0.26,
     maxWeight: 25000,
     iconKey: 'flame',
-    badge: 'ОГОНЬ',
-    description: 'Выкована из вулканического базальта, устойчива к экстремальным температурам.'
+    badge: 'MAGMA',
+    description: 'Forged in volcanic basalt, capable of withstanding extreme boiling waters.'
   },
   {
     id: 'mythical_rod',
-    name: 'Мифическая удочка',
+    name: 'Mythical Rod',
     englishName: 'Mythical Rod',
     price: 110000,
     pearlPrice: 50,
@@ -156,12 +156,12 @@ export const RODS = [
     barSize: 0.3,
     maxWeight: 50000,
     iconKey: 'trophy',
-    badge: 'МИФ',
-    description: 'Легендарное удилище древних мастеров с повышенным шансом сияющих мутаций.'
+    badge: 'MYTHIC',
+    description: 'Mastercrafted legendary rod boosting the frequency of iridescent shiny mutations.'
   },
   {
     id: 'destiny_rod',
-    name: 'Удочка Судьбы',
+    name: 'Destiny Rod',
     englishName: 'Destiny Rod',
     price: 190000,
     pearlPrice: 100,
@@ -172,7 +172,7 @@ export const RODS = [
     barSize: 0.32,
     maxWeight: 77777,
     iconKey: 'gem',
-    badge: 'СУДЬБА',
-    description: 'Вершина рыболовного мастерства, притягивающая древнейших левиафанов архипелага.'
+    badge: 'DESTINY',
+    description: 'The pinnacle of fishing mastery, drawing ancient leviathans from the deepest abyss.'
   }
 ];

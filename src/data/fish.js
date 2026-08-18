@@ -1,8 +1,8 @@
 export const FISH_DATABASE = [
-  // ================= 1. MOOSEWOOD (ОСТРОВ МЬЮСВУД) =================
+  // ================= 1. MOOSEWOOD =================
   {
     id: 'minnow',
-    name: 'Гольян',
+    name: 'Minnow',
     englishName: 'Minnow',
     biome: 'moosewood',
     rarity: 'common',
@@ -11,11 +11,11 @@ export const FISH_DATABASE = [
     maxWeight: 1.2,
     behavior: 'calm',
     iconKey: 'fish',
-    description: 'Маленькая юркая рыбка, часто собирающаяся стайками у причалов Мьюсвуда.'
+    description: 'A tiny, agile fish commonly found swimming in schools near Moosewood docks.'
   },
   {
     id: 'bream',
-    name: 'Лещ',
+    name: 'Bream',
     englishName: 'Bream',
     biome: 'moosewood',
     rarity: 'common',
@@ -24,11 +24,11 @@ export const FISH_DATABASE = [
     maxWeight: 3.5,
     behavior: 'calm',
     iconKey: 'fish',
-    description: 'Обычный обитатель спокойных пресноводных заводей и прибрежной полосы.'
+    description: 'A calm freshwater dweller found along tranquil shorelines and riverbends.'
   },
   {
     id: 'trout',
-    name: 'Речная Форель',
+    name: 'River Trout',
     englishName: 'Trout',
     biome: 'moosewood',
     rarity: 'common',
@@ -37,11 +37,11 @@ export const FISH_DATABASE = [
     maxWeight: 5.0,
     behavior: 'calm',
     iconKey: 'fish',
-    description: 'Пятнистая рыба из прозрачных речных потоков острова.'
+    description: 'A spotted, graceful fish native to clear flowing island streams.'
   },
   {
     id: 'bass',
-    name: 'Большеротый Окунь',
+    name: 'Largemouth Bass',
     englishName: 'Bass',
     biome: 'moosewood',
     rarity: 'uncommon',
@@ -50,11 +50,11 @@ export const FISH_DATABASE = [
     maxWeight: 7.5,
     behavior: 'erratic',
     iconKey: 'fish',
-    description: 'Хищник, прячущийся в камышах и корягах у восточного берега.'
+    description: 'An aggressive predator that stalks weeds and sunken logs near the eastern shore.'
   },
   {
     id: 'salmon',
-    name: 'Тихоокеанский Лосось',
+    name: 'Pacific Salmon',
     englishName: 'Salmon',
     biome: 'moosewood',
     rarity: 'uncommon',
@@ -63,11 +63,11 @@ export const FISH_DATABASE = [
     maxWeight: 14.0,
     behavior: 'erratic',
     iconKey: 'fish',
-    description: 'Сильная рыба, идущая на нерест против течения.'
+    description: 'A powerful fish known for its incredible upstream swimming strength.'
   },
   {
     id: 'carp',
-    name: 'Зеркальный Карп',
+    name: 'Mirror Carp',
     englishName: 'Carp',
     biome: 'moosewood',
     rarity: 'rare',
@@ -76,11 +76,11 @@ export const FISH_DATABASE = [
     maxWeight: 22.0,
     behavior: 'erratic',
     iconKey: 'fish',
-    description: 'Осторожный крупный карп, питающийся со дна озера Мьюсвуда.'
+    description: 'A cautious, heavy bottom-feeder resting in the deep basins of Moosewood Lake.'
   },
   {
     id: 'pike',
-    name: 'Северная Щука',
+    name: 'Northern Pike',
     englishName: 'Pike',
     biome: 'moosewood',
     rarity: 'rare',
@@ -89,11 +89,11 @@ export const FISH_DATABASE = [
     maxWeight: 18.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Опасный засадный хищник с острыми как бритва зубами.'
+    description: 'A vicious ambush predator equipped with razor-sharp needle teeth.'
   },
   {
     id: 'alligator',
-    name: 'Мьюсвудский Аллигатор',
+    name: 'Moosewood Alligator',
     englishName: 'Alligator',
     biome: 'moosewood',
     rarity: 'epic',
@@ -102,11 +102,11 @@ export const FISH_DATABASE = [
     maxWeight: 180.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Массивный болотный хищник. Требует прочной удочки и мастерства вываживания.'
+    description: 'A massive swamp leviathan. Requires a heavy-duty rod and expert reeling control.'
   },
   {
     id: 'moosewood_goliath',
-    name: 'Мьюсвудский Голиаф',
+    name: 'Moosewood Goliath',
     englishName: 'Moosewood Goliath',
     biome: 'moosewood',
     rarity: 'legendary',
@@ -115,11 +115,11 @@ export const FISH_DATABASE = [
     maxWeight: 420.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Легендарный гигант, обитающий в глубине главного озера острова.'
+    description: 'A legendary titan said to rule the deep waters beneath the lighthouse.'
   },
   {
     id: 'depth_serpent',
-    name: 'Древний Змей Глубин',
+    name: 'Ancient Depth Serpent',
     englishName: 'Ancient Depth Serpent',
     biome: 'moosewood',
     rarity: 'mythic',
@@ -128,13 +128,13 @@ export const FISH_DATABASE = [
     maxWeight: 2400.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Мифическое первобытное создание, пробуждающееся только в самые сильные бури.'
+    description: 'A mythical primordial serpent awakened only during violent tempest storms.'
   },
 
-  // ================= 2. ROSLIT BAY (ЗАЛИВ РОЗЛИТ) =================
+  // ================= 2. ROSLIT BAY =================
   {
     id: 'clownfish',
-    name: 'Рыба-клоун',
+    name: 'Clownfish',
     englishName: 'Clownfish',
     biome: 'roslit',
     rarity: 'common',
@@ -143,11 +143,11 @@ export const FISH_DATABASE = [
     maxWeight: 1.5,
     behavior: 'calm',
     iconKey: 'fish',
-    description: 'Яркая полосатая рыбка, живущая в коралловых актиниях Розлита.'
+    description: 'A vibrant striped reef dweller sheltered inside sea anemones.'
   },
   {
     id: 'snapper',
-    name: 'Красный Снэппер',
+    name: 'Red Snapper',
     englishName: 'Snapper',
     biome: 'roslit',
     rarity: 'common',
@@ -156,11 +156,11 @@ export const FISH_DATABASE = [
     maxWeight: 9.0,
     behavior: 'calm',
     iconKey: 'fish',
-    description: 'Обитатель теплых песчаных отмелей и мелководных рифов.'
+    description: 'A popular saltwater catch swimming around shallow volcanic sandbars.'
   },
   {
     id: 'amberjack',
-    name: 'Желтохвостая Сериола',
+    name: 'Yellowtail Amberjack',
     englishName: 'Amberjack',
     biome: 'roslit',
     rarity: 'uncommon',
@@ -169,11 +169,11 @@ export const FISH_DATABASE = [
     maxWeight: 35.0,
     behavior: 'erratic',
     iconKey: 'fish',
-    description: 'Стремительный хищник открытого залива с золотистым отливом на боках.'
+    description: 'A swift open-water hunter with shimmering golden streaks along its flanks.'
   },
   {
     id: 'barracuda',
-    name: 'Большая Барракуда',
+    name: 'Great Barracuda',
     englishName: 'Barracuda',
     biome: 'roslit',
     rarity: 'uncommon',
@@ -182,11 +182,11 @@ export const FISH_DATABASE = [
     maxWeight: 28.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Торпедообразная хищная рыба, атакующая блестящие наживки.'
+    description: 'A torpedo-shaped predator known to strike shiny lures at blinding speeds.'
   },
   {
     id: 'manta_ray',
-    name: 'Гигантская Манта',
+    name: 'Giant Manta Ray',
     englishName: 'Manta Ray',
     biome: 'roslit',
     rarity: 'rare',
@@ -195,11 +195,11 @@ export const FISH_DATABASE = [
     maxWeight: 350.0,
     behavior: 'erratic',
     iconKey: 'fish',
-    description: 'Величественный морской дьявол, плавно парящий над кораллами.'
+    description: 'A majestic sea giant gliding effortlessly across coral reef passages.'
   },
   {
     id: 'hammerhead',
-    name: 'Акула-молот',
+    name: 'Hammerhead Shark',
     englishName: 'Hammerhead Shark',
     biome: 'roslit',
     rarity: 'epic',
@@ -208,11 +208,11 @@ export const FISH_DATABASE = [
     maxWeight: 520.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Грозный охотник с уникальным строением головы и молниеносной реакцией.'
+    description: 'A fearsome apex hunter with panoramic sensory vision and relentless power.'
   },
   {
     id: 'roslit_volcanic_eel',
-    name: 'Вулканический Угорь',
+    name: 'Roslit Volcanic Eel',
     englishName: 'Roslit Volcanic Eel',
     biome: 'roslit',
     rarity: 'legendary',
@@ -221,11 +221,11 @@ export const FISH_DATABASE = [
     maxWeight: 380.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Огненный угорь, живущий в гидротермальных жерлах залива.'
+    description: 'A fire-infused eel nesting near hydrothermal vents and magma vents.'
   },
   {
     id: 'abyssal_devourer',
-    name: 'Пожиратель Бездны',
+    name: 'Abyssal Devourer',
     englishName: 'Abyssal Devourer',
     biome: 'roslit',
     rarity: 'mythic',
@@ -234,14 +234,14 @@ export const FISH_DATABASE = [
     maxWeight: 3500.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Чудовище из подводного каньона, затягивающее корабли в водоворот.'
+    description: 'A terrifying beast from the undersea trenches that pulls entire ships into whirlpools.'
   },
 
-  // ================= 3. SNOWCAP ISLAND (СНЕЖНАЯ ВЕРШИНА) =================
+  // ================= 3. SNOWCAP ISLAND =================
   {
     id: 'icefish',
-    name: 'Ледяная Рыба',
-    englishName: 'Antarctic Icefish',
+    name: 'Antarctic Icefish',
+    englishName: 'Icefish',
     biome: 'snowcap',
     rarity: 'common',
     basePrice: 130,
@@ -249,11 +249,11 @@ export const FISH_DATABASE = [
     maxWeight: 2.2,
     behavior: 'calm',
     iconKey: 'fish',
-    description: 'Прозрачная рыба с ледяной кровью, живущая при отрицательных температурах.'
+    description: 'A translucent fish with antifreeze glycoprotein blood thriving in sub-zero waters.'
   },
   {
     id: 'arctic_char',
-    name: 'Арктический Голец',
+    name: 'Arctic Char',
     englishName: 'Arctic Char',
     biome: 'snowcap',
     rarity: 'common',
@@ -262,11 +262,11 @@ export const FISH_DATABASE = [
     maxWeight: 8.5,
     behavior: 'calm',
     iconKey: 'fish',
-    description: 'Холодолюбивый голец с ярко-красным брюшком из подледных озер.'
+    description: 'A cold-water fish with bright crimson belly markings found under thick ice sheets.'
   },
   {
     id: 'glacier_perch',
-    name: 'Ледниковый Окунь',
+    name: 'Glacier Perch',
     englishName: 'Glacier Perch',
     biome: 'snowcap',
     rarity: 'uncommon',
@@ -275,11 +275,11 @@ export const FISH_DATABASE = [
     maxWeight: 12.0,
     behavior: 'erratic',
     iconKey: 'fish',
-    description: 'Шипастый окунь, покрытый тонкой ледяной коркой.'
+    description: 'A spiny perch coated with crystalline frost and sharp icicle fins.'
   },
   {
     id: 'aurora_trout',
-    name: 'Аврора-Форель',
+    name: 'Aurora Trout',
     englishName: 'Aurora Trout',
     biome: 'snowcap',
     rarity: 'rare',
@@ -288,11 +288,11 @@ export const FISH_DATABASE = [
     maxWeight: 20.0,
     behavior: 'erratic',
     iconKey: 'fish',
-    description: 'Чешуя этой редкой рыбы переливается всеми цветами северного сияния.'
+    description: 'Its scales shimmer with incandescent hues of the northern aurora borealis.'
   },
   {
     id: 'frostbite_shark',
-    name: 'Морозная Акула',
+    name: 'Frostbite Shark',
     englishName: 'Frostbite Shark',
     biome: 'snowcap',
     rarity: 'epic',
@@ -301,11 +301,11 @@ export const FISH_DATABASE = [
     maxWeight: 750.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Древняя арктическая акула, способная замораживать воду вокруг себя.'
+    description: 'An ancient glacial shark capable of freezing the water around its prey.'
   },
   {
     id: 'ancient_orca',
-    name: 'Древняя Косатка',
+    name: 'Ancient Orca',
     englishName: 'Ancient Orca',
     biome: 'snowcap',
     rarity: 'legendary',
@@ -314,11 +314,11 @@ export const FISH_DATABASE = [
     maxWeight: 4500.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Священный гигант северных морей, почитаемый древними эскимосами.'
+    description: 'A sacred matriarch of the arctic seas revered by island explorers.'
   },
   {
     id: 'apex_leviathan',
-    name: 'Апекс Левиафан',
+    name: 'Apex Leviathan',
     englishName: 'Apex Leviathan',
     biome: 'snowcap',
     rarity: 'mythic',
@@ -327,13 +327,13 @@ export const FISH_DATABASE = [
     maxWeight: 12000.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Верховный повелитель айсбергов и вечного холода.'
+    description: 'The supreme sovereign of permafrost glaciers and frozen deep seas.'
   },
 
-  // ================= 4. SUNSTONE ISLAND (ОСТРОВ СОЛНЕЧНОГО КАМНЯ) =================
+  // ================= 4. SUNSTONE ISLAND =================
   {
     id: 'angelfish',
-    name: 'Золотистая Скалярия',
+    name: 'Auric Angelfish',
     englishName: 'Auric Angelfish',
     biome: 'sunstone',
     rarity: 'common',
@@ -342,11 +342,11 @@ export const FISH_DATABASE = [
     maxWeight: 3.5,
     behavior: 'calm',
     iconKey: 'fish',
-    description: 'Священная рыбка с плавниками из чистейшего золотого свечения.'
+    description: 'A sacred angelfish adorned with radiant golden solar fin filaments.'
   },
   {
     id: 'sunstone_snapper',
-    name: 'Солнечный Люциан',
+    name: 'Sunstone Snapper',
     englishName: 'Sunstone Snapper',
     biome: 'sunstone',
     rarity: 'uncommon',
@@ -355,11 +355,11 @@ export const FISH_DATABASE = [
     maxWeight: 18.0,
     behavior: 'erratic',
     iconKey: 'fish',
-    description: 'Рыба, накапливающая энергию солнца в кристаллах на спине.'
+    description: 'A crystalline fish that stores concentrated solar energy in its dorsal spines.'
   },
   {
     id: 'volt_grouper',
-    name: 'Вольт-Групер',
+    name: 'Volt Grouper',
     englishName: 'Volt Grouper',
     biome: 'sunstone',
     rarity: 'rare',
@@ -368,11 +368,11 @@ export const FISH_DATABASE = [
     maxWeight: 90.0,
     behavior: 'erratic',
     iconKey: 'fish',
-    description: 'Огромный групер, генерирующий мощные электрические разряды.'
+    description: 'A massive grouper that generates high-voltage electrical bio-discharges.'
   },
   {
     id: 'solar_ray',
-    name: 'Солнечный Скат',
+    name: 'Solar Ray',
     englishName: 'Solar Ray',
     biome: 'sunstone',
     rarity: 'epic',
@@ -381,12 +381,12 @@ export const FISH_DATABASE = [
     maxWeight: 450.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Скат с пылающими краями крыльев, скользящий по теплым рифам.'
+    description: 'A blazing ray with fiery wingtips gliding across glowing mineral reefs.'
   },
   {
     id: 'apollos_sunshot',
-    name: 'Рыба Аполлона',
-    englishName: "Apollo's Sunshot Fish",
+    name: "Apollo's Sunshot",
+    englishName: "Apollo's Sunshot",
     biome: 'sunstone',
     rarity: 'legendary',
     basePrice: 9500,
@@ -394,11 +394,11 @@ export const FISH_DATABASE = [
     maxWeight: 1400.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Легендарное создание солнца, сияющее ярче полуденного неба.'
+    description: 'A legendary sun creature that shines brighter than the midday solar zenith.'
   },
   {
     id: 'ancient_megalodon',
-    name: 'Древний Мегалодон',
+    name: 'Ancient Megalodon',
     englishName: 'Ancient Megalodon',
     biome: 'sunstone',
     rarity: 'mythic',
@@ -407,13 +407,13 @@ export const FISH_DATABASE = [
     maxWeight: 20000.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Король доисторических океанов, сокрушающий скалы одним ударом челюстей.'
+    description: 'The prehistoric king of ocean predators, capable of shattering boulders in a single bite.'
   },
 
-  // ================= 5. THE DEPTHS (ГЛУБИНЫ БЕЗДНЫ / ВЕРТИГО) =================
+  // ================= 5. THE DEPTHS (VERTIGO) =================
   {
     id: 'barreleye',
-    name: 'Опистопрокт',
+    name: 'Barreleye Fish',
     englishName: 'Barreleye Fish',
     biome: 'depths',
     rarity: 'common',
@@ -422,11 +422,11 @@ export const FISH_DATABASE = [
     maxWeight: 4.5,
     behavior: 'calm',
     iconKey: 'fish',
-    description: 'Глубоководная рыба с прозрачной головой и светящимися изумрудными глазами.'
+    description: 'A deep-sea fish with a transparent dome head and glowing emerald tubular eyes.'
   },
   {
     id: 'grenadier',
-    name: 'Гренадер Бездны',
+    name: 'Abyssal Grenadier',
     englishName: 'Abyssal Grenadier',
     biome: 'depths',
     rarity: 'uncommon',
@@ -435,11 +435,11 @@ export const FISH_DATABASE = [
     maxWeight: 30.0,
     behavior: 'erratic',
     iconKey: 'fish',
-    description: 'Длиннохвостый хищник, приспособленный к запредельному давлению.'
+    description: 'A long-tailed abyssal predator adapted to crushingly extreme water pressure.'
   },
   {
     id: 'anglerfish',
-    name: 'Глубоководный удильщик',
+    name: 'Deepsea Anglerfish',
     englishName: 'Anglerfish',
     biome: 'depths',
     rarity: 'rare',
@@ -448,11 +448,11 @@ export const FISH_DATABASE = [
     maxWeight: 60.0,
     behavior: 'erratic',
     iconKey: 'fish',
-    description: 'Охотник абсолютной тьмы с биолюминесцентным фонарем-приманкой.'
+    description: 'A hunter of absolute pitch blackness equipped with a bioluminescent esca lure.'
   },
   {
     id: 'coelacanth',
-    name: 'Древняя Латимерия',
+    name: 'Ancient Coelacanth',
     englishName: 'Ancient Coelacanth',
     biome: 'depths',
     rarity: 'epic',
@@ -461,11 +461,11 @@ export const FISH_DATABASE = [
     maxWeight: 160.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Живое ископаемое с мясистыми плавниками, не изменившееся за 400 млн лет.'
+    description: 'A living fossil with lobed fins that has remained unchanged for over 400 million years.'
   },
   {
     id: 'ancient_kraken',
-    name: 'Древний Кракен',
+    name: 'Ancient Kraken',
     englishName: 'Ancient Kraken',
     biome: 'depths',
     rarity: 'legendary',
@@ -474,11 +474,11 @@ export const FISH_DATABASE = [
     maxWeight: 8000.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Колоссальный спрут бездны с щупальцами толщиной с вековые дубы.'
+    description: 'A colossal octopus titan with crushing tentacles thicker than ancient redwood trees.'
   },
   {
     id: 'awakened_omnithal',
-    name: 'Пробужденный Омнитал',
+    name: 'Awakened Omnithal',
     englishName: 'Awakened Omnithal',
     biome: 'depths',
     rarity: 'mythic',
@@ -487,6 +487,6 @@ export const FISH_DATABASE = [
     maxWeight: 35000.0,
     behavior: 'thrashing',
     iconKey: 'fish',
-    description: 'Космическая аномалия Бездны, искривляющая гравитацию и пространство вокруг себя.'
+    description: 'A cosmic anomaly of the deepest abyss that warps gravitational fields and spacetime.'
   }
 ];

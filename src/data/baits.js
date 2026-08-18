@@ -1,7 +1,7 @@
 export const BAITS = [
   {
     id: 'none',
-    name: 'Без наживки',
+    name: 'No Bait',
     englishName: 'No Bait',
     price: 0,
     pearlPrice: 0,
@@ -10,11 +10,11 @@ export const BAITS = [
     speedMultiplier: 1.0,
     mutationBonus: 0,
     iconKey: 'crosshair',
-    description: 'Ловля на пустой крючок. Стандартное время поклевки.'
+    description: 'Fishing with an empty hook. Standard bite time.'
   },
   {
     id: 'worm',
-    name: 'Дождевой червь',
+    name: 'Earthworm',
     englishName: 'Worm',
     price: 25,
     pearlPrice: 0,
@@ -23,11 +23,11 @@ export const BAITS = [
     speedMultiplier: 0.9,
     mutationBonus: 2,
     iconKey: 'crosshair',
-    description: 'Классическая приманка, немного увеличивает частоту поклевок.'
+    description: 'A classic bait slightly increasing bite rates.'
   },
   {
     id: 'shrimp',
-    name: 'Морская креветка',
+    name: 'Sea Shrimp',
     englishName: 'Shrimp',
     price: 90,
     pearlPrice: 0,
@@ -36,11 +36,11 @@ export const BAITS = [
     speedMultiplier: 0.8,
     mutationBonus: 6,
     iconKey: 'sparkles',
-    description: 'Лакомство для рифовых и прибрежных хищников.'
+    description: 'A delicacy for reef and coastal saltwater predators.'
   },
   {
     id: 'squid',
-    name: 'Кусочки кальмара',
+    name: 'Squid Chunks',
     englishName: 'Squid',
     price: 250,
     pearlPrice: 0,
@@ -49,11 +49,11 @@ export const BAITS = [
     speedMultiplier: 0.75,
     mutationBonus: 12,
     iconKey: 'sparkles',
-    description: 'Плотное мясо с сильным запахом, привлекает крупную рыбу.'
+    description: 'Pungent squid meat that attracts heavier, fighting fish.'
   },
   {
     id: 'fish_head',
-    name: 'Рыбья голова',
+    name: 'Fish Head',
     englishName: 'Fish Head',
     price: 650,
     pearlPrice: 0,
@@ -62,11 +62,11 @@ export const BAITS = [
     speedMultiplier: 0.7,
     mutationBonus: 20,
     iconKey: 'flame',
-    description: 'Особая наживка для охоты на глубоководных чудовищ и акул.'
+    description: 'Special bait favored for hunting deep-sea monsters and apex sharks.'
   },
   {
     id: 'super_flakes',
-    name: 'Супер-хлопья',
+    name: 'Super Flakes',
     englishName: 'Super Flakes',
     price: 1800,
     pearlPrice: 0,
@@ -75,11 +75,11 @@ export const BAITS = [
     speedMultiplier: 0.65,
     mutationBonus: 35,
     iconKey: 'trophy',
-    description: 'Ароматизированная смесь, многократно повышающая шанс мутаций.'
+    description: 'Aromatic nutrient blend greatly elevating mutation chances.'
   },
   {
     id: 'truffle_worm',
-    name: 'Трюфельный червь',
+    name: 'Truffle Worm',
     englishName: 'Truffle Worm',
     price: 0,
     pearlPrice: 15,
@@ -88,6 +88,6 @@ export const BAITS = [
     speedMultiplier: 0.5,
     mutationBonus: 60,
     iconKey: 'gem',
-    description: 'Редчайший деликатес, приманивающий мифических левиафанов архипелага.'
+    description: 'An ultra-rare delicacy capable of luring mythical archipelago leviathans.'
   }
 ];

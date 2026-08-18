@@ -204,7 +204,7 @@ class GameApp {
     if (this.gameState !== 'bite') return;
 
     this.gameState = 'idle';
-    this.hud.setCastState('idle', 'УПЛЫЛА! ЗАБРОСИТЬ СНОВА');
+    this.hud.setCastState('idle', 'ESCAPED! CAST AGAIN');
     this.canvas.retrieveBobber();
     sound.playSplash();
     tg.notificationError();
@@ -294,7 +294,7 @@ class GameApp {
 
   handleCatchFailed(fish) {
     this.gameState = 'idle';
-    this.hud.setCastState('idle', 'СОРВАЛАСЬ! ЗАБРОСИТЬ СНОВА');
+    this.hud.setCastState('idle', 'LOST FISH! CAST AGAIN');
     this.canvas.retrieveBobber();
     sound.playSplash();
     tg.notificationError();

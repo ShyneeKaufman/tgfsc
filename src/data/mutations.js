@@ -1,90 +1,90 @@
 export const MUTATIONS = {
   normal: {
     id: 'normal',
-    name: 'Обычная',
+    name: 'Normal',
     prefix: '',
     multiplier: 1.0,
     chance: 0.70,
     color: '#94a3b8',
     glow: 'none',
-    description: 'Стандартный экземпляр без отклонений.'
+    description: 'A standard specimen without abnormalities.'
   },
   shiny: {
     id: 'shiny',
-    name: 'Сияющая',
-    prefix: '✨ Сияющая',
+    name: 'Shiny',
+    prefix: '✨ Shiny',
     multiplier: 1.8,
     chance: 0.12,
     color: '#38bdf8',
     glow: '0 0 12px rgba(56, 189, 248, 0.8)',
-    description: 'Чешуя отражает свет всеми цветами радуги.'
+    description: 'Its scales reflect radiant, iridescent colors in the sunlight.'
   },
   golden: {
     id: 'golden',
-    name: 'Золотая',
-    prefix: '👑 Золотая',
+    name: 'Golden',
+    prefix: '👑 Golden',
     multiplier: 3.5,
     chance: 0.07,
     color: '#fbbf24',
     glow: '0 0 16px rgba(251, 191, 36, 0.9)',
-    description: 'Покрыта чистейшим золотым отливом. Мечта любого торговца!'
+    description: 'Coated in pure solid gold luster. Every merchant desires it!'
   },
   albino: {
     id: 'albino',
-    name: 'Альбинос',
-    prefix: '⚪ Альбинос',
+    name: 'Albino',
+    prefix: '⚪ Albino',
     multiplier: 2.2,
     chance: 0.05,
     color: '#f1f5f9',
     glow: '0 0 10px rgba(241, 245, 249, 0.7)',
-    description: 'Редчайшая молочно-белая особь с алыми глазами.'
+    description: 'An ultra-rare milky-white specimen with ruby eyes.'
   },
   gigantic: {
     id: 'gigantic',
-    name: 'Гигантская',
-    prefix: '🐋 Гигантская',
+    name: 'Gigantic',
+    prefix: '🐋 Gigantic',
     multiplier: 2.8,
     chance: 0.03,
     color: '#a855f7',
     glow: '0 0 14px rgba(168, 85, 247, 0.8)',
-    description: 'Аномально крупная рыба, едва помещается в садок.'
+    description: 'An abnormally massive fish that barely fits in your backpack.'
   },
   radioactive: {
     id: 'radioactive',
-    name: 'Радиоактивная',
-    prefix: '☢️ Радиоактивная',
+    name: 'Radioactive',
+    prefix: '☢️ Radioactive',
     multiplier: 4.5,
     chance: 0.02,
     color: '#22c55e',
     glow: '0 0 18px rgba(34, 197, 94, 0.95)',
-    description: 'Светится едким неоново-зеленым светом. Осторожно!'
+    description: 'Glows with pungent neon green bio-luminescent toxicity.'
   },
   abyssal: {
     id: 'abyssal',
-    name: 'Бездны',
-    prefix: '🌌 Порождение Бездны',
+    name: 'Abyssal',
+    prefix: '🌌 Abyssal',
     multiplier: 7.0,
     chance: 0.008,
     color: '#ec4899',
     glow: '0 0 22px rgba(236, 72, 153, 1)',
-    description: 'Древняя мутация из Марианского желоба. Питается тенью.'
+    description: 'An ancient void mutation born in the deepest Mariana trenches.'
   },
   cosmic: {
     id: 'cosmic',
-    name: 'Космическая',
-    prefix: '🌠 Космическая',
+    name: 'Cosmic',
+    prefix: '🌠 Cosmic',
     multiplier: 12.0,
     chance: 0.002,
     color: '#818cf8',
     glow: '0 0 25px rgba(129, 140, 248, 1)',
-    description: 'Упала из далеких звездных скоплений. Бесценна.'
+    description: 'Fell from distant stellar nebula clusters. Priceless treasure.'
   }
 };
 
 export const RARITIES = {
   common: {
     id: 'common',
-    name: 'Обычная',
+    name: 'Common',
     color: '#94a3b8',
     bgGradient: 'linear-gradient(135deg, #1e293b, #334155)',
     borderColor: '#475569',
@@ -93,7 +93,7 @@ export const RARITIES = {
   },
   uncommon: {
     id: 'uncommon',
-    name: 'Необычная',
+    name: 'Uncommon',
     color: '#4ade80',
     bgGradient: 'linear-gradient(135deg, #064e3b, #047857)',
     borderColor: '#10b981',
@@ -102,7 +102,7 @@ export const RARITIES = {
   },
   rare: {
     id: 'rare',
-    name: 'Редкая',
+    name: 'Rare',
     color: '#38bdf8',
     bgGradient: 'linear-gradient(135deg, #0c4a6e, #0284c7)',
     borderColor: '#38bdf8',
@@ -111,7 +111,7 @@ export const RARITIES = {
   },
   epic: {
     id: 'epic',
-    name: 'Эпическая',
+    name: 'Epic',
     color: '#c084fc',
     bgGradient: 'linear-gradient(135deg, #4c1d95, #7c3aed)',
     borderColor: '#a855f7',
@@ -120,7 +120,7 @@ export const RARITIES = {
   },
   legendary: {
     id: 'legendary',
-    name: 'Легендарная',
+    name: 'Legendary',
     color: '#facc15',
     bgGradient: 'linear-gradient(135deg, #713f12, #ca8a04)',
     borderColor: '#eab308',
@@ -129,7 +129,7 @@ export const RARITIES = {
   },
   mythic: {
     id: 'mythic',
-    name: 'Мифическая',
+    name: 'Mythic',
     color: '#f43f5e',
     bgGradient: 'linear-gradient(135deg, #881337, #e11d48)',
     borderColor: '#f43f5e',
@@ -138,7 +138,7 @@ export const RARITIES = {
   },
   abyssal: {
     id: 'abyssal',
-    name: 'Абиссальная',
+    name: 'Abyssal',
     color: '#e879f9',
     bgGradient: 'linear-gradient(135deg, #3b0764, #701a75)',
     borderColor: '#d946ef',

@@ -33,8 +33,8 @@ class TelegramBridge {
       const u = this.tg.initDataUnsafe.user;
       return {
         id: u.id,
-        username: u.username || 'Рыбак',
-        firstName: u.first_name || 'Рыбак',
+        username: u.username || 'Angler',
+        firstName: u.first_name || 'Angler',
         lastName: u.last_name || '',
         photoUrl: u.photo_url || null
       };
@@ -42,7 +42,7 @@ class TelegramBridge {
     return {
       id: 1952158452, // Default admin id in standalone mode
       username: 'ShyneeKaufman',
-      firstName: 'Капитан',
+      firstName: 'Captain',
       lastName: '',
       photoUrl: null
     };

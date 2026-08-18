@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   }
 
   const token = process.env.BOT_TOKEN || '8974555890:AAHM4U1BctSOwQAbbB_DALOHmdcLWQVHU1M';
-  const webAppUrl = process.env.WEBAPP_URL || 'https://tgfsc.vercel.app/?v=3.0';
+  const webAppUrl = process.env.WEBAPP_URL || 'https://tgfsc.vercel.app/?v=3.5';
 
   try {
     const update = req.body;
@@ -22,19 +22,20 @@ export default async function handler(req, res) {
     const telegramApi = `https://api.telegram.org/bot${token}`;
 
     if (text.startsWith('/start') || text.startsWith('/play')) {
-      const welcomeText = `Забрасывай удочку, следи за поплавком и удерживай бегунок на рыбе, пока шкала вываживания не заполнится.\n\n` +
-        `Что тут есть:\n` +
-        `• 35+ видов рыб и 8 мутаций (от золотых до космических)\n` +
-        `• 4 биома: от прибрежной бухты до лавового кратера\n` +
-        `• Удочки со статами натяжения, наживки и расширение садка\n` +
-        `• Тактильная отдача на поклевках и рывках\n\n` +
-        `Жми кнопку ниже, чтобы начать:`;
+      const welcomeText = `🎣 Welcome to TG-Fisch!\n\n` +
+        `Cast your rod, watch the bobber, and keep your control bar centered on the fish until it's reeled in.\n\n` +
+        `Features:\n` +
+        `• 37 authentic fish species & 8 rare mutations (from Golden to Cosmic)\n` +
+        `• 5 archipelago islands from Moosewood to The Depths (Vertigo)\n` +
+        `• 11 Fisch fishing rods, baits, and infinite backpack\n` +
+        `• Real-time multiplayer catch feed & global weather anomalies\n\n` +
+        `Tap the button below to start fishing:`;
 
       const keyboard = {
         inline_keyboard: [
           [
             {
-              text: '🎣 Запустить рыбалку',
+              text: '🎣 Play TG-Fisch',
               web_app: { url: webAppUrl }
             }
           ]
@@ -51,11 +52,11 @@ export default async function handler(req, res) {
         })
       });
     } else if (text.startsWith('/help')) {
-      const helpText = `Как тут всё устроено:\n\n` +
-        `1. Нажимаешь «Запустить рыбалку».\n` +
-        `2. Жмешь «Забросить» и ждешь сигнала поклевки.\n` +
-        `3. При сигнале «ПОДСЕКАЙ» жмешь кнопку и удерживаешь бегунок на рыбе.\n` +
-        `4. Продаешь рыбу в садке и берешь более прочные удочки в магазине.`;
+      const helpText = `How to Play TG-Fisch:\n\n` +
+        `1. Tap "Play TG-Fisch".\n` +
+        `2. Hold and release "Cast" into the water and wait for a bite.\n` +
+        `3. When "BITE! HOOK NOW!" appears, tap quickly and track the fish with your control bar.\n` +
+        `4. Sell catches from your backpack and purchase better rods and baits in the shop.`;
 
       await fetch(`${telegramApi}/sendMessage`, {
         method: 'POST',
