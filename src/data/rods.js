@@ -2,7 +2,7 @@ export const RODS = [
   {
     id: 'starter_rod',
     name: 'Бамбуковая удочка',
-    icon: '🎋',
+    iconKey: 'anchor',
     price: 0,
     pearlPrice: 0,
     requiredLevel: 1,
@@ -16,7 +16,7 @@ export const RODS = [
   {
     id: 'reinforced_rod',
     name: 'Усиленный спиннинг',
-    icon: '🎣',
+    iconKey: 'shield',
     price: 350,
     pearlPrice: 0,
     requiredLevel: 3,
@@ -30,7 +30,7 @@ export const RODS = [
   {
     id: 'carbon_rod',
     name: 'Карбоновый жезл',
-    icon: '⚡',
+    iconKey: 'zap',
     price: 1200,
     pearlPrice: 0,
     requiredLevel: 6,
@@ -44,7 +44,7 @@ export const RODS = [
   {
     id: 'magnetic_rod',
     name: 'Магнитный траулер',
-    icon: '🧲',
+    iconKey: 'crosshair',
     price: 3500,
     pearlPrice: 15,
     requiredLevel: 10,
@@ -58,7 +58,7 @@ export const RODS = [
   {
     id: 'magma_rod',
     name: 'Вулканический бур',
-    icon: '🔥',
+    iconKey: 'flame',
     price: 8500,
     pearlPrice: 40,
     requiredLevel: 15,
@@ -72,7 +72,7 @@ export const RODS = [
   {
     id: 'midas_rod',
     name: 'Жезл Царя Мидаса',
-    icon: '👑',
+    iconKey: 'trophy',
     price: 25000,
     pearlPrice: 100,
     requiredLevel: 20,
@@ -86,7 +86,7 @@ export const RODS = [
   {
     id: 'abyssal_rod',
     name: 'Глубинный Левиафан',
-    icon: '🌌',
+    iconKey: 'eye',
     price: 75000,
     pearlPrice: 250,
     requiredLevel: 25,

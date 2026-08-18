@@ -2,7 +2,8 @@ export const BIOMES = [
   {
     id: 'coast',
     name: 'Лазурная Бухта',
-    icon: '🏝️',
+    iconKey: 'palmtree',
+    icon: 'palmtree',
     requiredLevel: 1,
     travelCost: 0,
     waterColor: '#0ea5e9',
@@ -15,7 +16,8 @@ export const BIOMES = [
   {
     id: 'reef',
     name: 'Затонувший Риф',
-    icon: '🪸',
+    iconKey: 'waves',
+    icon: 'waves',
     requiredLevel: 5,
     travelCost: 200,
     waterColor: '#06b6d4',
@@ -28,7 +30,8 @@ export const BIOMES = [
   {
     id: 'abyss',
     name: 'Марианская Бездна',
-    icon: '🌌',
+    iconKey: 'eye',
+    icon: 'eye',
     requiredLevel: 12,
     travelCost: 1500,
     waterColor: '#8b5cf6',
@@ -41,7 +44,8 @@ export const BIOMES = [
   {
     id: 'caldera',
     name: 'Лавовая Кальдера',
-    icon: '🌋',
+    iconKey: 'flame',
+    icon: 'flame',
     requiredLevel: 20,
     travelCost: 5000,
     waterColor: '#f97316',

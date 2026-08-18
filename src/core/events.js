@@ -4,8 +4,9 @@ import { tg } from './telegram.js';
 export const GLOBAL_EVENTS = [
   {
     id: 'golden_hour',
-    title: '🌅 ЗОЛОТОЙ ЧАС',
-    desc: '+50% к цене всей рыбы и +15 к Удаче!',
+    title: 'ЗОЛОТОЙ ЧАС',
+    iconKey: 'sparkles',
+    desc: '+50% к цене всей рыбы и +15 к Удаче',
     luckBonus: 15,
     priceMultiplier: 1.5,
     expMultiplier: 1.0,
@@ -15,8 +16,9 @@ export const GLOBAL_EVENTS = [
   },
   {
     id: 'abyssal_storm',
-    title: '⚡ ШТОРМ БЕЗДНЫ',
-    desc: 'Шанс редких мутаций увеличен в 2.5 раза!',
+    title: 'ШТОРМ БЕЗДНЫ',
+    iconKey: 'zap',
+    desc: 'Шанс редких мутаций увеличен в 2.5 раза',
     luckBonus: 25,
     priceMultiplier: 1.2,
     expMultiplier: 1.2,
@@ -26,8 +28,9 @@ export const GLOBAL_EVENTS = [
   },
   {
     id: 'aurora_blessing',
-    title: '🌌 СИЯНИЕ АВРОРЫ',
-    desc: '+100% к опыту и мгновенная поклевка!',
+    title: 'СИЯНИЕ АВРОРЫ',
+    iconKey: 'sparkle',
+    desc: '+100% к опыту и мгновенная поклевка',
     luckBonus: 10,
     priceMultiplier: 1.0,
     expMultiplier: 2.0,
@@ -37,8 +40,9 @@ export const GLOBAL_EVENTS = [
   },
   {
     id: 'caldera_surge',
-    title: '🌋 ВУЛКАНИЧЕСКИЙ ВСПЛЕСК',
-    desc: 'Легендарные рыбы поднялись из глубин!',
+    title: 'ВУЛКАНИЧЕСКИЙ ВСПЛЕСК',
+    iconKey: 'flame',
+    desc: 'Легендарные рыбы поднялись из глубин',
     luckBonus: 35,
     priceMultiplier: 1.4,
     expMultiplier: 1.5,

@@ -3,6 +3,7 @@ import { sound } from '../core/sound.js';
 import { tg } from '../core/telegram.js';
 import { liveFeed } from '../core/liveFeed.js';
 import { events } from '../core/events.js';
+import { getIconSvg } from './icons.js';
 
 export class HUD {
   constructor(container, onCastStart, onCastRelease, onShakeClick, onHookClick, onTabChange, onOpenDaily, onOpenRef) {
@@ -44,17 +45,17 @@ export class HUD {
       <!-- Live Global Catch Ticker -->
       <div class="live-catch-ticker" id="liveCatchTicker">
         <div class="ticker-content" id="tickerContent">
-          <span class="ticker-pulse">🔴 LIVE</span>
-          <span class="ticker-text" id="tickerText">Океан спокоен... Забрасывайте удочки!</span>
+          <span class="ticker-pulse">LIVE</span>
+          <span class="ticker-text" id="tickerText">Океан спокоен. Забрасывайте снасти.</span>
         </div>
       </div>
 
       <!-- Active Global Event / Weather Banner -->
       <div class="global-event-banner hidden" id="globalEventBanner">
-        <span class="event-icon" id="eventIcon">⚡</span>
+        <span class="event-icon" id="eventIcon">${getIconSvg('zap', 18)}</span>
         <div class="event-info">
           <div class="event-title" id="eventTitle">ШТОРМ БЕЗДНЫ</div>
-          <div class="event-desc" id="eventDesc">+25 к Удаче и шанс мутаций x2.5!</div>
+          <div class="event-desc" id="eventDesc">+25 к Удаче и шанс мутаций x2.5</div>
         </div>
         <div class="event-timer-badge" id="eventTimer">02:30</div>
       </div>
@@ -63,7 +64,7 @@ export class HUD {
       <header class="game-header">
         <div class="header-left">
           <div class="user-badge">
-            <div class="avatar-ring">${user.photoUrl ? `<img src="${user.photoUrl}" class="avatar-img"/>` : '🎣'}</div>
+            <div class="avatar-ring">${user.photoUrl ? `<img src="${user.photoUrl}" class="avatar-img"/>` : getIconSvg('anchor', 16)}</div>
             <div class="user-meta">
               <div class="user-name">${user.firstName || user.username}</div>
               <div class="level-pill">Ур. <span id="hudLevel">${state.level}</span></div>
@@ -77,17 +78,21 @@ export class HUD {
 
         <div class="header-right">
           <div class="currency-badge coins" title="Монеты">
-            <span class="coin-icon">🪙</span>
+            ${getIconSvg('coins', 13)}
             <span class="coin-value" id="hudCoins">${state.coins.toLocaleString('ru-RU')}</span>
           </div>
           <div class="currency-badge pearls" title="Жемчуг Бездны">
-            <span class="pearl-icon">💎</span>
+            ${getIconSvg('gem', 13)}
             <span class="pearl-value" id="hudPearls">${state.pearls}</span>
           </div>
-          <button class="header-action-btn" id="dailyBtn" title="Ежедневный бонус">🎁</button>
-          <button class="header-action-btn" id="refBtn" title="Пригласить друзей">🤝</button>
+          <button class="header-action-btn" id="dailyBtn" title="Ежедневный бонус">
+            ${getIconSvg('gift', 15)}
+          </button>
+          <button class="header-action-btn" id="refBtn" title="Пригласить друзей">
+            ${getIconSvg('userPlus', 15)}
+          </button>
           <button class="sound-toggle" id="soundToggleBtn" aria-label="Звук">
-            ${sound.muted ? '🔇' : '🔊'}
+            ${sound.muted ? getIconSvg('mute', 14) : getIconSvg('volume', 14)}
           </button>
         </div>
       </header>
@@ -96,28 +101,29 @@ export class HUD {
       <div class="sub-header-ribbon">
         <div class="ribbon-left">
           <div class="biome-pill" id="hudBiome">
-            <span class="biome-icon">${biome.icon}</span>
+            <span class="biome-icon">${getIconSvg(biome.iconKey || 'palmtree', 13)}</span>
             <span class="biome-name">${biome.name}</span>
           </div>
           
           <div class="anglers-pill" id="hudAnglersPill" title="Рыбаки на этой локации">
             <span class="anglers-dot"></span>
-            <span class="anglers-count" id="hudAnglersCount">👥 ${anglers.length + 1} онлайн</span>
+            ${getIconSvg('users', 12)}
+            <span class="anglers-count" id="hudAnglersCount">${anglers.length + 1} онлайн</span>
           </div>
 
           <div class="streak-pill ${state.streak > 0 ? '' : 'hidden'}" id="hudStreakPill">
-            <span>🔥</span>
+            ${getIconSvg('flame', 12)}
             <span id="hudStreakText">Стрик x${state.streak}</span>
           </div>
         </div>
 
         <div class="gear-status">
           <div class="gear-item" id="hudRodPill" title="Текущая удочка">
-            <span>${rod.icon}</span>
+            <span>${getIconSvg(rod.iconKey || 'anchor', 12)}</span>
             <span class="gear-name">${rod.name}</span>
           </div>
           <div class="gear-item" id="hudBaitPill" title="Текущая наживка">
-            <span>${bait.icon}</span>
+            <span>${getIconSvg(bait.iconKey || 'crosshair', 12)}</span>
             <span class="gear-name">${bait.name} ${state.equippedBaitId !== 'none' ? `(${state.baits[state.equippedBaitId] || 0})` : ''}</span>
           </div>
         </div>
@@ -126,7 +132,7 @@ export class HUD {
       <!-- Floating Fisch Shake Button Area -->
       <div class="fisch-shake-layer hidden" id="shakeLayer">
         <button class="btn-fisch-shake" id="shakeBtn">
-          <span class="shake-inner">SHAKE! 💥</span>
+          <span class="shake-inner">SHAKE</span>
         </button>
       </div>
 
@@ -151,13 +157,13 @@ export class HUD {
 
         <!-- Cast Accuracy Grade Toast -->
         <div class="cast-grade-popup hidden" id="castGradePopup">
-          <span class="grade-text" id="gradeText">PERFECT!!</span>
+          <span class="grade-text" id="gradeText">PERFECT</span>
         </div>
 
         <!-- Big Cast Button -->
         <button class="btn-cast" id="castBtn">
           <div class="btn-cast-inner">
-            <span class="cast-icon">🎣</span>
+            <span class="cast-icon">${getIconSvg('crosshair', 20)}</span>
             <span class="cast-text" id="castBtnText">ЗАБРОСИТЬ</span>
           </div>
           <div class="cast-glow"></div>
@@ -166,8 +172,8 @@ export class HUD {
         <!-- Bite Notification Overlay -->
         <div class="bite-alert-banner hidden" id="biteAlertBanner">
           <div class="bite-content">
-            <span class="bite-emoji">⚡</span>
-            <span class="bite-title">КЛЮЁТ! ПОДСЕКАЙ!</span>
+            <span class="bite-icon">${getIconSvg('zap', 16)}</span>
+            <span class="bite-title">ПОДСЕКАЙ</span>
           </div>
         </div>
       </div>
@@ -175,24 +181,24 @@ export class HUD {
       <!-- Bottom Dock Navigation -->
       <nav class="bottom-dock">
         <button class="dock-tab active" data-tab="fishing" id="tabFishing">
-          <span class="tab-icon">🌊</span>
+          <span class="tab-icon">${getIconSvg('waves', 20)}</span>
           <span class="tab-label">Вода</span>
         </button>
         <button class="dock-tab" data-tab="backpack" id="tabBackpack">
-          <span class="tab-icon">🎒</span>
+          <span class="tab-icon">${getIconSvg('bag', 20)}</span>
           <span class="tab-label">Садок</span>
           <span class="badge" id="hudBagBadge" style="display: ${state.inventory.length > 0 ? 'flex' : 'none'}">${state.inventory.length}</span>
         </button>
         <button class="dock-tab" data-tab="shop" id="tabShop">
-          <span class="tab-icon">🏪</span>
+          <span class="tab-icon">${getIconSvg('store', 20)}</span>
           <span class="tab-label">Снасти</span>
         </button>
         <button class="dock-tab" data-tab="fishdex" id="tabFishdex">
-          <span class="tab-icon">📖</span>
+          <span class="tab-icon">${getIconSvg('book', 20)}</span>
           <span class="tab-label">FishDex</span>
         </button>
         <button class="dock-tab" data-tab="map" id="tabMap">
-          <span class="tab-icon">🗺️</span>
+          <span class="tab-icon">${getIconSvg('map', 20)}</span>
           <span class="tab-label">Карта</span>
         </button>
       </nav>
@@ -226,9 +232,9 @@ export class HUD {
     const locTag = `<span class="ticker-loc">${event.biomeName}</span>`;
 
     if (event.isLocal) {
-      this.tickerText.innerHTML = `🌟 <strong>Вы</strong> выловили ${event.fishIcon} <strong>${mutBadge}${event.fishName}</strong> (${event.weight} кг) в ${locTag}! (+${event.price} 🪙)`;
+      this.tickerText.innerHTML = `<strong>Вы</strong> выловили <strong>${mutBadge}${event.fishName}</strong> (${event.weight} кг) в ${locTag} (+${event.price} монет)`;
     } else {
-      this.tickerText.innerHTML = `🎣 <strong>${event.playerName}</strong> поймал ${event.fishIcon} <strong>${mutBadge}${event.fishName}</strong> (${event.weight} кг) в ${locTag}!`;
+      this.tickerText.innerHTML = `<strong>${event.playerName}</strong> поймал <strong>${mutBadge}${event.fishName}</strong> (${event.weight} кг) в ${locTag}`;
     }
 
     this.tickerContainer.classList.add('flash');
@@ -244,7 +250,6 @@ export class HUD {
       const mins = Math.floor(remainingSecs / 60).toString().padStart(2, '0');
       const secs = (remainingSecs % 60).toString().padStart(2, '0');
 
-      this.eventIcon.textContent = currentEvent.title.split(' ')[0];
       this.eventTitle.textContent = currentEvent.title;
       this.eventDesc.textContent = currentEvent.desc;
       this.eventTimer.textContent = `${mins}:${secs}`;
@@ -262,7 +267,7 @@ export class HUD {
     // Sound toggle
     this.soundToggleBtn.addEventListener('click', () => {
       const isMuted = sound.toggleMute();
-      this.soundToggleBtn.textContent = isMuted ? '🔇' : '🔊';
+      this.soundToggleBtn.innerHTML = isMuted ? getIconSvg('mute', 14) : getIconSvg('volume', 14);
       tg.selectionChanged();
     });
 
@@ -347,24 +352,24 @@ export class HUD {
   }
 
   showAccuracyGrade(accuracy) {
-    let grade = 'Meh..';
+    let grade = 'Слабо';
     let color = '#94a3b8';
 
     if (accuracy >= 95) {
-      grade = 'PERFECT!!';
+      grade = 'ИДЕАЛЬНО!';
       color = '#f59e0b';
       state.stats.perfectCasts += 1;
     } else if (accuracy >= 85) {
-      grade = 'Amazing!';
+      grade = 'Отлично!';
       color = '#22d3ee';
     } else if (accuracy >= 70) {
-      grade = 'Great!';
+      grade = 'Хорошо';
       color = '#10b981';
     } else if (accuracy >= 50) {
-      grade = 'Good!';
+      grade = 'Нормально';
       color = '#38bdf8';
     } else if (accuracy >= 30) {
-      grade = 'Fine.';
+      grade = 'Неплохо';
       color = '#e2e8f0';
     }
 
@@ -414,6 +419,15 @@ export class HUD {
         actionZone.classList.remove('hidden');
       } else {
         actionZone.classList.add('hidden');
+      }
+    }
+
+    const eventBanner = this.container.querySelector('#globalEventBanner');
+    if (eventBanner) {
+      if (tabName === 'fishing' && events.getCurrentEvent()) {
+        eventBanner.classList.remove('hidden');
+      } else {
+        eventBanner.classList.add('hidden');
       }
     }
 
@@ -482,12 +496,12 @@ export class HUD {
 
     const biomeEl = this.container.querySelector('#hudBiome');
     if (biomeEl) {
-      biomeEl.innerHTML = `<span class="biome-icon">${biome.icon}</span><span class="biome-name">${biome.name}</span>`;
+      biomeEl.innerHTML = `<span class="biome-icon">${getIconSvg(biome.iconKey || 'palmtree', 13)}</span><span class="biome-name">${biome.name}</span>`;
     }
 
     const anglersCountEl = this.container.querySelector('#hudAnglersCount');
     if (anglersCountEl) {
-      anglersCountEl.textContent = `👥 ${anglers.length + 1} онлайн`;
+      anglersCountEl.textContent = `${anglers.length + 1} онлайн`;
     }
 
     const streakPill = this.container.querySelector('#hudStreakPill');
@@ -503,12 +517,12 @@ export class HUD {
 
     const rodPill = this.container.querySelector('#hudRodPill');
     if (rodPill) {
-      rodPill.innerHTML = `<span>${rod.icon}</span><span class="gear-name">${rod.name}</span>`;
+      rodPill.innerHTML = `<span>${getIconSvg(rod.iconKey || 'anchor', 12)}</span><span class="gear-name">${rod.name}</span>`;
     }
 
     const baitPill = this.container.querySelector('#hudBaitPill');
     if (baitPill) {
-      baitPill.innerHTML = `<span>${bait.icon}</span><span class="gear-name">${bait.name} ${state.equippedBaitId !== 'none' ? `(${state.baits[state.equippedBaitId] || 0})` : ''}</span>`;
+      baitPill.innerHTML = `<span>${getIconSvg(bait.iconKey || 'crosshair', 12)}</span><span class="gear-name">${bait.name} ${state.equippedBaitId !== 'none' ? `(${state.baits[state.equippedBaitId] || 0})` : ''}</span>`;
     }
   }
 }

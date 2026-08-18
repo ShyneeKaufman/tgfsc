@@ -3,6 +3,7 @@ import { RODS } from '../data/rods.js';
 import { BAITS } from '../data/baits.js';
 import { sound } from '../core/sound.js';
 import { tg } from '../core/telegram.js';
+import { getIconSvg } from './icons.js';
 
 export class ShopView {
   constructor(container) {
@@ -18,12 +19,12 @@ export class ShopView {
       <div class="view-panel shop-panel">
         <div class="panel-header">
           <div class="panel-title-group">
-            <span class="panel-icon">🏪</span>
+            <span class="panel-icon">${getIconSvg('store', 20)}</span>
             <h2>МАГАЗИН СНАСТЕЙ</h2>
           </div>
           <div class="shop-subtabs">
-            <button class="subtab-btn active" data-subtab="rods">Удочки 🎣</button>
-            <button class="subtab-btn" data-subtab="baits">Наживки 🪱</button>
+            <button class="subtab-btn active" data-subtab="rods">Удочки</button>
+            <button class="subtab-btn" data-subtab="baits">Наживки</button>
           </div>
         </div>
 
@@ -44,19 +45,23 @@ export class ShopView {
 
       let btnHTML = '';
       if (isEquipped) {
-        btnHTML = `<button class="btn-shop-action equipped" disabled>✓ ЭКИПИРОВАНО</button>`;
+        btnHTML = `<button class="btn-shop-action equipped" disabled>${getIconSvg('check', 14)} Экипировано</button>`;
       } else if (isOwned) {
-        btnHTML = `<button class="btn-shop-action equip-btn" data-action="equip-rod" data-id="${rod.id}">ЭКИПИРОВАТЬ</button>`;
+        btnHTML = `<button class="btn-shop-action equip-btn" data-action="equip-rod" data-id="${rod.id}">Экипировать</button>`;
       } else if (isLevelLocked) {
-        btnHTML = `<button class="btn-shop-action locked" disabled>🔒 ТРЕБУЕТСЯ ${rod.requiredLevel} УРОВЕНЬ</button>`;
+        btnHTML = `<button class="btn-shop-action locked" disabled>${getIconSvg('lock', 13)} Требуется ${rod.requiredLevel} уровень</button>`;
       } else {
         const canAffordCoins = rod.price === 0 || state.coins >= rod.price;
         const canAffordPearls = rod.pearlPrice === 0 || state.pearls >= rod.pearlPrice;
         const canAfford = canAffordCoins && canAffordPearls;
 
+        const priceParts = [];
+        if (rod.price > 0) priceParts.push(`${rod.price.toLocaleString('ru-RU')} монет`);
+        if (rod.pearlPrice > 0) priceParts.push(`${rod.pearlPrice} жемчужин`);
+
         btnHTML = `
           <button class="btn-shop-action buy-btn ${canAfford ? '' : 'cant-afford'}" data-action="buy-rod" data-id="${rod.id}" ${canAfford ? '' : 'disabled'}>
-            КУПИТЬ: ${rod.price > 0 ? `${rod.price.toLocaleString('ru-RU')}🪙 ` : ''}${rod.pearlPrice > 0 ? `${rod.pearlPrice}💎` : ''}
+            Купить: ${priceParts.join(' + ')}
           </button>
         `;
       }
@@ -65,7 +70,7 @@ export class ShopView {
         <div class="shop-card rod-card ${isEquipped ? 'equipped-card' : ''}">
           <div class="shop-card-main">
             <div class="shop-item-icon-box">
-              <span class="shop-icon">${rod.icon}</span>
+              <span class="shop-icon">${getIconSvg(rod.iconKey || 'anchor', 24)}</span>
             </div>
             <div class="shop-item-details">
               <div class="shop-item-name">${rod.name}</div>
@@ -73,9 +78,9 @@ export class ShopView {
               
               <!-- Stat bars -->
               <div class="stat-pills-row">
-                <div class="stat-pill" title="Удача находок">🍀 Удача: +${rod.luck}</div>
-                <div class="stat-pill" title="Ширина зоны вываживания">🎯 Зона: ${Math.round(rod.barSize * 100)}%</div>
-                <div class="stat-pill" title="Максимальный вес рыбы">⚖️ Макс: ${rod.maxWeight} кг</div>
+                <div class="stat-pill">Удача: +${rod.luck}</div>
+                <div class="stat-pill">Зона контроля: ${Math.round(rod.barSize * 100)}%</div>
+                <div class="stat-pill">Макс. вес: ${rod.maxWeight} кг</div>
               </div>
             </div>
           </div>
@@ -96,7 +101,7 @@ export class ShopView {
       if (bait.id === 'none') {
         actionHTML = `
           <button class="btn-shop-action ${isEquipped ? 'equipped' : 'equip-btn'}" data-action="equip-bait" data-id="none">
-            ${isEquipped ? '✓ ВЫБРАНО' : 'ВЫБРАТЬ'}
+            ${isEquipped ? `${getIconSvg('check', 14)} Выбрано` : 'Выбрать'}
           </button>
         `;
       } else {
@@ -104,11 +109,11 @@ export class ShopView {
         actionHTML = `
           <div class="bait-actions-group">
             <button class="btn-shop-action buy-btn ${canAfford ? '' : 'cant-afford'}" data-action="buy-bait" data-id="${bait.id}" ${canAfford ? '' : 'disabled'}>
-              +${bait.amount} шт. (${bait.price}🪙)
+              +${bait.amount} шт. (${bait.price} монет)
             </button>
             ${count > 0 ? `
               <button class="btn-shop-action ${isEquipped ? 'equipped' : 'equip-btn'}" data-action="equip-bait" data-id="${bait.id}">
-                ${isEquipped ? '✓ ВЫБРАНО' : 'ВЫБРАТЬ'}
+                ${isEquipped ? `${getIconSvg('check', 14)} Выбрано` : 'Выбрать'}
               </button>
             ` : ''}
           </div>
@@ -119,19 +124,19 @@ export class ShopView {
         <div class="shop-card bait-card ${isEquipped ? 'equipped-card' : ''}">
           <div class="shop-card-main">
             <div class="shop-item-icon-box">
-              <span class="shop-icon">${bait.icon}</span>
+              <span class="shop-icon">${getIconSvg(bait.iconKey || 'crosshair', 24)}</span>
             </div>
             <div class="shop-item-details">
               <div class="shop-item-name-row">
                 <span class="shop-item-name">${bait.name}</span>
-                ${bait.id !== 'none' ? `<span class="stock-badge">В запасе: ${count} шт.</span>` : ''}
+                ${bait.id !== 'none' ? `<span class="stock-badge">Запас: ${count} шт.</span>` : ''}
               </div>
               <p class="shop-item-desc">${bait.description}</p>
               
               <div class="stat-pills-row">
-                ${bait.luckBonus > 0 ? `<div class="stat-pill">🍀 Удача: +${bait.luckBonus}</div>` : ''}
-                ${bait.speedMultiplier < 1 ? `<div class="stat-pill">⚡ Клев: +${Math.round((1 - bait.speedMultiplier) * 100)}%</div>` : ''}
-                ${bait.mutationBonus > 0 ? `<div class="stat-pill">✨ Мутации: +${Math.round(bait.mutationBonus * 100)}%</div>` : ''}
+                ${bait.luckBonus > 0 ? `<div class="stat-pill">Удача: +${bait.luckBonus}</div>` : ''}
+                ${bait.speedMultiplier < 1 ? `<div class="stat-pill">Клев: +${Math.round((1 - bait.speedMultiplier) * 100)}%</div>` : ''}
+                ${bait.mutationBonus > 0 ? `<div class="stat-pill">Мутации: +${Math.round(bait.mutationBonus * 100)}%</div>` : ''}
               </div>
             </div>
           </div>

@@ -2,6 +2,7 @@ import { RARITIES } from '../data/mutations.js';
 import { sound } from '../core/sound.js';
 import { tg } from '../core/telegram.js';
 import { state } from '../core/state.js';
+import { getIconSvg } from './icons.js';
 
 export class CatchModal {
   constructor(container, onKeep, onSell) {
@@ -29,18 +30,20 @@ export class CatchModal {
           <!-- Fish Icon / Sprite Stage -->
           <div class="fish-display-stage">
             <div class="fish-ring-glow" id="fishRingGlow"></div>
-            <div class="fish-hero-icon" id="catchFishIcon">🐟</div>
+            <div class="fish-hero-icon" id="catchFishIcon">
+              ${getIconSvg('fish', 56)}
+            </div>
           </div>
 
           <!-- Mutation Badge -->
           <div class="mutation-badge hidden" id="catchMutationBadge">
-            <span class="mutation-text" id="catchMutationText">✨ Золотая</span>
+            <span class="mutation-text" id="catchMutationText">Золотая</span>
           </div>
 
           <!-- Fish Titles -->
           <div class="catch-info">
             <h2 class="catch-name" id="catchFishName">Морской Окунь</h2>
-            <div class="catch-lore" id="catchFishLore">Обычный обитатель прибрежных скал.</div>
+            <div class="catch-lore" id="catchFishLore">Обитатель прибрежных скал.</div>
           </div>
 
           <!-- Caught Stats Grid -->
@@ -51,14 +54,14 @@ export class CatchModal {
                 <span class="stat-value" id="catchWeight">3.45</span>
                 <span class="stat-unit">кг</span>
               </div>
-              <span class="record-indicator hidden" id="newRecordPill">⭐ РЕКОРД!</span>
+              <span class="record-indicator hidden" id="newRecordPill">РЕКОРД</span>
             </div>
 
             <div class="stat-box">
               <span class="stat-label">СТОИМОСТЬ</span>
               <div class="stat-val-group">
                 <span class="stat-value coin-val" id="catchPrice">120</span>
-                <span class="stat-unit">🪙</span>
+                <span class="stat-unit">${getIconSvg('coins', 14)}</span>
               </div>
               <span class="multiplier-tag" id="catchMultiplier">1.0x</span>
             </div>
@@ -67,11 +70,11 @@ export class CatchModal {
           <!-- Actions Footer -->
           <div class="catch-actions">
             <button class="btn-action btn-sell" id="btnCatchSell">
-              <span class="btn-icon">💰</span>
-              <span class="btn-text">Продать (+<span id="btnSellVal">120</span>🪙)</span>
+              <span class="btn-icon">${getIconSvg('coins', 16)}</span>
+              <span class="btn-text">Продать (+<span id="btnSellVal">120</span>)</span>
             </button>
             <button class="btn-action btn-keep" id="btnCatchKeep">
-              <span class="btn-icon">🎒</span>
+              <span class="btn-icon">${getIconSvg('bag', 16)}</span>
               <span class="btn-text">В садок</span>
             </button>
           </div>
@@ -126,7 +129,7 @@ export class CatchModal {
     this.rarityTag.style.color = '#0a0f1d';
 
     this.expTag.textContent = `+${exp} XP`;
-    this.fishIcon.textContent = fish.icon || '🐟';
+    this.fishIcon.innerHTML = getIconSvg('fish', 56);
     let displayName = fish.name;
     if (mutation.prefix) {
       const cleanPrefix = mutation.name.replace(/[^а-яёА-ЯЁa-zA-Z]/g, '').trim();
@@ -166,7 +169,7 @@ export class CatchModal {
     if (state.inventory.length >= state.backpackCapacity) {
       this.btnKeep.disabled = true;
       this.btnKeep.classList.add('disabled');
-      this.btnKeep.querySelector('.btn-text').textContent = 'Садок полон!';
+      this.btnKeep.querySelector('.btn-text').textContent = 'Садок полон';
     } else {
       this.btnKeep.disabled = false;
       this.btnKeep.classList.remove('disabled');

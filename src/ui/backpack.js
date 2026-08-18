@@ -2,6 +2,7 @@ import { state } from '../core/state.js';
 import { RARITIES } from '../data/mutations.js';
 import { sound } from '../core/sound.js';
 import { tg } from '../core/telegram.js';
+import { getIconSvg } from './icons.js';
 
 export class BackpackView {
   constructor(container) {
@@ -18,7 +19,7 @@ export class BackpackView {
       <div class="view-panel backpack-panel">
         <div class="panel-header">
           <div class="panel-title-group">
-            <span class="panel-icon">🎒</span>
+            <span class="panel-icon">${getIconSvg('bag', 20)}</span>
             <h2>РЫБНЫЙ САДОК</h2>
           </div>
           <div class="capacity-pill" id="bagCapacityText">
@@ -34,13 +35,13 @@ export class BackpackView {
 
           <div class="backpack-actions-row">
             <button class="btn-sell-all" id="btnSellAll" ${state.inventory.length === 0 ? 'disabled' : ''}>
-              <span class="sell-all-icon">💰</span>
-              <span class="sell-all-text">ПРОДАТЬ ВСЁ (<span id="totalBagVal">${this.calcTotalValue()}</span>🪙)</span>
+              <span class="sell-all-icon">${getIconSvg('coins', 16)}</span>
+              <span class="sell-all-text">Продать все (<span id="totalBagVal">${this.calcTotalValue()}</span> монет)</span>
             </button>
 
             <button class="btn-upgrade-bag" id="btnUpgradeBag" title="Расширить садок">
-              <span>➕ +5 мест</span>
-              <small id="bagUpgradeCost">${state.getBackpackUpgradeCost()}🪙</small>
+              <span>+5 мест</span>
+              <small id="bagUpgradeCost">${state.getBackpackUpgradeCost()} монет</small>
             </button>
           </div>
         </div>
@@ -48,8 +49,8 @@ export class BackpackView {
         <!-- Filter Chips -->
         <div class="filter-chips-row">
           <button class="chip active" data-filter="all">Все (${state.inventory.length})</button>
-          <button class="chip" data-filter="rare">Редкие+ </button>
-          <button class="chip" data-filter="mutations">Мутации ✨</button>
+          <button class="chip" data-filter="rare">Редкие+</button>
+          <button class="chip" data-filter="mutations">Мутации</button>
         </div>
 
         <!-- Fish Grid -->
@@ -77,9 +78,9 @@ export class BackpackView {
     if (state.inventory.length === 0) {
       return `
         <div class="empty-bag-placeholder">
-          <span class="empty-icon">🪣</span>
-          <p>Твой садок пуст</p>
-          <small>Забрось удочку в воду, чтобы поймать первую рыбу!</small>
+          <span class="empty-icon">${getIconSvg('bag', 32)}</span>
+          <p>Садок пуст</p>
+          <small>Забросьте удочку, чтобы поймать рыбу.</small>
         </div>
       `;
     }
@@ -111,17 +112,19 @@ export class BackpackView {
         <div class="fish-card" data-id="${item.instanceId}" style="border-color: ${rarityDef.borderColor}">
           <div class="card-rarity-strip" style="background: ${rarityDef.color}"></div>
           <div class="card-icon-box">
-            <span class="card-fish-icon">${item.fish.icon || '🐟'}</span>
+            <span class="card-fish-icon">${getIconSvg('fish', 24)}</span>
             ${item.mutation.id !== 'normal' ? `<span class="card-mutation-badge" style="background: ${item.mutation.color}">${item.mutation.name}</span>` : ''}
           </div>
           <div class="card-info">
             <div class="card-name">${displayName}</div>
             <div class="card-meta">
-              <span class="card-weight">⚖️ ${item.weight.toFixed(2)} кг</span>
-              <span class="card-price">🪙 ${item.price.toLocaleString('ru-RU')}</span>
+              <span class="card-weight">${item.weight.toFixed(2)} кг</span>
+              <span class="card-price">${getIconSvg('coins', 12)} ${item.price.toLocaleString('ru-RU')}</span>
             </div>
           </div>
-          <button class="btn-quick-sell" data-sell-id="${item.instanceId}" title="Продать">💰</button>
+          <button class="btn-quick-sell" data-sell-id="${item.instanceId}" title="Продать">
+            ${getIconSvg('coins', 14)}
+          </button>
         </div>
       `;
     }).join('');
@@ -192,23 +195,23 @@ export class BackpackView {
     card.innerHTML = `
       <div class="detail-header" style="border-bottom: 2px solid ${rarityDef.color}">
         <span class="detail-rarity" style="color: ${rarityDef.color}">${rarityDef.name.toUpperCase()}</span>
-        <button class="btn-close-detail" id="btnCloseDetail">✕</button>
+        <button class="btn-close-detail" id="btnCloseDetail">${getIconSvg('close', 16)}</button>
       </div>
       <div class="detail-body">
         <div class="detail-icon-wrap" style="background: radial-gradient(circle, ${rarityDef.color}44 0%, transparent 70%)">
-          <span class="detail-icon">${item.fish.icon || '🐟'}</span>
+          <span class="detail-icon">${getIconSvg('fish', 36)}</span>
         </div>
         <h3>${item.mutation.prefix ? `${item.mutation.prefix} ${item.fish.name}` : item.fish.name}</h3>
         <p class="detail-desc">${item.fish.description || ''}</p>
 
         <div class="detail-stats-list">
-          <div class="detail-row"><span>Вес экземпляра:</span><strong>${item.weight} кг</strong></div>
+          <div class="detail-row"><span>Вес:</span><strong>${item.weight} кг</strong></div>
           <div class="detail-row"><span>Мутация:</span><strong style="color: ${item.mutation.color}">${item.mutation.name} (${item.mutation.multiplier}x)</strong></div>
-          <div class="detail-row"><span>Рыночная цена:</span><strong class="coin-val">${item.price.toLocaleString('ru-RU')} 🪙</strong></div>
+          <div class="detail-row"><span>Стоимость:</span><strong class="coin-val">${getIconSvg('coins', 13)} ${item.price.toLocaleString('ru-RU')}</strong></div>
         </div>
 
         <button class="btn-detail-sell" id="btnDetailSell">
-          💰 Продать за ${item.price.toLocaleString('ru-RU')} 🪙
+          ${getIconSvg('coins', 15)} Продать за ${item.price.toLocaleString('ru-RU')} монет
         </button>
       </div>
     `;
@@ -240,7 +243,7 @@ export class BackpackView {
     if (sellAllBtn) sellAllBtn.disabled = state.inventory.length === 0;
 
     const upgradeCost = this.container.querySelector('#bagUpgradeCost');
-    if (upgradeCost) upgradeCost.textContent = `${state.getBackpackUpgradeCost()}🪙`;
+    if (upgradeCost) upgradeCost.textContent = `${state.getBackpackUpgradeCost()} монет`;
 
     const grid = this.container.querySelector('#fishGrid');
     if (grid) grid.innerHTML = this.renderFishGrid();

@@ -2,6 +2,7 @@ import { state } from '../core/state.js';
 import { DAILY_REWARDS } from '../data/dailyRewards.js';
 import { sound } from '../core/sound.js';
 import { tg } from '../core/telegram.js';
+import { getIconSvg } from './icons.js';
 
 export class DailyModal {
   constructor(container) {
@@ -15,19 +16,19 @@ export class DailyModal {
         <div class="daily-card" id="dailyCard">
           <div class="daily-header">
             <div class="daily-title-group">
-              <span class="daily-big-icon">🎁</span>
+              <span class="daily-big-icon">${getIconSvg('gift', 24)}</span>
               <div>
-                <h3>Ежедневный Бонус</h3>
-                <p>Заходи каждый день для лучших наград!</p>
+                <h3>Ежедневный бонус</h3>
+                <p>Заходите каждый день, чтобы развивать снаряжение быстрее.</p>
               </div>
             </div>
-            <button class="btn-close-daily" id="closeDailyBtn">✕</button>
+            <button class="btn-close-daily" id="closeDailyBtn">${getIconSvg('close', 18)}</button>
           </div>
 
           <div class="daily-grid" id="dailyGrid"></div>
 
           <div class="daily-footer">
-            <button class="btn-claim-daily" id="claimDailyBtn">ЗАБРАТЬ НАГРАДУ</button>
+            <button class="btn-claim-daily" id="claimDailyBtn">Забрать награду</button>
           </div>
         </div>
       </div>
@@ -77,23 +78,22 @@ export class DailyModal {
     this.grid.innerHTML = DAILY_REWARDS.map((reward, index) => {
       const isClaimed = index < currentStreak;
       const isCurrent = index === currentStreak;
-      const isLocked = index > currentStreak;
 
       let statusClass = 'locked';
-      let statusText = 'Заблокировано';
+      let statusText = 'Закрыто';
 
       if (isClaimed) {
         statusClass = 'claimed';
-        statusText = 'Получено ✓';
+        statusText = 'Получено';
       } else if (isCurrent) {
         statusClass = canClaim ? 'available' : 'waiting';
-        statusText = canClaim ? 'ДОСТУПНО!' : 'Завтра';
+        statusText = canClaim ? 'Доступно' : 'Завтра';
       }
 
       return `
         <div class="daily-box ${statusClass} ${reward.day === 7 ? 'grand-box' : ''}">
           <div class="daily-day-label">${reward.title}</div>
-          <div class="daily-box-icon">${reward.icon}</div>
+          <div class="daily-box-icon">${getIconSvg(reward.iconKey || 'coins', 22)}</div>
           <div class="daily-box-reward">${reward.rewardText}</div>
           <div class="daily-box-status">${statusText}</div>
         </div>
@@ -102,11 +102,11 @@ export class DailyModal {
 
     if (canClaim) {
       this.claimBtn.disabled = false;
-      this.claimBtn.textContent = `ЗАБРАТЬ НАГРАДУ (ДЕНЬ ${currentStreak + 1})`;
+      this.claimBtn.textContent = `Забрать награду (День ${currentStreak + 1})`;
       this.claimBtn.classList.remove('disabled');
     } else {
       this.claimBtn.disabled = true;
-      this.claimBtn.textContent = 'НАГРАДА УЖЕ ПОЛУЧЕНА СЕГОДНЯ';
+      this.claimBtn.textContent = 'Награда уже получена сегодня';
       this.claimBtn.classList.add('disabled');
     }
   }

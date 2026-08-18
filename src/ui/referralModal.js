@@ -1,6 +1,7 @@
 import { state } from '../core/state.js';
 import { tg } from '../core/telegram.js';
 import { sound } from '../core/sound.js';
+import { getIconSvg } from './icons.js';
 
 export class ReferralModal {
   constructor(container) {
@@ -19,40 +20,42 @@ export class ReferralModal {
         <div class="ref-card" id="refCard">
           <div class="ref-header">
             <div class="ref-title-group">
-              <span class="ref-big-icon">🤝</span>
+              <span class="ref-big-icon">${getIconSvg('userPlus', 24)}</span>
               <div>
-                <h3>Пригласи Друзей</h3>
-                <p>Получай +5 💎 Жемчужин за каждого друга!</p>
+                <h3>Приглашение друзей</h3>
+                <p>Получайте +5 жемчужин за каждого приглашенного рыбака.</p>
               </div>
             </div>
-            <button class="btn-close-ref" id="closeRefBtn">✕</button>
+            <button class="btn-close-ref" id="closeRefBtn">${getIconSvg('close', 18)}</button>
           </div>
 
           <div class="ref-perks-card">
             <div class="perk-row">
-              <span>💎</span>
+              <span class="perk-icon-wrap">${getIconSvg('gem', 20)}</span>
               <div>
                 <strong>+5 Жемчуга Бездны</strong>
-                <small>Мгновенно на твой баланс за каждого приглашенного</small>
+                <small>Зачисляется на ваш баланс при старте друга</small>
               </div>
             </div>
             <div class="perk-row">
-              <span>🪙</span>
+              <span class="perk-icon-wrap">${getIconSvg('coins', 20)}</span>
               <div>
                 <strong>+500 Монет другу</strong>
-                <small>Твой друг получит стартовый капитал на снасти</small>
+                <small>Стартовый капитал на первые снасти и наживку</small>
               </div>
             </div>
           </div>
 
           <div class="ref-link-box">
             <input type="text" readonly value="${inviteUrl}" id="refLinkInput" class="ref-link-input"/>
-            <button class="btn-copy-ref" id="copyRefBtn">Копировать</button>
+            <button class="btn-copy-ref" id="copyRefBtn">
+              ${getIconSvg('copy', 14)} Копировать
+            </button>
           </div>
 
           <div class="ref-footer">
             <button class="btn-share-tg" id="shareTgBtn">
-              <span>✈️</span> ПОДЕЛИТЬСЯ В TELEGRAM
+              ${getIconSvg('send', 15)} Поделиться в Telegram
             </button>
           </div>
         </div>
@@ -76,16 +79,16 @@ export class ReferralModal {
 
     this.copyBtn.addEventListener('click', () => {
       navigator.clipboard.writeText(inviteUrl);
-      this.copyBtn.textContent = 'Скопировано! ✓';
+      this.copyBtn.innerHTML = `${getIconSvg('check', 14)} Скопировано`;
       sound.playClick();
       tg.notificationSuccess();
       setTimeout(() => {
-        this.copyBtn.textContent = 'Копировать';
+        this.copyBtn.innerHTML = `${getIconSvg('copy', 14)} Копировать`;
       }, 2000);
     });
 
     this.shareBtn.addEventListener('click', () => {
-      const shareText = encodeURIComponent('🎣 Погнали рыбачить в TG-Fisch! Лови редких мутантов и вытаскивай легендарную рыбу прямо в Telegram:');
+      const shareText = encodeURIComponent('Рыбалка в Telegram: вываживание рыбы, редкие мутации и снасти.');
       const shareLink = `https://t.me/share/url?url=${encodeURIComponent(inviteUrl)}&text=${shareText}`;
       
       if (window.Telegram?.WebApp?.openTelegramLink) {

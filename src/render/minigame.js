@@ -1,5 +1,6 @@
 import { sound } from '../core/sound.js';
 import { tg } from '../core/telegram.js';
+import { getIconSvg } from '../ui/icons.js';
 
 export class ReelingMinigame {
   constructor(container, onSuccess, onFailed) {
@@ -43,8 +44,10 @@ export class ReelingMinigame {
           
           <!-- Top Telemetry Row -->
           <div class="reeling-status-row">
-            <div class="reeling-fish-badge" id="reelingFishName">🐟 Рыба на крючке</div>
-            <div class="reeling-perfect-badge ${this.perfectCatch ? '' : 'hidden'}" id="reelingPerfectBadge">✨ PERFECT CATCH</div>
+            <div class="reeling-fish-badge" id="reelingFishName">Рыба на крючке</div>
+            <div class="reeling-perfect-badge ${this.perfectCatch ? '' : 'hidden'}" id="reelingPerfectBadge">
+              <span class="perfect-badge-icon">${getIconSvg('sparkles', 11)}</span> PERFECT CATCH
+            </div>
             <div class="reeling-progress-num" id="reelingProgressNum">20%</div>
           </div>
 
@@ -58,30 +61,31 @@ export class ReelingMinigame {
                 <div class="fisch-slider-arrow" id="sliderArrow">➔</div>
               </div>
 
-              <!-- Fish Needle & Icon -->
-              <div class="fisch-needle-container" id="fishNeedle">
-                <div class="needle-indicator-line"></div>
-                <div class="needle-fish-icon" id="needleFishIcon">🐟</div>
+              <!-- Needle / Fish Indicator -->
+              <div class="fisch-needle" id="fishNeedle">
+                <div class="needle-fish-icon" id="needleFishIcon">
+                  ${getIconSvg('fish', 16)}
+                </div>
+                <div class="needle-line"></div>
               </div>
             </div>
 
             <span class="track-arrow right">◀</span>
           </div>
 
-          <!-- Bottom Progress Bar right underneath -->
+          <!-- Bottom Slim Progress Bar Under Track -->
           <div class="fisch-bottom-progress-track">
-            <div class="fisch-bottom-progress-fill" id="bottomProgressFill"></div>
+            <div class="fisch-bottom-progress-fill" id="bottomProgressFill" style="width: 20%"></div>
           </div>
 
-          <div class="reeling-instructions">
-            Удерживай экран, чтобы двигать ползунок вправо. Отпусти — влево!
+          <div class="reeling-hint-text">
+            Удерживайте экран для движения вправо. Отпустите для движения влево.
           </div>
         </div>
       </div>
     `;
 
     this.overlay = this.container.querySelector('#reelingOverlay');
-    this.panel = this.container.querySelector('#reelingPanel');
     this.whiteBar = this.container.querySelector('#whiteBar');
     this.sliderArrow = this.container.querySelector('#sliderArrow');
     this.fishNeedle = this.container.querySelector('#fishNeedle');
@@ -97,25 +101,31 @@ export class ReelingMinigame {
       if (!this.active) return;
       e.preventDefault();
       this.isHolding = true;
-      this.whiteBar.classList.add('active-pull');
-      this.sliderArrow.style.opacity = '1';
-      this.sliderArrow.style.transform = 'scaleX(1)';
+      sound.playReelClick();
+      tg.impactLight();
     };
 
     const handleInputEnd = (e) => {
       if (!this.active) return;
       e.preventDefault();
       this.isHolding = false;
-      this.whiteBar.classList.remove('active-pull');
-      this.sliderArrow.style.opacity = '0.5';
-      this.sliderArrow.style.transform = 'scaleX(-1)';
     };
 
-    // Global listener when reeling is active
-    window.addEventListener('mousedown', handleInputStart);
-    window.addEventListener('mouseup', handleInputEnd);
-    window.addEventListener('touchstart', handleInputStart, { passive: false });
-    window.addEventListener('touchend', handleInputEnd, { passive: false });
+    // Global document touch / mouse for reeling
+    document.addEventListener('mousedown', (e) => {
+      if (this.active) handleInputStart(e);
+    });
+    document.addEventListener('mouseup', (e) => {
+      if (this.active) handleInputEnd(e);
+    });
+
+    document.addEventListener('touchstart', (e) => {
+      if (this.active) handleInputStart(e);
+    }, { passive: false });
+
+    document.addEventListener('touchend', (e) => {
+      if (this.active) handleInputEnd(e);
+    }, { passive: false });
 
     // Keyboard Space support
     window.addEventListener('keydown', (e) => {
@@ -154,8 +164,8 @@ export class ReelingMinigame {
     this.whiteBar.style.width = `${this.barWidth}%`;
 
     this.fishBehavior = fish.behavior || 'calm';
-    this.fishNameBadge.textContent = `${fish.icon} ${fish.name}`;
-    this.needleFishIcon.textContent = fish.icon;
+    this.fishNameBadge.textContent = fish.name;
+    this.needleFishIcon.innerHTML = getIconSvg('fish', 16);
 
     this.container.classList.remove('hidden');
     this.overlay.classList.remove('hidden');
@@ -176,7 +186,7 @@ export class ReelingMinigame {
   update(dt) {
     if (!this.active) return;
 
-    // Initial 1.0s lock warmup
+    // 1. Intro Lock Timer
     if (this.isLocked) {
       this.lockTimer -= dt;
       if (this.lockTimer <= 0) {
@@ -184,128 +194,138 @@ export class ReelingMinigame {
       }
     }
 
-    // 1. Slider Physics: Accelerates Right on Hold, Accelerates Left on Release
-    const accelRight = 380; // %/s^2
-    const accelLeft = 320;  // %/s^2
-    const maxSpeed = 160;   // %/s
+    // 2. Bar Motion Physics
+    // Holding = right acceleration, Not holding = left acceleration (recoil)
+    const accelRight = 380; // % / s^2
+    const accelLeft = -320; // % / s^2
+    const maxSpeed = 160;   // % / s
     const friction = 0.94;
 
-    if (!this.isLocked) {
-      if (this.isHolding) {
-        this.barVel += accelRight * dt;
-      } else {
-        this.barVel -= accelLeft * dt;
-      }
+    if (this.isHolding) {
+      this.barVel += accelRight * dt;
+      this.sliderArrow.textContent = '➔';
+      this.sliderArrow.style.transform = 'scale(1.1)';
+    } else {
+      this.barVel += accelLeft * dt;
+      this.sliderArrow.textContent = '⬅';
+      this.sliderArrow.style.transform = 'scale(0.9)';
     }
 
-    this.barVel = Math.max(-maxSpeed, Math.min(maxSpeed, this.barVel * friction));
+    this.barVel *= Math.pow(friction, dt * 60);
+    this.barVel = Math.max(-maxSpeed, Math.min(maxSpeed, this.barVel));
     this.barPos += this.barVel * dt;
 
-    // Bounce off walls
-    const maxBarLeft = 100 - this.barWidth;
+    // Wall Bounces / Clamping
     if (this.barPos < 0) {
       this.barPos = 0;
-      this.barVel = -this.barVel * 0.35; // Bounce with dampening
-    } else if (this.barPos > maxBarLeft) {
-      this.barPos = maxBarLeft;
-      this.barVel = -this.barVel * 0.35;
+      this.barVel = 0;
+    } else if (this.barPos + this.barWidth > 100) {
+      this.barPos = 100 - this.barWidth;
+      this.barVel = 0;
     }
 
-    // 2. Fish Movement AI (Resilience dampens fish vigorousness)
-    const resilienceDamp = Math.max(0.4, 1.0 - (this.currentRod.resilience || 0.5) * 0.4);
-    this.updateFishAI(dt, resilienceDamp);
-
-    // 3. Check if Fish is Inside the White Slider
-    const fishInside = (this.fishPos >= this.barPos && this.fishPos <= this.barPos + this.barWidth);
-    this.isInside = fishInside;
-
-    // 4. Progress Gain / Drain (14%/s gain, 12%/s drain)
+    // 3. Fish AI Physics
     if (!this.isLocked) {
-      if (fishInside) {
-        this.progress += 14.5 * dt;
-        if (Math.random() < 0.2) {
-          sound.playReelClick();
-          tg.impactLight();
-        }
-      } else {
-        this.progress -= 11.5 * dt;
-        this.perfectCatch = false;
-        this.perfectBadge.classList.add('hidden');
-      }
+      this.updateFishAI(dt);
+    }
+
+    // 4. Collision Check: Is Fish Needle inside White Slider Bar?
+    const barLeft = this.barPos;
+    const barRight = this.barPos + this.barWidth;
+    this.isInside = (this.fishPos >= barLeft && this.fishPos <= barRight);
+
+    // 5. Progress Calculation
+    const progressGainRate = 14.5; // % per sec
+    const progressDrainRate = 11.5; // % per sec
+
+    if (this.isInside) {
+      this.progress += progressGainRate * dt;
+      if (Math.random() < 0.1) tg.impactLight();
+    } else {
+      this.progress -= progressDrainRate * dt;
+      this.perfectCatch = false;
+      this.perfectBadge.classList.add('hidden');
     }
 
     this.progress = Math.max(0, Math.min(100, this.progress));
 
-    // 5. Check Win / Loss
+    // 6. Check Win / Loss Conditions
     if (this.progress >= 100) {
-      const fish = this.currentFish;
-      const isPerfect = this.perfectCatch;
       this.stop();
-      sound.playCatchFanfare();
-      tg.notificationSuccess();
-      this.onSuccess(fish, isPerfect);
+      this.onSuccess(this.currentFish, this.perfectCatch);
       return;
-    }
-
-    if (this.progress <= 0 && !this.isLocked) {
-      const fish = this.currentFish;
+    } else if (this.progress <= 0) {
       this.stop();
-      this.onFailed(fish);
+      this.onFailed(this.currentFish);
       return;
     }
 
     this.updateDOM();
   }
 
-  updateFishAI(dt, resilienceDamp) {
+  updateFishAI(dt) {
     this.fishTimer -= dt;
 
+    const rodResilience = this.currentRod ? this.currentRod.resilience : 1.0;
+    const resilienceDampener = Math.max(0.4, 1.0 - (rodResilience - 1.0) * 0.4);
+
     if (this.fishTimer <= 0) {
+      let switchInterval = 1.4;
+      let moveSpeed = 35;
+
       switch (this.fishBehavior) {
         case 'calm':
+          switchInterval = 1.6 + Math.random() * 1.2;
           this.fishTargetPos = 20 + Math.random() * 60;
-          this.fishTimer = (1.2 + Math.random() * 1.5) * resilienceDamp;
-          break;
-        case 'darting':
-          this.fishTargetPos = Math.random() < 0.5 ? (5 + Math.random() * 25) : (70 + Math.random() * 25);
-          this.fishTimer = (0.6 + Math.random() * 0.8) * resilienceDamp;
-          break;
-        case 'thrashing':
-          this.fishTargetPos = Math.max(10, Math.min(90, this.fishPos + (Math.random() - 0.5) * 70));
-          this.fishTimer = (0.4 + Math.random() * 0.6) * resilienceDamp;
+          moveSpeed = (25 + Math.random() * 20) * resilienceDampener;
           break;
         case 'erratic':
-          this.fishTargetPos = 5 + Math.random() * 90;
-          this.fishTimer = (0.25 + Math.random() * 0.45) * resilienceDamp;
+          switchInterval = 0.6 + Math.random() * 0.7;
+          this.fishTargetPos = 10 + Math.random() * 80;
+          moveSpeed = (45 + Math.random() * 35) * resilienceDampener;
+          break;
+        case 'thrashing':
+          switchInterval = 0.35 + Math.random() * 0.5;
+          this.fishTargetPos = Math.random() > 0.5 ? 85 : 15;
+          moveSpeed = (65 + Math.random() * 45) * resilienceDampener;
           break;
         default:
-          this.fishTargetPos = 25 + Math.random() * 50;
-          this.fishTimer = 1.0;
+          switchInterval = 1.2;
+          this.fishTargetPos = 15 + Math.random() * 70;
+          moveSpeed = 35 * resilienceDampener;
       }
+
+      this.fishTimer = switchInterval;
+      this.fishSpeed = moveSpeed;
     }
 
-    // Smooth lerp fish position towards target
-    const speed = (this.fishBehavior === 'erratic' ? 5.5 : (this.fishBehavior === 'darting' ? 4.5 : 2.8)) / resilienceDamp;
-    this.fishPos += (this.fishTargetPos - this.fishPos) * speed * dt;
-    this.fishPos = Math.max(3, Math.min(97, this.fishPos));
+    // Smooth movement towards target position
+    const diff = this.fishTargetPos - this.fishPos;
+    const step = (diff > 0 ? 1 : -1) * (this.fishSpeed || 35) * dt;
+
+    if (Math.abs(diff) < Math.abs(step)) {
+      this.fishPos = this.fishTargetPos;
+    } else {
+      this.fishPos += step;
+    }
+
+    this.fishPos = Math.max(5, Math.min(95, this.fishPos));
   }
 
   updateDOM() {
     this.whiteBar.style.left = `${this.barPos}%`;
     this.fishNeedle.style.left = `${this.fishPos}%`;
-    this.bottomProgressFill.style.width = `${this.progress}%`;
-    this.progressNum.textContent = `${Math.round(this.progress)}%`;
+
+    const roundedProg = Math.round(this.progress);
+    this.bottomProgressFill.style.width = `${roundedProg}%`;
+    this.progressNum.textContent = `${roundedProg}%`;
 
     if (this.isInside) {
-      this.whiteBar.classList.add('inside-target');
-      this.panel.classList.remove('danger');
+      this.whiteBar.classList.add('active-hit');
+      this.needleFishIcon.style.color = '#22d3ee';
     } else {
-      this.whiteBar.classList.remove('inside-target');
-      if (this.progress < 30) {
-        this.panel.classList.add('danger');
-      } else {
-        this.panel.classList.remove('danger');
-      }
+      this.whiteBar.classList.remove('active-hit');
+      this.needleFishIcon.style.color = '#ef4444';
     }
   }
 }

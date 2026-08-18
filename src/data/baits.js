@@ -2,7 +2,7 @@ export const BAITS = [
   {
     id: 'none',
     name: 'Без наживки',
-    icon: '🪝',
+    iconKey: 'crosshair',
     price: 0,
     amount: 999999,
     luckBonus: 0,
@@ -14,7 +14,7 @@ export const BAITS = [
   {
     id: 'worm',
     name: 'Дождевой червь',
-    icon: '🪱',
+    iconKey: 'activity',
     price: 50,
     amount: 15,
     luckBonus: 10,
@@ -26,7 +26,7 @@ export const BAITS = [
   {
     id: 'glow_shrimp',
     name: 'Светящаяся креветка',
-    icon: '🦐',
+    iconKey: 'sparkles',
     price: 220,
     amount: 10,
     luckBonus: 30,
@@ -38,7 +38,7 @@ export const BAITS = [
   {
     id: 'bioluminescent_squid',
     name: 'Глубинный кальмар',
-    icon: '🦑',
+    iconKey: 'eye',
     price: 750,
     amount: 8,
     luckBonus: 65,
@@ -50,7 +50,7 @@ export const BAITS = [
   {
     id: 'magma_crab',
     name: 'Лавовый краб',
-    icon: '🦀',
+    iconKey: 'flame',
     price: 1800,
     amount: 6,
     luckBonus: 95,
@@ -62,13 +62,13 @@ export const BAITS = [
   {
     id: 'golden_fly',
     name: 'Золотая стрекоза',
-    icon: '🪰',
+    iconKey: 'trophy',
     price: 5000,
     amount: 5,
     luckBonus: 150,
     speedMultiplier: 0.3,
     mutationBonus: 0.80,
     preferredBiome: null,
-    description: 'Легендарная приманка. Огромный шанс поймать Золотую или Космическую мутацию!'
+    description: 'Легендарная приманка. Огромный шанс поймать Золотую или Космическую мутацию.'
   }
 ];

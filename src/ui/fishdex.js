@@ -3,6 +3,7 @@ import { FISH_DATABASE } from '../data/fish.js';
 import { BIOMES } from '../data/biomes.js';
 import { RARITIES, MUTATIONS } from '../data/mutations.js';
 import { sound } from '../core/sound.js';
+import { getIconSvg } from './icons.js';
 
 export class FishDexView {
   constructor(container) {
@@ -22,8 +23,8 @@ export class FishDexView {
       <div class="view-panel fishdex-panel">
         <div class="panel-header">
           <div class="panel-title-group">
-            <span class="panel-icon">📖</span>
-            <h2>FISHDEX ЭНЦИКЛОПЕДИЯ</h2>
+            <span class="panel-icon">${getIconSvg('book', 20)}</span>
+            <h2>FISHDEX</h2>
           </div>
           <div class="progress-pill">
             ${discoveredCount} / ${totalSpecies} (${totalProgressPct}%)
@@ -36,16 +37,18 @@ export class FishDexView {
             <div class="fishdex-bar-fill" style="width: ${totalProgressPct}%"></div>
           </div>
           <div class="fishdex-stats-summary">
-            <span>Всего поймано рыб: <strong>${state.stats.totalCaught} шт.</strong></span>
+            <span>Выловлено рыб: <strong>${state.stats.totalCaught} шт.</strong></span>
             <span>Рекордный вес: <strong>${state.stats.heaviestFish.toFixed(2)} кг</strong></span>
           </div>
         </div>
 
         <!-- Biome Filter Tabs -->
         <div class="biome-filters-row">
-          <button class="biome-filter-btn active" data-biome="all">Все локации</button>
+          <button class="biome-filter-btn active" data-biome="all">Все водоемы</button>
           ${BIOMES.map(b => `
-            <button class="biome-filter-btn" data-biome="${b.id}">${b.icon} ${b.name}</button>
+            <button class="biome-filter-btn" data-biome="${b.id}">
+              ${getIconSvg(b.iconKey || 'palmtree', 13)} ${b.name}
+            </button>
           `).join('')}
         </div>
 
@@ -74,12 +77,12 @@ export class FishDexView {
         return `
           <div class="dex-card undiscovered">
             <div class="dex-icon-box">
-              <span class="dex-silhouette">❓</span>
+              <span class="dex-silhouette">${getIconSvg('info', 20)}</span>
             </div>
             <div class="dex-info">
-              <div class="dex-name">???</div>
+              <div class="dex-name">Неизвестно</div>
               <div class="dex-rarity" style="color: ${rarityDef.color}">${rarityDef.name.toUpperCase()}</div>
-              <div class="dex-hint">Ещё не поймана в водах</div>
+              <div class="dex-hint">Еще не поймана в экспедициях</div>
             </div>
           </div>
         `;
@@ -89,7 +92,7 @@ export class FishDexView {
         <div class="dex-card discovered" style="border-color: ${rarityDef.borderColor}">
           <div class="dex-card-top">
             <div class="dex-icon-box" style="background: radial-gradient(circle, ${rarityDef.color}33 0%, transparent 70%)">
-              <span class="dex-icon">${fish.icon}</span>
+              <span class="dex-icon">${getIconSvg('fish', 24)}</span>
             </div>
             <div class="dex-badge-rarity" style="background: ${rarityDef.color}">${rarityDef.name}</div>
           </div>
