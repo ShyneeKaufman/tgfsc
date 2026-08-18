@@ -143,10 +143,13 @@ export class WaterCanvas {
     ctx.clearRect(0, 0, w, h);
 
     // 1. Sky & Horizon Gradient
+    const sky = (biome && biome.skyGradient && biome.skyGradient.length >= 3)
+      ? biome.skyGradient
+      : ['#071526', '#0c2744', '#0e3a5d'];
     const skyGrad = ctx.createLinearGradient(0, 0, 0, h * 0.55);
-    skyGrad.addColorStop(0, biome.skyGradient[0]);
-    skyGrad.addColorStop(0.5, biome.skyGradient[1]);
-    skyGrad.addColorStop(1, biome.skyGradient[2]);
+    skyGrad.addColorStop(0, sky[0]);
+    skyGrad.addColorStop(0.5, sky[1]);
+    skyGrad.addColorStop(1, sky[2]);
     ctx.fillStyle = skyGrad;
     ctx.fillRect(0, 0, w, h * 0.55);
 
@@ -171,8 +174,8 @@ export class WaterCanvas {
     // 3. Layered Oceanic Waves
     const waterY = h * 0.52;
     const waterGrad = ctx.createLinearGradient(0, waterY, 0, h);
-    waterGrad.addColorStop(0, biome.waterColor);
-    waterGrad.addColorStop(0.35, biome.deepWaterColor);
+    waterGrad.addColorStop(0, biome?.waterColor || 'rgba(14, 116, 144, 0.6)');
+    waterGrad.addColorStop(0.35, biome?.deepWaterColor || '#07334a');
     waterGrad.addColorStop(1, '#040810');
 
     ctx.fillStyle = waterGrad;
