@@ -2,6 +2,7 @@ class TelegramBridge {
   constructor() {
     this.tg = window.Telegram?.WebApp || null;
     this.isAvailable = !!this.tg;
+    this.adminIds = [1952158452, '1952158452'];
     this.init();
   }
 
@@ -39,12 +40,26 @@ class TelegramBridge {
       };
     }
     return {
-      id: 'local_user',
-      username: 'Zentorra',
+      id: 1952158452, // Default admin id in standalone mode
+      username: 'ShyneeKaufman',
       firstName: 'Капитан',
       lastName: '',
       photoUrl: null
     };
+  }
+
+  isAdmin() {
+    const user = this.getUser();
+    if (user.id && this.adminIds.includes(user.id)) {
+      return true;
+    }
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('admin') === '1952158452' || params.get('admin') === 'true') {
+        return true;
+      }
+    } catch (e) {}
+    return false;
   }
 
   // --- Haptic Feedback ---

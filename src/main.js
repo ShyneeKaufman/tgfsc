@@ -13,6 +13,7 @@ import { HUD } from './ui/hud.js';
 import { CatchModal } from './ui/catchModal.js';
 import { DailyModal } from './ui/dailyModal.js';
 import { ReferralModal } from './ui/referralModal.js';
+import { AdminModal } from './ui/adminModal.js';
 import { BackpackView } from './ui/backpack.js';
 import { ShopView } from './ui/shop.js';
 import { FishDexView } from './ui/fishdex.js';
@@ -31,9 +32,9 @@ class GameApp {
   }
 
   init() {
-    // 1. Setup Canvas
-    const canvasEl = document.getElementById('waterCanvas');
-    this.canvas = new WaterCanvas(canvasEl);
+    // 1. Setup 2D Canvas Physics Layer
+    const canvas = document.getElementById('waterCanvas');
+    this.canvas = new WaterCanvas(canvas);
 
     // 2. Setup Reeling Minigame
     const minigameContainer = document.getElementById('minigameContainer');
@@ -51,15 +52,18 @@ class GameApp {
       (catchItem) => this.handleSellFish(catchItem)
     );
 
-    // 4. Setup Daily & Referral Modals
+    // 4. Setup Daily, Referral & Admin Modals
     const modalsContainer = document.getElementById('modalsContainer') || document.body;
     const dailyDiv = document.createElement('div');
     const refDiv = document.createElement('div');
+    const adminDiv = document.createElement('div');
     modalsContainer.appendChild(dailyDiv);
     modalsContainer.appendChild(refDiv);
+    modalsContainer.appendChild(adminDiv);
 
     this.dailyModal = new DailyModal(dailyDiv);
     this.referralModal = new ReferralModal(refDiv);
+    this.adminModal = new AdminModal(adminDiv);
 
     // 5. Setup HUD with Fisch interactions
     const hudContainer = document.getElementById('hudContainer');
@@ -71,7 +75,8 @@ class GameApp {
       () => this.handleHookClick(),
       (tab) => this.handleTabChange(tab),
       () => this.dailyModal.show(),
-      () => this.referralModal.show()
+      () => this.referralModal.show(),
+      () => this.adminModal.show()
     );
 
     // 6. Setup Views Container

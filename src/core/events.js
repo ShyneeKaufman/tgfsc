@@ -52,11 +52,19 @@ export const GLOBAL_EVENTS = [
   }
 ];
 
+export const EVENT_PRESETS = {
+  abyssal_storm: GLOBAL_EVENTS.find(e => e.id === 'abyssal_storm'),
+  golden_hour: GLOBAL_EVENTS.find(e => e.id === 'golden_hour'),
+  aurora_blessing: GLOBAL_EVENTS.find(e => e.id === 'aurora_blessing'),
+  caldera_surge: GLOBAL_EVENTS.find(e => e.id === 'caldera_surge')
+};
+
 class EventManager {
   constructor() {
     this.currentEvent = null;
     this.remainingTime = 0;
     this.listeners = new Set();
+    this.timerInterval = null;
 
     this.startCycle();
   }
@@ -80,34 +88,46 @@ class EventManager {
     }
   }
 
+  triggerEvent(eventObj) {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    this.currentEvent = eventObj;
+    this.remainingTime = Math.round(eventObj.durationMs / 1000);
+    this.notify();
+
+    this.timerInterval = setInterval(() => {
+      this.remainingTime -= 1;
+      this.notify();
+      if (this.remainingTime <= 0) {
+        clearInterval(this.timerInterval);
+        this.currentEvent = null;
+        this.notify();
+      }
+    }, 1000);
+  }
+
+  clearEvent() {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    this.currentEvent = null;
+    this.remainingTime = 0;
+    this.notify();
+  }
+
   startCycle() {
     // Start an event every 2 to 4 minutes
     const triggerRandomEvent = () => {
       const randomEvent = GLOBAL_EVENTS[Math.floor(Math.random() * GLOBAL_EVENTS.length)];
-      this.currentEvent = randomEvent;
-      this.remainingTime = Math.round(randomEvent.durationMs / 1000);
+      this.triggerEvent(randomEvent);
 
       sound.playCatchFanfare();
       tg.notificationSuccess();
-      this.notify();
 
-      const timerInterval = setInterval(() => {
-        this.remainingTime -= 1;
-        this.notify();
-        if (this.remainingTime <= 0) {
-          clearInterval(timerInterval);
-          this.currentEvent = null;
-          this.notify();
-
-          // Schedule next event in 45-90 seconds
-          const nextDelay = 45000 + Math.random() * 45000;
-          setTimeout(triggerRandomEvent, nextDelay);
-        }
-      }, 1000);
+      // Schedule next event in 45-90 seconds after finish
+      const nextDelay = randomEvent.durationMs + 45000 + Math.random() * 45000;
+      setTimeout(triggerRandomEvent, nextDelay);
     };
 
-    // First event after 15 seconds of play
-    setTimeout(triggerRandomEvent, 15000);
+    // First event after 25 seconds of play
+    setTimeout(triggerRandomEvent, 25000);
   }
 }
 

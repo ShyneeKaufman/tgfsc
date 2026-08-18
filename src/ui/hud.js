@@ -6,7 +6,7 @@ import { events } from '../core/events.js';
 import { getIconSvg } from './icons.js';
 
 export class HUD {
-  constructor(container, onCastStart, onCastRelease, onShakeClick, onHookClick, onTabChange, onOpenDaily, onOpenRef) {
+  constructor(container, onCastStart, onCastRelease, onShakeClick, onHookClick, onTabChange, onOpenDaily, onOpenRef, onOpenAdmin) {
     this.container = container;
     this.onCastStart = onCastStart;
     this.onCastRelease = onCastRelease;
@@ -15,6 +15,7 @@ export class HUD {
     this.onTabChange = onTabChange;
     this.onOpenDaily = onOpenDaily;
     this.onOpenRef = onOpenRef;
+    this.onOpenAdmin = onOpenAdmin;
 
     this.activeTab = 'fishing';
     this.castPower = 0;
@@ -90,6 +91,11 @@ export class HUD {
           <button class="header-action-btn" id="refBtn" title="Пригласить друзей">
             ${getIconSvg('userPlus', 15)}
           </button>
+          ${tg.isAdmin() ? `
+            <button class="header-action-btn admin-btn-glow" id="adminBtn" title="Панель администратора">
+              ${getIconSvg('shield', 15)}
+            </button>
+          ` : ''}
           <button class="sound-toggle" id="soundToggleBtn" aria-label="Звук">
             ${sound.muted ? getIconSvg('mute', 14) : getIconSvg('volume', 14)}
           </button>
@@ -207,6 +213,7 @@ export class HUD {
     this.soundToggleBtn = this.container.querySelector('#soundToggleBtn');
     this.dailyBtn = this.container.querySelector('#dailyBtn');
     this.refBtn = this.container.querySelector('#refBtn');
+    this.adminBtn = this.container.querySelector('#adminBtn');
     this.shakeLayer = this.container.querySelector('#shakeLayer');
     this.shakeBtn = this.container.querySelector('#shakeBtn');
     this.tickerText = this.container.querySelector('#tickerText');
@@ -259,6 +266,11 @@ export class HUD {
   bindEvents() {
     this.dailyBtn.addEventListener('click', () => this.onOpenDaily());
     this.refBtn.addEventListener('click', () => this.onOpenRef());
+    if (this.adminBtn) {
+      this.adminBtn.addEventListener('click', () => {
+        if (this.onOpenAdmin) this.onOpenAdmin();
+      });
+    }
 
     // Sound toggle
     this.soundToggleBtn.addEventListener('click', () => {
