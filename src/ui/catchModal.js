@@ -18,6 +18,11 @@ export class CatchModal {
     this.container.innerHTML = `
       <div class="catch-modal-backdrop hidden" id="catchBackdrop">
         <div class="catch-card" id="catchCard">
+          <!-- Close button (auto-saves to backpack) -->
+          <button class="modal-close-btn" id="btnCatchClose" title="В садок">
+            ${getIconSvg('x', 18)}
+          </button>
+
           <!-- Animated Light Rays & Glow FX -->
           <div class="rarity-rays" id="rarityRays"></div>
 
@@ -84,6 +89,7 @@ export class CatchModal {
 
     this.backdrop = this.container.querySelector('#catchBackdrop');
     this.card = this.container.querySelector('#catchCard');
+    this.btnClose = this.container.querySelector('#btnCatchClose');
     this.rarityTag = this.container.querySelector('#catchRarityTag');
     this.expTag = this.container.querySelector('#catchExpTag');
     this.fishIcon = this.container.querySelector('#catchFishIcon');
@@ -101,20 +107,44 @@ export class CatchModal {
     this.btnSell = this.container.querySelector('#btnCatchSell');
     this.btnKeep = this.container.querySelector('#btnCatchKeep');
 
-    this.btnSell.addEventListener('click', () => {
+    this.btnSell.addEventListener('click', (e) => {
+      e.stopPropagation();
       if (!this.currentCatch) return;
+      const item = this.currentCatch;
       sound.playCoin();
       tg.impactMedium();
       this.hide();
-      this.onSell(this.currentCatch);
+      this.onSell(item);
     });
 
-    this.btnKeep.addEventListener('click', () => {
+    this.btnKeep.addEventListener('click', (e) => {
+      e.stopPropagation();
       if (!this.currentCatch) return;
+      const item = this.currentCatch;
       sound.playClick();
       tg.selectionChanged();
       this.hide();
-      this.onKeep(this.currentCatch);
+      this.onKeep(item);
+    });
+
+    this.btnClose.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!this.currentCatch) return;
+      const item = this.currentCatch;
+      sound.playClick();
+      this.hide();
+      this.onKeep(item);
+    });
+
+    // Tapping backdrop outside card automatically keeps the fish
+    this.backdrop.addEventListener('click', (e) => {
+      if (e.target === this.backdrop) {
+        if (!this.currentCatch) return;
+        const item = this.currentCatch;
+        sound.playClick();
+        this.hide();
+        this.onKeep(item);
+      }
     });
   }
 

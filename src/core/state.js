@@ -215,8 +215,9 @@ class GameState {
       this.stats.heaviestFish = fishItem.weight;
     }
 
+    const fishId = fishItem.fish?.id || fishItem.fishId || 'unknown';
     // Update FishDex
-    const dex = this.fishdex[fishItem.fishId] || {
+    const dex = this.fishdex[fishId] || {
       discovered: true,
       count: 0,
       maxWeight: 0,
@@ -225,10 +226,10 @@ class GameState {
 
     dex.count += 1;
     dex.maxWeight = Math.max(dex.maxWeight, fishItem.weight);
-    if (!dex.mutations.includes(fishItem.mutation.id)) {
+    if (fishItem.mutation && !dex.mutations.includes(fishItem.mutation.id)) {
       dex.mutations.push(fishItem.mutation.id);
     }
-    this.fishdex[fishItem.fishId] = dex;
+    this.fishdex[fishId] = dex;
 
     this.save();
     return true;

@@ -100,6 +100,10 @@ class GameApp {
   }
 
   handleCastStart() {
+    if (this.pendingCatch) {
+      this.handleKeepFish(this.pendingCatch);
+      this.catchModal.hide();
+    }
     sound.ensureContext();
     sound.playCast();
     tg.impactLight();
@@ -296,18 +300,21 @@ class GameApp {
   }
 
   handleKeepFish(catchItem) {
+    if (!catchItem) return;
     const success = state.addFish(catchItem);
     if (!success) {
       // Inventory was full, auto sell
       state.addCoins(catchItem.price);
     }
     this.pendingCatch = null;
+    sound.playClick();
   }
 
   handleSellFish(catchItem) {
+    if (!catchItem) return;
     state.addCoins(catchItem.price);
-    // Still record in FishDex!
-    const dex = state.fishdex[catchItem.fish.id] || {
+    const fishId = catchItem.fish?.id || 'unknown';
+    const dex = state.fishdex[fishId] || {
       discovered: true,
       count: 0,
       maxWeight: 0,
@@ -315,10 +322,10 @@ class GameApp {
     };
     dex.count += 1;
     dex.maxWeight = Math.max(dex.maxWeight, catchItem.weight);
-    if (!dex.mutations.includes(catchItem.mutation.id)) {
+    if (catchItem.mutation && !dex.mutations.includes(catchItem.mutation.id)) {
       dex.mutations.push(catchItem.mutation.id);
     }
-    state.fishdex[catchItem.fish.id] = dex;
+    state.fishdex[fishId] = dex;
     state.stats.totalCaught += 1;
     state.save();
 
@@ -326,6 +333,11 @@ class GameApp {
   }
 
   handleTabChange(tabName) {
+    if (this.pendingCatch) {
+      this.handleKeepFish(this.pendingCatch);
+      this.catchModal.hide();
+    }
+
     if (tabName === 'fishing') {
       this.viewPanelContainer.classList.add('hidden');
       this.viewPanelContainer.innerHTML = '';
