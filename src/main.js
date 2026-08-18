@@ -3,6 +3,7 @@ import { tg } from './core/telegram.js';
 import { sound } from './core/sound.js';
 import { RNG } from './core/rng.js';
 import { RARITIES } from './data/mutations.js';
+import { liveFeed } from './core/liveFeed.js';
 
 import { WaterCanvas } from './render/canvas.js';
 import { ReelingMinigame } from './render/minigame.js';
@@ -35,7 +36,7 @@ class GameApp {
     const minigameContainer = document.getElementById('minigameContainer');
     this.minigame = new ReelingMinigame(
       minigameContainer,
-      (fish) => this.handleCatchSuccess(fish),
+      (fish, isPerfect) => this.handleCatchSuccess(fish, isPerfect),
       (fish) => this.handleCatchFailed(fish)
     );
 
@@ -227,7 +228,7 @@ class GameApp {
     this.minigame.start(fish, rod);
   }
 
-  handleCatchSuccess(fish) {
+  handleCatchSuccess(fish, isPerfect = false) {
     this.gameState = 'idle';
     this.hud.setCastState('idle');
     this.canvas.retrieveBobber();
@@ -236,8 +237,19 @@ class GameApp {
     state.incrementStreak();
 
     if (this.pendingCatch) {
+      if (isPerfect) {
+        this.pendingCatch.isPerfect = true;
+        this.pendingCatch.price += 10; // +10C$ Fisch wiki rule
+        this.pendingCatch.exp = Math.round(this.pendingCatch.exp * 1.5); // +50% EXP
+        state.addCoins(10);
+      }
+
       // Award EXP immediately
       state.addExp(this.pendingCatch.exp);
+
+      // Broadcast to live ticker
+      liveFeed.broadcastLocalCatch(this.pendingCatch, isPerfect);
+
       // Show catch reveal modal
       this.catchModal.show(this.pendingCatch);
     }

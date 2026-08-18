@@ -1,6 +1,7 @@
 import { state } from '../core/state.js';
 import { sound } from '../core/sound.js';
 import { tg } from '../core/telegram.js';
+import { liveFeed } from '../core/liveFeed.js';
 
 export class HUD {
   constructor(container, onCastStart, onCastRelease, onShakeClick, onHookClick, onTabChange) {
@@ -20,6 +21,9 @@ export class HUD {
     this.render();
     this.bindEvents();
     state.subscribe(() => this.updateState());
+
+    // Subscribe to live feed ticker
+    liveFeed.subscribe((event) => this.displayLiveCatch(event));
   }
 
   render() {
@@ -28,8 +32,17 @@ export class HUD {
     const bait = state.getEquippedBait();
     const biome = state.getCurrentBiome();
     const expPct = Math.round((state.exp / state.getMaxExp()) * 100);
+    const anglers = liveFeed.getAnglersForCurrentBiome();
 
     this.container.innerHTML = `
+      <!-- Live Global Catch Ticker -->
+      <div class="live-catch-ticker" id="liveCatchTicker">
+        <div class="ticker-content" id="tickerContent">
+          <span class="ticker-pulse">🔴 LIVE</span>
+          <span class="ticker-text" id="tickerText">Океан спокоен... Забрасывайте удочки!</span>
+        </div>
+      </div>
+
       <!-- Top Status Header -->
       <header class="game-header">
         <div class="header-left">
@@ -61,13 +74,20 @@ export class HUD {
         </div>
       </header>
 
-      <!-- Active Location, Gear & Streak Ribbon -->
+      <!-- Active Location, Online Anglers & Gear Ribbon -->
       <div class="sub-header-ribbon">
         <div class="ribbon-left">
           <div class="biome-pill" id="hudBiome">
             <span class="biome-icon">${biome.icon}</span>
             <span class="biome-name">${biome.name}</span>
           </div>
+          
+          <!-- Live Anglers at this location -->
+          <div class="anglers-pill" id="hudAnglersPill" title="Рыбаки на этой локации">
+            <span class="anglers-dot"></span>
+            <span class="anglers-count" id="hudAnglersCount">👥 ${anglers.length + 1} онлайн</span>
+          </div>
+
           <div class="streak-pill ${state.streak > 0 ? '' : 'hidden'}" id="hudStreakPill">
             <span>🔥</span>
             <span id="hudStreakText">Стрик x${state.streak}</span>
@@ -90,7 +110,6 @@ export class HUD {
       <div class="fisch-shake-layer hidden" id="shakeLayer">
         <button class="btn-fisch-shake" id="shakeBtn">
           <span class="shake-inner">SHAKE! 💥</span>
-          <div class="shake-ripple-ring"></div>
         </button>
       </div>
 
@@ -172,6 +191,26 @@ export class HUD {
     this.soundToggleBtn = this.container.querySelector('#soundToggleBtn');
     this.shakeLayer = this.container.querySelector('#shakeLayer');
     this.shakeBtn = this.container.querySelector('#shakeBtn');
+    this.tickerText = this.container.querySelector('#tickerText');
+    this.tickerContainer = this.container.querySelector('#liveCatchTicker');
+  }
+
+  displayLiveCatch(event) {
+    if (!this.tickerText) return;
+
+    const mutBadge = event.mutationId !== 'normal' ? `[${event.mutation}] ` : '';
+    const locTag = `<span class="ticker-loc">${event.biomeName}</span>`;
+
+    if (event.isLocal) {
+      this.tickerText.innerHTML = `🌟 <strong>Вы</strong> выловили ${event.fishIcon} <strong>${mutBadge}${event.fishName}</strong> (${event.weight} кг) в ${locTag}! (+${event.price} 🪙)`;
+    } else {
+      this.tickerText.innerHTML = `🎣 <strong>${event.playerName}</strong> поймал ${event.fishIcon} <strong>${mutBadge}${event.fishName}</strong> (${event.weight} кг) в ${locTag}!`;
+    }
+
+    this.tickerContainer.classList.add('flash');
+    setTimeout(() => {
+      this.tickerContainer.classList.remove('flash');
+    }, 1200);
   }
 
   bindEvents() {
@@ -305,7 +344,6 @@ export class HUD {
   }
 
   relocateShakeButton() {
-    // Random position within safe middle area (20% to 75% width, 25% to 65% height)
     const randomX = 15 + Math.random() * 65;
     const randomY = 25 + Math.random() * 40;
 
@@ -371,6 +409,7 @@ export class HUD {
     const bait = state.getEquippedBait();
     const biome = state.getCurrentBiome();
     const expPct = Math.round((state.exp / state.getMaxExp()) * 100);
+    const anglers = liveFeed.getAnglersForCurrentBiome();
 
     const levelEl = this.container.querySelector('#hudLevel');
     if (levelEl) levelEl.textContent = state.level;
@@ -401,6 +440,11 @@ export class HUD {
     const biomeEl = this.container.querySelector('#hudBiome');
     if (biomeEl) {
       biomeEl.innerHTML = `<span class="biome-icon">${biome.icon}</span><span class="biome-name">${biome.name}</span>`;
+    }
+
+    const anglersCountEl = this.container.querySelector('#hudAnglersCount');
+    if (anglersCountEl) {
+      anglersCountEl.textContent = `👥 ${anglers.length + 1} онлайн`;
     }
 
     const streakPill = this.container.querySelector('#hudStreakPill');
